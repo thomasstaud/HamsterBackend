@@ -1,10 +1,39 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">  
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-  <meta charset="UTF-8"></meta>
-  <title>Spring Boot Test – Hello World</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- Bootstrap settings -->
+	<link rel="stylesheet" th:href="@{/webjars/bootstrap/5.1.3/css/bootstrap.min.css}">
+	<script th:src="@{/webjars/popper.js/2.9.3/umd/popper.min.js}"></script>
+	<!-- Read CSS -->
+	<link th:href="@{/css/home.css}" rel="stylesheet">
+	</link>
+	<title>User</title>
 </head>
+
 <body>
-  <h1>Usersettings</h1>
+	<div class="container-fluid header clearfix p-3">
+		<h1 class="float-start">Usersettings</h1>
+	</div>
+	<hr>
+	<form method="post" action="/user/index">
+		ID eingeben:
+		<input type="text" name="id" />
+		<input type="submit" value="Click" />
+	</form>
+	<div th:if="${error}">
+		<div>Fehler</div>
+	</div>
+	<!-- ELSE -->
+	<div th:unless="${id}">
+		<p th:text="${id}"></p>
+		<p th:text="${username}"></p>
+		<p th:text="${password}"></p> 
+	</div>
+
+
 </body>
+
 </html>

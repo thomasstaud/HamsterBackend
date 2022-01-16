@@ -1,0 +1,1 @@
+Insert into user(user_id, username, password) values (0, 'Simon', '12345678'); 
