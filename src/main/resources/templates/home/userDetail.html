@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+	<meta charset="UTF-8">
+	</meta>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+</head>
+
+<body>
+	<div th:fragment="productDetail_contents">
+		<div class="row">
+			<div class="col-sm-5">
+				<div class="page-header">
+					<h1>Userdetails</h1>
+				</div>
+				<form method="post" th:action="@{/home/userDetail}" th:object="${user}">
+					<table class="table table-bordered table-hover">
+						<tr>
+							<th class="active col-sm-2">User ID</th>
+							<td class="col-sm-3">
+								<div class="form-group">
+									<input type="text" th:field="*{id}" class="form-control" readonly="readonly" />
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th class="active">Name</th>
+							<td>
+								<div class="form-group">
+									<input type="text" class="form-control" th:field="*{username}" />
+
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th class="active">Password</th>
+							<td>
+								<div class="form-group">
+									<input type="password" class="form-control" th:field="*{password}"   />
+
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th class="active">Repeat Password</th>
+							<td>
+								<div class="form-group" th:object="${passwordRepeat}" >
+									<input type="password" class="form-control" th:name="passwordRepeat"/>
+								</div>
+							</td>
+						</tr>
+					</table>
+					<!-- Update button -->
+					<button class="btn btn-primary btn-lg pull-right" type="submit" name="update">
+						Update
+					</button>
+					<!-- Delete button -->
+					<button class="btn btn-danger btn-lg" type="submit" name="delete">
+						Delete
+					</button>
+					 <div align="left" th:if="${result}">
+           				 <p style="font-size: 20; color: #FF1C19;">Passwords are not identic!</p>
+        			</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

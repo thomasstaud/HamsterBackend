@@ -25,6 +25,27 @@
 		</form>
 	</div>
 	<hr>
+	<div th:fragment="userList_contents">
+	<table class="table table-bordered table-hover table-striped">
+        <th class="info col-sm-1">ID</th>
+        <th class="info col-sm-5">Username</th>
+        <th class="info col-sm-5">Password</th>
+		<th class="info col-sm-1">Bearbeiten</th>
+      </tr>
+      <tr th:each="user : ${userlist}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.password}"></td>
+        <td>
+          <!-- Point 2: Dynamic URL -->
+          <a class="btn btn-primary" th:href="@{'/home/userDetail/' + ${user.id}}">
+            bearbeiten
+          </a>
+        </td>
+      </tr>
+    </table>
+	<label th:text="${userListCount} + ' Stück' "></label><br/>
+	</div>
 </body>
 
 </html>

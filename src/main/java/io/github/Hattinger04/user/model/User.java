@@ -35,10 +35,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
     private Integer id;
-    @Column(name = "user_name")
+    @Column(name = "username")
     @Length(min = 5, message = "*Your user name must have at least 5 characters")
     @NotEmpty(message = "*Please provide a user name")
-    private String userName;
+    private String username;
     @Column(name = "email")
     @Email(message = "*Please provide a valid Email")
     @NotEmpty(message = "*Please provide an email")
@@ -50,7 +50,7 @@ public class User {
     @Column(name = "name")
     @NotEmpty(message = "*Please provide your name")
     private String name;
-    @Column(name = "last_name")
+    @Column(name = "lastname")
     @NotEmpty(message = "*Please provide your last name")
     private String lastName;
     @Column(name = "active")
