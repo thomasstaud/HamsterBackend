@@ -21,7 +21,7 @@ public class HomeController {
 	private UserService userService;
 
 	@GetMapping(value = { "/", "/home", "/home/index" })
-	public String getHome(Model model) {
+	public String getHome(Model model) { 
 		model.addAttribute("contents", "home/userList :: userList_contents");
 		List<User> userList = userService.selectMany();
 		model.addAttribute("userlist", userList);
@@ -29,7 +29,7 @@ public class HomeController {
 		model.addAttribute("userListCount", count);
 		return "home/index";
 	}
-
+	
 	@GetMapping("/home/userDetail")
 	public String getUserList(Model model) {
 		model.addAttribute("contents", "home/index :: userDetail_contents");

@@ -3,6 +3,7 @@ package io.github.Hattinger04.configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,6 +15,10 @@ import io.github.Hattinger04.user.model.MyUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(
+		  prePostEnabled = true, 
+		  securedEnabled = true, 
+		  jsr250Enabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -33,8 +38,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		String loginPage = "/user/login";
 		String logoutPage = "/user/logout";
 
-		http.authorizeRequests().antMatchers(loginPage).permitAll().antMatchers("/user/registration").permitAll()
-				.antMatchers("/admin/**").hasAuthority("ADMIN").anyRequest().authenticated().and().csrf().disable()
+		http.authorizeRequests()
+				.antMatchers(loginPage).permitAll()
+				.antMatchers("/user/registration").permitAll()
+				.antMatchers("/user").hasAuthority("USER")
+				.and().csrf().disable()
 				.formLogin().loginPage(loginPage).failureUrl("/user/login?error=true").defaultSuccessUrl("/home/")
 				.usernameParameter("user_name").passwordParameter("password").and().logout()
 				.logoutRequestMatcher(new AntPathRequestMatcher(logoutPage)).logoutSuccessUrl(loginPage).and()

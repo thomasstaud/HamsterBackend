@@ -1,7 +1,6 @@
 package io.github.Hattinger04.user.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -29,17 +28,20 @@ public class MyUserDetailsService implements UserDetailsService {
         List<GrantedAuthority> authorities = getUserAuthority(user.getRoles());
         return buildUserForAuthentication(user, authorities);
     }
+    
+    
 
     private List<GrantedAuthority> getUserAuthority(Set<Role> userRoles) {
-        Set<GrantedAuthority> roles = new HashSet<>();
+        List<GrantedAuthority> authorities = new ArrayList<>();
         for (Role role : userRoles) {
-            roles.add(new SimpleGrantedAuthority(role.getRole()));
+            authorities.add(new SimpleGrantedAuthority(role.getRole()));
         }
-        return new ArrayList<>(roles);
+        return authorities; 
     }
 
     private UserDetails buildUserForAuthentication(User user, List<GrantedAuthority> authorities) {
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+    	// return UserDetails
+    	return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                 user.getActive(), true, true, true, authorities);
     }
 }

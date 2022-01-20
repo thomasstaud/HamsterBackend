@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
@@ -19,6 +20,7 @@
 
 	<div class="container-fluid header clearfix p-3">
 		<h1 class="float-start">Startseite</h1>
+		<p sec:authorize="hasAnyRole('ADMIN')">Sehen nur Admins: </p>
 		<form th:action="@{/user/logout}" method="get" class="float-end">
 			<button class="btn btn-md btn-danger btn-block" name="registration" type="Submit">Logout
 			</button>
