@@ -29,8 +29,6 @@ public class MyUserDetailsService implements UserDetailsService {
         return buildUserForAuthentication(user, authorities);
     }
     
-    
-
     private List<GrantedAuthority> getUserAuthority(Set<Role> userRoles) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (Role role : userRoles) {

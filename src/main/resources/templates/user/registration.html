@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<title>Webhamster</title>
@@ -10,63 +10,46 @@
 
 <body>
 	<form th:action="@{/}" method="get">
-		<button class="btn btn-md btn-warning btn-block" type="Submit">Login</button>
+		<button class="btn btn-lg btn-primary btn-block" type="Submit">Login</button>
 	</form>
 
 	<div class="container">
-		<div class="row">
-			<div class="col-md-6 col-md-offset-3">
-				<form autocomplete="off" action="#" th:action="@{/user/registration}" th:object="${user}" method="post"
-					class="form-horizontal" role="form">
-					<h2>Registration</h2>
-					<div class="form-group">
-						<div class="col-sm-9">
-							<label th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
-								class="validation-message"></label>
-							<input type="text" th:field="*{name}" placeholder="Name" class="form-control" />
-						</div>
-					</div>
+		<h3 class="form-signin-heading" th:text="Registration"></h3>
 
-					<div class="form-group">
-						<div class="col-sm-9">
-							<label th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"
-								class="validation-message"></label>
-							<input type="text" th:field="*{lastName}" placeholder="Last Name" class="form-control" />
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-sm-9">
-							<input type="text" th:field="*{email}" placeholder="Email" class="form-control" /> <label
-								th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
-								class="validation-message"></label>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-sm-9">
-							<input type="text" th:field="*{username}" placeholder="User Name" class="form-control" />
-							<label th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
-								class="validation-message"></label>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-sm-9">
-							<input type="password" th:field="*{password}" placeholder="Password" class="form-control" />
-							<label th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
-								class="validation-message"></label>
-						</div>
-					</div>
-
-					<div class="form-group">
-						<div class="col-sm-9">
-							<button type="submit" class="btn btn-primary btn-block">Register User</button>
-						</div>
-					</div>
-
-					<h2><span class="text-success" th:utext="${successMessage}"></span></h2>
-
-				</form>
+		<form autocomplete="off" action="#" th:action="@{/user/registration}" th:object="${user}" method="post"
+			class="form-horizontal" role="form">
+			<div class="form-group">
+				<label th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="validation-message"></label>
+				<input type="text" th:field="*{name}" placeholder="Name" class="form-control" />
 			</div>
-		</div>
+
+			<div class="form-group">
+				<label th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"
+					class="validation-message"></label>
+				<input type="text" th:field="*{lastName}" placeholder="Last Name" class="form-control" />
+			</div>
+			<div class="form-group">
+				<input type="text" th:field="*{email}" placeholder="Email" class="form-control" /> <label
+					th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="validation-message"></label>
+			</div>
+			<div class="form-group">
+				<input type="text" th:field="*{username}" placeholder="User Name" class="form-control" />
+				<label th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+					class="validation-message"></label>
+			</div>
+			<div class="form-group">
+				<input type="password" th:field="*{password}" placeholder="Password" class="form-control" />
+				<label th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+					class="validation-message"></label>
+			</div>
+
+			<div class="form-group">
+				<button type="submit" class="btn btn-primary btn-block">Register User</button>
+			</div>
+
+			<h2><span class="text-success" th:utext="${successMessage}"></span></h2>
+
+		</form>
 	</div>
 
 </body>

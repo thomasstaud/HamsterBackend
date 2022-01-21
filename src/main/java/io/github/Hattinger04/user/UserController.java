@@ -2,6 +2,7 @@ package io.github.Hattinger04.user;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -48,7 +49,7 @@ public class UserController {
 	}
 
 	@PostMapping(value = "/user/registration")
-	public ModelAndView createNewUser(User user, BindingResult bindingResult) {
+	public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
 		ModelAndView modelAndView = new ModelAndView();
 		User userExists = userService.findUserByUsername(user.getUsername());
 		if (userExists != null) {
@@ -64,5 +65,19 @@ public class UserController {
 		}
 		return modelAndView;
 	}
+
+//	@GetMapping(value = "/admin/home")
+//	public ModelAndView home() {
+//		ModelAndView modelAndView = new ModelAndView();
+//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//		User user = userService.findUserByUsername(auth.getName());
+//		modelAndView.addObject("username", "Welcome " + user.getUsername() + "/" + user.getName() + " "
+//				+ user.getLastName() + " (" + user.getEmail() + ")");
+//		modelAndView.addObject("adminMessage", "Content Available Only for Users with Admin Role");
+//		modelAndView.setViewName("admin/home");
+//		return modelAndView;
+//	}
+
+
 
 }

@@ -36,12 +36,12 @@ public class User {
 	@Column(name = "user_id")
 	private Integer id;
 	@Column(name = "username")
-	@Length(min = 5, message = "*Your user name must have at least 5 characters")
-	@NotEmpty(message = "*Please provide a user name")
+	@Length(min = 5, message = "Your user name must have at least 5 characters")
+	@NotEmpty(message = "*Please provide a username")
 	private String username;
 	@Column(name = "email")
 	@Email(message = "*Please provide a valid Email")
-	@NotEmpty(message = "*Please provide an email")
+	@NotEmpty(message = "*Please provide an Email")
 	private String email;
 	@Column(name = "password")
 	@Length(min = 5, message = "*Your password must have at least 5 characters")
@@ -51,7 +51,7 @@ public class User {
 	@NotEmpty(message = "*Please provide your name")
 	private String name;
 	@Column(name = "lastname")
-	@NotEmpty(message = "*Please provide your last name")
+	@NotEmpty(message = "Please provide your last name")
 	private String lastName;
 	@Column(name = "active")
 	private Boolean active;
