@@ -3,50 +3,51 @@
 
 <head>
 	<title>Webhamster</title>
+	<link rel="stylesheet" href="/css/login.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-	<form th:action="@{/}" method="get">
-		<button class="btn btn-lg btn-primary btn-block" type="Submit">Login</button>
-	</form>
+	<div class="login-dark">
+		<form autocomplete="off" th:action="@{/user/registration}" th:object="${user}" method="post"
+			role="presentation">
+			<p class="h2">Register</p>
+			<br>
 
-	<div class="container">
-		<h3 class="form-signin-heading" th:text="Registration"></h3>
-
-		<form autocomplete="off" action="#" th:action="@{/user/registration}" th:object="${user}" method="post"
-			class="form-horizontal" role="form">
 			<div class="form-group">
 				<label th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="validation-message"></label>
-				<input type="text" th:field="*{name}" placeholder="Name" class="form-control" />
+				<input type="text" th:field="*{name}" placeholder="Name" class="form-control" autocomplete="off" />
 			</div>
 
 			<div class="form-group">
 				<label th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"
 					class="validation-message"></label>
-				<input type="text" th:field="*{lastName}" placeholder="Last Name" class="form-control" />
+				<input type="text" th:field="*{lastName}" placeholder="Lastname" class="form-control"
+					autocomplete="off" />
+			</div>
+
+			<div class="form-group">
+				<input type="email" th:field="*{email}" placeholder="Email" class="form-control" autocomplete="off" />
+				<label th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="validation-message"></label>
 			</div>
 			<div class="form-group">
-				<input type="text" th:field="*{email}" placeholder="Email" class="form-control" /> <label
-					th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="validation-message"></label>
-			</div>
-			<div class="form-group">
-				<input type="text" th:field="*{username}" placeholder="User Name" class="form-control" />
+				<input type="text" th:field="*{username}" placeholder="Username" class="form-control"
+					autocomplete="off" />
 				<label th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
 					class="validation-message"></label>
 			</div>
 			<div class="form-group">
-				<input type="password" th:field="*{password}" placeholder="Password" class="form-control" />
+				<input type="password" th:field="*{password}" placeholder="Password" class="form-control"
+					autocomplete="off" />
 				<label th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
 					class="validation-message"></label>
 			</div>
 
 			<div class="form-group">
-				<button type="submit" class="btn btn-primary btn-block">Register User</button>
+				<button type="submit" class="btn btn-lg btn-primary btn-block">Register</button>
 			</div>
 
+			<a href="/user/login" type="submit">Logging in</a>
 			<h2><span class="text-success" th:utext="${successMessage}"></span></h2>
 
 		</form>
