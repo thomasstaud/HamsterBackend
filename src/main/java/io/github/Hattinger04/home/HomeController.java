@@ -1,6 +1,9 @@
 package io.github.Hattinger04.home;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,8 +13,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import io.github.Hattinger04.hamster.workbench.Workbench;
 import io.github.Hattinger04.user.model.User;
+import io.github.Hattinger04.user.model.UserForm;
 import io.github.Hattinger04.user.model.UserService;
 
 @Controller
@@ -22,7 +28,6 @@ public class HomeController {
 
 	@GetMapping(value = { "/", "/home", "/home/index" })
 	public String getHome(Model model) { 
-		model.addAttribute("contents", "home/userList :: userList_contents");
 		List<User> userList = userService.selectMany();
 		model.addAttribute("userlist", userList);
 		long count = userService.count();
@@ -30,45 +35,87 @@ public class HomeController {
 		return "home/index";
 	}
 	
-	@GetMapping("/home/userDetail")
-	public String getUserList(Model model) {
-		model.addAttribute("contents", "home/index :: userDetail_contents");
-		return "redirect:/home/index";
-	}
-	
 	@GetMapping("/home/userDetail/{id:.+}")
-	public String getUserDetail(@RequestParam(name="passwordRepeat", required = false) String passwordRepeat, @ModelAttribute User user, Model model, @PathVariable("id") String userID) {
-		model.addAttribute("contents", "home/userDetail :: userDetail_contents");
-		if (userID != null && userID.length() > 0) {
-			model.addAttribute("user", user);
+	public String getUserDetail(@RequestParam(name="passwordRepeat", required = false) String passwordRepeat, @ModelAttribute UserForm form, Model model, @PathVariable("id") String userID) {
+		if(userID.equals("-1")) {
+			form.setUser_id(String.valueOf(userService.getFutureID()));
+			model.addAttribute("userForm", form); 
+			model.addAttribute("insert", true); 
+		}
+		else if (userID != null && userID.length() > 0) {
+			User user = userService.findUserByID(Integer.valueOf(userID)); 
+			form.setUser_id(String.valueOf(user.getId())); 
+			form.setUsername(user.getUsername());
 			model.addAttribute("passwordRepeat", "check if password is the same"); 
+			model.addAttribute("userForm", form); 
 		}
 		return "home/userDetail";
 	}
 	
 	@PostMapping(value = "/home/userDetail", params = "update")
-	public String postUserDetailUpdate(@ModelAttribute("passwordRepeat") String passwordRepeat, @ModelAttribute User user, Model model) {
-		if(!user.getPassword().equals(passwordRepeat)) {
+	public String postUserDetailUpdate(@ModelAttribute("passwordRepeat") String passwordRepeat, @ModelAttribute UserForm form, Model model) {
+		User user = new User(); 
+		if(!form.getPassword().equals(passwordRepeat)) {
 			model.addAttribute("result", "Passwords not the same");
-			return getUserDetail(passwordRepeat, user, model, String.valueOf(user.getId())); 
+			return getUserDetail(passwordRepeat, form, model, String.valueOf(form.getUser_id())); 
 		}
+		user.setId(Integer.valueOf(form.getUser_id())); 
+		user.setUsername(form.getUsername()); 
+		user.setPassword(form.getPassword()); 
 		boolean result = userService.updateUser(user);
 		if (result == true) {
 			model.addAttribute("result", "Update success");
-			return getUserList(model);
+			return "redirect:/home/index";
 		}
-		return getUserDetail(passwordRepeat, user, model, String.valueOf(user.getId())); 	
+		return getUserDetail(passwordRepeat, form, model, String.valueOf(user.getId())); 	
 	}
 
 	@PostMapping(value = "/home/userDetail", params = "delete")
-	public String postUserDetailDelete(@ModelAttribute User user, Model model) {
+	public String postUserDetailDelete(@ModelAttribute UserForm form, Model model, RedirectAttributes redirectAtt) {
+		User user = new User();
+		user.setId(Integer.valueOf(form.getUser_id())); 
+		user.setUsername(form.getUsername()); 
+		user.setPassword(form.getPassword()); 
 		boolean result = userService.deleteUser(user);
 		if (result == true) {
-			model.addAttribute("result", "Delete success");
+			redirectAtt.addFlashAttribute("result", "Delete success");
 		} else {
-			model.addAttribute("result", "Delete failed");
+			redirectAtt.addFlashAttribute("result", "Delete failed");
 		}
-		return getUserList(model);
+		return "redirect:/home/index";
 	}
-
+	
+	@PostMapping(value = "/home/userDetail", params = "insert")
+	public String postUserDetailInsert(@ModelAttribute("passwordRepeat") String passwordRepeat, @ModelAttribute UserForm form, Model model) {
+		User user = new User(); 
+		if(!form.getPassword().equals(passwordRepeat)) {
+			model.addAttribute("error", "Passwords not the same");
+			return getUserDetail(passwordRepeat, form, model, String.valueOf(form.getUser_id())); 
+		}
+		user.setId(Integer.valueOf(form.getUser_id())); 
+		user.setUsername(form.getUsername()); 
+		user.setPassword(form.getPassword()); 
+		user.setEmail(form.getEmail()); 
+		user.setLastName(form.getLastname()); 
+		user.setName(form.getName()); 
+		boolean result = userService.saveUser(user);
+		if(result) {
+			model.addAttribute("result", "Insert success");
+			return "redirect:/home/index";
+		}
+		model.addAttribute("error", "Das Formular ist nicht korrekt ausgefüllt!"); 
+		return getUserDetail(passwordRepeat, form, model, "-1"); 	
+	}
+	
+	@GetMapping(value = "/home/hamster")
+	public String getHamster() {
+		return "home/hamster"; 
+	}
+	@PostMapping(value = "/home/hamster")
+	public String postHamster(Model model) {
+		Workbench wb = Workbench.getWorkbench(); 
+		wb.startProgram("src/main/resources/hamster/testuser/data.ham");
+		model.addAttribute("oi", "oi"); 
+		return "home/hamster"; 
+	}
 }

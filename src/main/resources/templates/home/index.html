@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
@@ -8,7 +7,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<!-- Bootstrap settings -->
 	<link rel="stylesheet" th:href="@{/webjars/bootstrap/5.1.3/css/bootstrap.min.css}">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
 	<script th:src="@{/webjars/popper.js/2.9.3/umd/popper.min.js}"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
 	<!-- Read CSS -->
 
 	<link th:href="@{/css/home.css}" rel="stylesheet">
@@ -26,27 +28,47 @@
 		</form>
 	</div>
 	<hr>
-	<div th:fragment="userList_contents">
-	<table class="table table-bordered table-hover table-striped">
-        <th class="info col-sm-1">ID</th>
-        <th class="info col-sm-5">Username</th>
-        <th class="info col-sm-5">Password</th>
-		<th class="info col-sm-1">Bearbeiten</th>
-      </tr>
-      <tr th:each="user : ${userlist}">
-        <td th:text="${user.id}"></td>
-        <td th:text="${user.username}"></td>
-        <td th:text="${user.password}"></td>
-        <td>
-          <!-- Point 2: Dynamic URL -->
-          <a class="btn btn-primary" th:href="@{'/home/userDetail/' + ${user.id}}">
-            bearbeiten
-          </a>
-        </td>
-      </tr>
-    </table>
-	<label th:text="${userListCount} + ' Stück' "></label><br/>
-	</div>
-</body>
+		<table id="example" class="display" style="width:100%">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Username</th>
+					<th>Password</th>
+					<th>Bearbeiten</th>
+				</tr>
+			</thead>
+			<tbody>
 
+				<tr th:each="user : ${userlist}">
+					<td th:text="${user.id}"></td>
+					<td th:text="${user.username}"></td>
+					<td th:text="${user.password}"></td>
+					<td>
+						<!-- Point 2: Dynamic URL -->
+						<a class="btn btn-primary" th:href="@{'/home/userDetail/' + ${user.id}}">
+							bearbeiten
+						</a>
+					</td>
+				</tr>
+			</tbody>
+			<tfoot>
+            <tr>
+					<th>ID</th>
+					<th>Username</th>
+					<th>Password</th>
+					<th>Bearbeiten</th>
+            </tr>
+        </tfoot>
+		</table>
+		<div sec:authorize="hasRole('ADMIN')">
+			<a class="btn btn-primary" th:href="@{/home/userDetail/-1}"> Create new User </a>
+		</div>
+		<a class="btn btn-primary" th:href="@{/home/hamster}"> Hamster </a>
+		<p th:text="${result}"/>
+</body>
+<script>
+	$(document).ready(function () {
+			$('#example').DataTable();
+		});
+</script>
 </html>

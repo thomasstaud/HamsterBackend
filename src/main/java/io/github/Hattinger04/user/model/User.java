@@ -16,6 +16,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import io.github.Hattinger04.role.Role;
 import lombok.AllArgsConstructor;
@@ -32,14 +33,14 @@ import lombok.NoArgsConstructor;
 public class User {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
 	private Integer id;
-	@Column(name = "username")
-	@Length(min = 5, message = "Your user name must have at least 5 characters")
+	@Column(name = "username", unique = true, nullable = false)
+	@Length(min = 5, message = "Your username must have at least 5 characters")
 	@NotEmpty(message = "*Please provide a username")
 	private String username;
-	@Column(name = "email")
+	@Column(name = "email", unique = true, nullable = false)
 	@Email(message = "*Please provide a valid Email")
 	@NotEmpty(message = "*Please provide an Email")
 	private String email;

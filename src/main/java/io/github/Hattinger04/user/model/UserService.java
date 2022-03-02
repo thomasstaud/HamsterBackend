@@ -39,12 +39,17 @@ public class UserService {
 		return userRepository.findByUsername(username);
 	}
 
-	public User saveUser(User user) {
-		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-		user.setActive(true);
-		Role userRole = roleRepository.findByRole("USER");
-		user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
-		return userRepository.save(user);
+	public boolean saveUser(User user) {
+		try {
+			user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+			user.setActive(true);
+			Role userRole = roleRepository.findByRole("USER");
+			user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
+			userRepository.save(user);
+			return true; 
+		} catch (Exception e) {
+			return false; 
+		} 
 	}
 
 	public boolean updateUser(User user) {
@@ -57,6 +62,10 @@ public class UserService {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+	
+	public long getFutureID() {
+		return userRepository.getNextSeriesId().get(1); 
 	}
 
 	public boolean deleteUser(User user) {

@@ -53,7 +53,7 @@ public class UserController {
 		ModelAndView modelAndView = new ModelAndView();
 		User userExists = userService.findUserByUsername(user.getUsername());
 		if (userExists != null) {
-			bindingResult.rejectValue("userName", "error.user", "Es gibt bereits einen User mit diesem Namen");
+			bindingResult.rejectValue("username", "error.user", "Es gibt bereits einen User mit diesem Namen");
 		}
 		if (bindingResult.hasErrors()) {
 			modelAndView.setViewName("user/registration");
@@ -65,19 +65,4 @@ public class UserController {
 		}
 		return modelAndView;
 	}
-
-//	@GetMapping(value = "/admin/home")
-//	public ModelAndView home() {
-//		ModelAndView modelAndView = new ModelAndView();
-//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//		User user = userService.findUserByUsername(auth.getName());
-//		modelAndView.addObject("username", "Welcome " + user.getUsername() + "/" + user.getName() + " "
-//				+ user.getLastName() + " (" + user.getEmail() + ")");
-//		modelAndView.addObject("adminMessage", "Content Available Only for Users with Admin Role");
-//		modelAndView.setViewName("admin/home");
-//		return modelAndView;
-//	}
-
-
-
 }

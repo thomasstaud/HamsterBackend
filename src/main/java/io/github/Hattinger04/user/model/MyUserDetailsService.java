@@ -23,8 +23,8 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String userName) {
-        User user = userService.findUserByUsername(userName);
+	public UserDetails loadUserByUsername(String username) {
+        User user = userService.findUserByUsername(username);
         List<GrantedAuthority> authorities = getUserAuthority(user.getRoles());
         return buildUserForAuthentication(user, authorities);
     }

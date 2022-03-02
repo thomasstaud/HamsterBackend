@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+	<meta charset="UTF-8">
+	</meta>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+</head>
+
+<body>
+	<form method="post" th:action="@{/home/hamster}" th:object="${userForm}">
+		<button class="btn btn-danger btn-lg" type="submit" name="insert"> Insert </button>
+	</form>
+	<div th:if="${hamster}">
+		oioioi
+	</div>
+</body>
