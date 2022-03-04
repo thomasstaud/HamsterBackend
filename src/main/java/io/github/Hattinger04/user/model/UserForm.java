@@ -18,5 +18,4 @@ public class UserForm {
 	private String name; 
 	@NotBlank()
 	private String lastname; 
-	
 }
