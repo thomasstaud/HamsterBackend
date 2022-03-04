@@ -206,6 +206,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 				return "ok";
 			} else {
 				SimulationModel.hamsterTurns.add(instruction.getType()); 
+				System.out.println("ins: " + instruction.getType());
 				switch (instruction.getType()) {
 				case HamsterInstruction.FORWARD:
 					return forward(id);

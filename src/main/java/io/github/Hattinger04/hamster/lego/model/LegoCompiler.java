@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 
-
 /**
  * Mithilfe des LegoCompilers werden aus den Hamsterprogrammen 
  * class-Dateien erstellt, die f�r die nxj Code-Erstellung 
