@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 public class Hamster {
 	@Id
 	private Integer hamster_id;
+	private String programName; 
 	private String program; 
 	private int leange, breite, x, y;
 	private int[] cornAnzahl; 
 	private int[][] corn, wall;  
- 
 }

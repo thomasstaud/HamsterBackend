@@ -87,9 +87,7 @@ public class Workbench {
 //		Example of how a program could start: 
 //		startProgram("Programme/data.ham", "Programme/test.ter", new TerrainForm(10,10,new int[][] {{1,2}, {2,3}}, new int[] {1,1}, new int[][] {{0,0}, {1,0}}, 0, 1));
 	}
-	
-	// All Methods not tested 
-	
+		
 	@Getter @Setter
 	public class TerrainForm {
 		
@@ -124,13 +122,13 @@ public class Workbench {
 	 * 
 	 * @param path
 	 */
-	public void startProgram(String path) {
+	public HashMap<String, String> startProgram(String path) {
 		HamsterFile file = HamsterFile.createHamsterFile(path, HamsterFile.OBJECT); 
 		compiler.setActiveFile(file);
 		file.setType(HamsterFile.OBJECT);
-		ensureCompiled(file);		
-		
+		ensureCompiled(file);
 		model.getDebuggerModel().start(file);
+		return jsonObject; 
 	}
 	
 	/**
@@ -139,10 +137,10 @@ public class Workbench {
 	 * @param path
 	 * @param ter
 	 */
-	public void startProgram(String path, String ter) {
+	public HashMap<String, String> startProgram(String path, String ter) {
 		System.out.println("Loading Terrain...");
 		Territorium.ladeTerritorium(ter);
-		startProgram(path);
+		return startProgram(path);
 	}
 	
 	/**
@@ -151,12 +149,12 @@ public class Workbench {
 	 * @param path
 	 * @param ter
 	 */
-	public void startProgram(String path, String ter, TerrainForm form) {
+	public HashMap<String, String> startProgram(String path, String ter, TerrainForm form) {
 		System.out.println("Creating Terrain...");
 		Terrain t = new Terrain(createTerrain(form)); 
 		createTerrainFile(t, ter); 
 		Territorium.ladeTerritorium(ter);
-		startProgram(path);
+		return startProgram(path);
 	}
 	
 	/**

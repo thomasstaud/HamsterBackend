@@ -1,10 +1,8 @@
 /*imperative program*/void main() {
-    vor(); 
-    vor(); 
-    linksUm();
-    linksUm(); 
-    linksUm(); 
+    if(vornFrei()) {
+    	vor();
+    	linksUm(); 
+    }
     vor();      
     nimm(); 
 }
-

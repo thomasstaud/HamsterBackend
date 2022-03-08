@@ -167,7 +167,6 @@ public class DebuggerModel extends Observable implements Runnable {
 			try {
 				this.machine = connector.launch(args);
 				this.machine.resume(); // dibo 27082015
-				Thread.sleep(500); // dibo 24102015
 			} catch (Exception e) {
 				e.printStackTrace();
 				return;
@@ -179,12 +178,6 @@ public class DebuggerModel extends Observable implements Runnable {
 			this.stepRequest = null;
 			this.eventRequestManager = this.machine.eventRequestManager();
 			this.eventQueue = this.machine.eventQueue();
-
-			this.thread = new Thread(this);
-			this.thread.start();
-			if (!this.enabled) {
-				this.runner.setDelay(this.delay);
-			}
 			this.runner.start();
 		}
 	}

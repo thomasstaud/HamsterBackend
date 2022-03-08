@@ -1,5 +1,7 @@
 package io.github.Hattinger04.hamster;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +19,13 @@ public class HamsterController {
 		return "home/hamster"; 
 	}
 	@PostMapping(value = "/home/hamster")
-	public String postHamster(Model model) {
+	public String postHamster(@ModelAttribute HamsterForm form, Model model) {
 		Workbench wb = Workbench.getWorkbench(); 
 		wb.startProgram("src/main/resources/hamster/testuser/data.ham");
+		System.out.println("ArrayList: ");
+		for(Map.Entry<String, String> entry : Workbench.jsonObject.entrySet()) {
+			System.out.println(entry.getKey() + " " + entry.getValue());
+		}
 		return "home/hamster"; 
 	}
 }

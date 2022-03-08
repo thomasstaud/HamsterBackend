@@ -11,5 +11,13 @@ public class HamsterForm {
 	@NotBlank()
 	private String program; 
 	@NotBlank
-	private String terrain; 
+	private String leange, breite;
+	@NotBlank
+	private String corn; 
+	@NotBlank
+	private String cornAnzahl; 
+	@NotBlank
+	private String wall; 
+	@NotBlank
+	private String x, y;
 }

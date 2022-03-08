@@ -52,10 +52,11 @@ public class RemoteRunner {
 	/**
 	 * Diese Methode startet den Simulator-seitigen RemoteProcessor, wodurch der
 	 * Simulator dann die Befehle des Clients empfangen kann.
+	 * 
+	 * Removed Thread!
 	 */
 	public void start() {
-		Thread thread = new Thread(remoteProcessor);
-		thread.start();
+		remoteProcessor.run();
 	}
 
 	/**

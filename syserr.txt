@@ -1,4 +1,4 @@
-KachelLeerException (1, 2)
-	at io.github.Hattinger04.hamsterEvaluation.debugger.model.IHamster.nimm(IHamster.java:111)
-	at data.main(data.java:8)
-	at io.github.Hattinger04.hamsterEvaluation.debugger.model.RemoteRunner.main(RemoteRunner.java:123)
+MauerDaException (-1, 1)
+	at io.github.Hattinger04.hamsterEvaluation.debugger.model.IHamster.vor(IHamster.java:94)
+	at data.main(data.java:6)
+	at io.github.Hattinger04.hamsterEvaluation.debugger.model.RemoteRunner.main(RemoteRunner.java:124)

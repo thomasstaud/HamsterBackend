@@ -23,7 +23,7 @@ import io.github.Hattinger04.hamsterEvaluation.model.InstructionProcessor;
  *
  * @author Daniel Jasper
  */
-public class RemoteProcessor implements InstructionProcessor, Runnable {
+public class RemoteProcessor implements InstructionProcessor{
 	/**
 	 * Der Ausgabestrom der jeweiligen Seite.
 	 */
@@ -127,7 +127,6 @@ public class RemoteProcessor implements InstructionProcessor, Runnable {
 	 * der Client-Prozess beendet wurde, daher ist dies kein Fehler sondern
 	 * tritt im normalen Ablauf auf.
 	 */
-	@Override
 	public void run() {
 
 		try {
@@ -135,7 +134,6 @@ public class RemoteProcessor implements InstructionProcessor, Runnable {
 			this.processor.start();
 			while (!this.terminate) {
 				Object obj = this.in.readObject();
-				System.out.println("obj: " + obj.toString());
 				if (obj instanceof Instruction) {
 					Object o = this.processor.process((Instruction) obj);
 					Thread.sleep(this.delay);

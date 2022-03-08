@@ -179,10 +179,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 			Workbench.jsonObject.put(i + ".Zug", String.valueOf(SimulationModel.hamsterTurns.get(i)));
 		}
 		Workbench.jsonObject.put("Finished", "working");
-		System.out.println("ArrayList: ");
-		for(Map.Entry<String, String> entry : Workbench.jsonObject.entrySet()) {
-			System.out.println(entry.getKey() + " " + entry.getValue());
-		}
+
 		// TODO: call method from spring server to send data to client 
 	}
 
@@ -206,7 +203,6 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 				return "ok";
 			} else {
 				SimulationModel.hamsterTurns.add(instruction.getType()); 
-				System.out.println("ins: " + instruction.getType());
 				switch (instruction.getType()) {
 				case HamsterInstruction.FORWARD:
 					return forward(id);
