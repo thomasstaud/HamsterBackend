@@ -23,7 +23,7 @@ public class HamsterController {
 		Workbench wb = Workbench.getWorkbench(); 
 		wb.startProgram("src/main/resources/hamster/testuser/data.ham");
 		System.out.println("ArrayList: ");
-		for(Map.Entry<String, String> entry : Workbench.jsonObject.entrySet()) {
+		for(Map.Entry<String, String> entry : Workbench.getWorkbench().getJsonObject().entrySet()) {
 			System.out.println(entry.getKey() + " " + entry.getValue());
 		}
 		return "home/hamster"; 

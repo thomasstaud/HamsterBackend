@@ -71,10 +71,10 @@ public class Workbench {
 	// dibo
 	public boolean simulatdorOnly;
 	
-	public static HashMap<String, String> jsonObject; 
+	@Getter @Setter
+	private HashMap<String, String> jsonObject; 
 	
 	protected Workbench(boolean simulatorOnly, SimulationModel simModel) {
-		System.out.println("Start");
 		workbench = this; // Prolog
 		settings = new Properties();
 

@@ -6,9 +6,7 @@ import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
@@ -18,16 +16,15 @@ import org.springframework.stereotype.Component;
 public class LogAspect {
 
 	File file = new File("src/main/resources/hamster/logging/log.txt"); 
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     BufferedWriter writer;
-    SimpleDateFormat formatter;
     Date date;
 
     
 	@Around(("execution(* io.github.Hattinger04.user.UserController.logoutPage(..))"))
 	public Object startControllerLog(ProceedingJoinPoint jp) throws Throwable {
 		Object result;
-		writer = new BufferedWriter(new FileWriter(file, true));
-    	formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+		writer = new BufferedWriter(new FileWriter(file, true)); 
     	for(Object o : jp.getArgs()) {
     		System.out.println("Object: " + o.toString());
     	}
