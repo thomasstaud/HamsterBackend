@@ -91,7 +91,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 		hamster = new ArrayList<Hamster>();
 		terrain = new Terrain(14, 10); // dibo
 		logSinks = new ArrayList<LogSink>();
-		hamsterTurns = Collections.emptyList(); 
+		hamsterTurns = new ArrayList<Integer>(); 
 	}
 
 	public void addLogSink(LogSink sink) {
