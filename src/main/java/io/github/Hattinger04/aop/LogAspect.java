@@ -1,6 +1,14 @@
 package io.github.Hattinger04.aop;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
@@ -9,14 +17,26 @@ import org.springframework.stereotype.Component;
 @Component
 public class LogAspect {
 
-	// TODO: Java Logger
-	@Around("bean(*Controller)")
+	File file = new File("src/main/resources/hamster/logging/log.txt"); 
+    BufferedWriter writer;
+    SimpleDateFormat formatter;
+    Date date;
+
+    
+	@Around(("execution(* io.github.Hattinger04.user.UserController.logoutPage(..))"))
 	public Object startControllerLog(ProceedingJoinPoint jp) throws Throwable {
-		System.out.println("Controller called: " + jp.getSignature());
 		Object result;
+		writer = new BufferedWriter(new FileWriter(file, true));
+    	formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+    	for(Object o : jp.getArgs()) {
+    		System.out.println("Object: " + o.toString());
+    	}
 		try {
 			result = jp.proceed();
-			System.out.println("Method end: " + jp.getSignature());
+			date = new Date(System.currentTimeMillis()); 
+			System.out.println("User logged out: " + jp.getSignature());
+			writer.append("Logged out at: " + formatter.format(date) + "\n"); // No username or smth like that yet
+			writer.close();
 			return result; 
 		} catch (Throwable e) {
 			System.out.println("Method abnormal termination: " + jp.getSignature());
