@@ -1,3 +1,4 @@
+
 package io.github.Hattinger04.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-
-		String loginPage = "/user/login";
+		String loginPage = "/user/login"; 
 		String registrationPage = "/user/registration"; 
 
 		http.authorizeRequests()
@@ -45,8 +45,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**", "/webjars/**");
-
 	}
-	
-
 }
