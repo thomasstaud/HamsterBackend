@@ -18,18 +18,9 @@ import org.springframework.stereotype.Component;
 public class LogAspect {
 
 	private static Logger logger;
-	private static FileHandler fileHandler; 
 	static {
 		logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 		logger.setLevel(Level.ALL);
-		try {
-			fileHandler = new FileHandler("src/main/resources/allLogs.log");
-			logger.addHandler(fileHandler);
-			SimpleFormatter formatter = new SimpleFormatter(); 
-			fileHandler.setFormatter(formatter); 
-		} catch (SecurityException | IOException e) {
-			e.printStackTrace();
-		} 
 	}
 
 	
@@ -41,7 +32,13 @@ public class LogAspect {
 		int port = request.getRemotePort(); 
 		String username = request.getRemoteUser(); 
 		o = jp.proceed(); 
+		FileHandler fileHandler = new FileHandler("src/main/resources/allLogs.log", true);
+		logger.addHandler(fileHandler);
+		SimpleFormatter formatter = new SimpleFormatter(); 
+		fileHandler.setFormatter(formatter); 
 		logger.fine(String.format("%s - %s - %d 	[logged out]", username, ip, port)); 
+		logger.removeHandler(fileHandler); 
+		fileHandler.close();
 		return o; 
 	}
 }

@@ -194,7 +194,6 @@ public class Workbench {
 					System.out.println(save + " " + form.getCorn()[i][j] + " " + form.getCornAnzahl()[i]);
 					terrain.setCornCount(save, form.getCorn()[i][j], form.getCornAnzahl()[i]);
 				}
-				
 			}
 		}
 		

@@ -17,7 +17,6 @@ public class SecurityConfiguration implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 	    registry.addResourceHandler("/files/**")
-	    .addResourceLocations("file:/C:/Users/s8gre/Documents/Schule/Diplomarbeit/testuser/")
 	    .setCachePeriod(0)
 	    .resourceChain(true)
 	    .addResolver(new PathResourceResolver());
