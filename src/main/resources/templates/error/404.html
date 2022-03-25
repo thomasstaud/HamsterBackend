@@ -11,8 +11,8 @@
 <body>
   <h1 th:text="${status} + ' ' + ${error}"></h1>
   <p>HTTP 404 error</p>
-  <form method="post" th:action="@{/logout}">
-    <button class="btn btn-link" type="submit">Return to login screen</button>
+  <form method="get" th:action="@{/home}">
+    <button class="btn btn-link" type="submit">Back to site</button>
   </form>
 </body>
 </html>

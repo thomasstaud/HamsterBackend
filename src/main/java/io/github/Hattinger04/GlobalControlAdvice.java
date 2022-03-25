@@ -1,4 +1,4 @@
-package io.github.Hattinger04.aop;
+package io.github.Hattinger04;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;

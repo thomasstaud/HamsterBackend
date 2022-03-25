@@ -4,3 +4,11 @@ Mär 19, 2022 9:51:34 PM io.github.Hattinger04.aop.LogAspect logoutLog
 FEIN: Admin - 192.168.0.42 - 54958 	[logged out]
 Mär 19, 2022 9:51:45 PM io.github.Hattinger04.aop.LogAspect logoutLog
 FEIN: Hattinger04 - 192.168.0.42 - 54987 	[logged out]
+März 25, 2022 8:36:59 AM io.github.Hattinger04.aop.LogAspect logoutLog
+FINE: Admin - 0:0:0:0:0:0:0:1 - 60058 	[logged out]
+März 25, 2022 8:37:44 AM io.github.Hattinger04.aop.LogAspect logoutLog
+FINE: Admin - 127.0.0.1 - 59228 	[logged out]
+März 25, 2022 8:38:48 AM io.github.Hattinger04.aop.LogAspect logoutLog
+FINE: Username - 127.0.0.1 - 59228 	[logged out]
+März 25, 2022 8:39:45 AM io.github.Hattinger04.aop.LogAspect logoutLog
+FINE: Admin - 0:0:0:0:0:0:0:1 - 59278 	[logged out]
