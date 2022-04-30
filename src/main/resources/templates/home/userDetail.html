@@ -66,8 +66,7 @@
 						<th class="active">Password</th>
 						<td>
 							<div class="form-group">
-								<input type="password" class="form-control" th:field="*{password}"   />
-
+								<input type="password" class="form-control" th:field="*{password}" id="password" />
 							</div>
 						</td>
 					</tr>
@@ -75,7 +74,7 @@
 						<th class="active">Repeat Password</th>
 						<td>
 							<div class="form-group" th:object="${passwordRepeat}">
-								<input type="password" class="form-control" th:name="passwordRepeat" />
+								<input type="password" class="form-control" th:name="passwordRepeat" id="passwordRepeat" />
 							</div>
 						</td>
 					</tr>
@@ -97,5 +96,4 @@
 		</div>
 	</div>
 </body>
-
 </html>
