@@ -180,9 +180,9 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 		// TODO: Writing correct json object!	
 		for(int i = 0; i < hamsterTurns.size(); i++) {
 			Workbench.getWorkbench().getJsonObject().put(i + ".Zug", String.valueOf(hamsterTurns.get(i)));
+			System.out.println(Workbench.getWorkbench().getJsonObject().get(i + ".Zug"));
 		}
 		Workbench.getWorkbench().getJsonObject().put("Finished", "working");
-
 		// TODO: call method from spring server to send data to client 
 	}
 
@@ -327,11 +327,6 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 				}
 				Workbench.getWorkbench().getJsonObject().put("Exception", e.toString()); 
 				Workbench.getWorkbench().getJsonObject().put("Finished", "error");
-
-				System.out.println("ArrayList: ");
-				for(Map.Entry<String, String> entry : Workbench.getWorkbench().getJsonObject().entrySet()) {
-					System.out.println(entry.getKey() + " " + entry.getValue());
-				}
 				
 				return e;
 			}

@@ -123,6 +123,7 @@ public class Workbench {
 	 * @param path
 	 */
 	public HashMap<String, String> startProgram(String path) {
+		System.out.println("start");
 		HamsterFile file = HamsterFile.createHamsterFile(path, HamsterFile.OBJECT); 
 		compiler.setActiveFile(file);
 		file.setType(HamsterFile.OBJECT);
@@ -267,6 +268,7 @@ public class Workbench {
 	 */
 	public static void main(String[] args) {
 		Workbench wb = getWorkbench();
+		wb.startProgram("src/main/resources/hamster/testuser/data.ham"); 
 	}
 
 	/**

@@ -130,13 +130,11 @@ public class RemoteProcessor implements InstructionProcessor{
 	public void run() {
 
 		try {
-			System.out.println("Runnin");
 			this.processor.start();
 			while (!this.terminate) {
 				Object obj = this.in.readObject();
 				if (obj instanceof Instruction) {
 					Object o = this.processor.process((Instruction) obj);
-					Thread.sleep(this.delay);
 					this.out.writeObject(o);
 				} else if (obj instanceof Throwable) {
 					this.processor.processException((Throwable) obj);
@@ -149,10 +147,6 @@ public class RemoteProcessor implements InstructionProcessor{
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Thread.currentThread().interrupt();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

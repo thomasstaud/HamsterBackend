@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.github.Hattinger04.hamster.model.HamsterForm;
 import io.github.Hattinger04.hamsterEvaluation.workbench.Workbench;
 
@@ -22,10 +25,12 @@ public class HamsterController {
 	public String postHamster(@ModelAttribute HamsterForm form, Model model) {
 		Workbench wb = Workbench.getWorkbench(); 
 		wb.startProgram("src/main/resources/hamster/testuser/data.ham");
-		System.out.println("ArrayList: ");
-		for(Map.Entry<String, String> entry : Workbench.getWorkbench().getJsonObject().entrySet()) {
-			System.out.println(entry.getKey() + " " + entry.getValue());
-		}
-		return "home/hamster"; 
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			model.addAttribute("json", objectMapper.writeValueAsString(Workbench.getWorkbench().getJsonObject().entrySet()));
+			return "home/hamster"; 
+		} catch (JsonProcessingException e) {
+			return "home/hamster"; 
+		} 
 	}
 }
