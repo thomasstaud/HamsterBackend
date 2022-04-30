@@ -23,7 +23,7 @@ public class GlobalControlAdvice {
 	@ExceptionHandler(AccessDeniedException.class) 
 	public String exceptionDeniedHandler(AccessDeniedException ex, Model model) {
 		model.addAttribute("error", "Access denied!"); 
-		model.addAttribute("message", "You are not allowed opening this site!"); 
+		model.addAttribute("message", "You are not allowed visiting this site!"); 
 		model.addAttribute("status", HttpStatus.FORBIDDEN); 
 		return "error"; 
 	}
