@@ -12,3 +12,51 @@ März 25, 2022 8:38:48 AM io.github.Hattinger04.aop.LogAspect logoutLog
 FINE: Username - 127.0.0.1 - 59228 	[logged out]
 März 25, 2022 8:39:45 AM io.github.Hattinger04.aop.LogAspect logoutLog
 FINE: Admin - 0:0:0:0:0:0:0:1 - 59278 	[logged out]
+Mär 26, 2022 12:59:46 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 192.168.0.42 - 63157 	[logged out]
+Mär 26, 2022 3:42:54 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 192.168.0.42 - 59783 	[logged out]
+Mär 26, 2022 3:43:08 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 192.168.0.42 - 59782 	[logged out]
+Apr 30, 2022 11:31:38 AM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 0:0:0:0:0:0:0:1 - 49924 	[logged out]
+Apr 30, 2022 11:32:35 AM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Hattinger04 - 0:0:0:0:0:0:0:1 - 50002 	[logged out]
+Apr 30, 2022 11:32:49 AM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Hattinger04 - 0:0:0:0:0:0:0:1 - 50020 	[logged out]
+Apr 30, 2022 11:40:43 AM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 0:0:0:0:0:0:0:1 - 63090 	[logged out]
+Apr 30, 2022 11:42:21 AM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Hattinger04 - 0:0:0:0:0:0:0:1 - 64169 	[logged out]
+Apr 30, 2022 11:46:28 AM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 0:0:0:0:0:0:0:1 - 49481 	[logged out]
+Apr 30, 2022 11:49:21 AM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 0:0:0:0:0:0:0:1 - 49533 	[logged out]
+Apr 30, 2022 11:56:50 AM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Hattinger04 - 0:0:0:0:0:0:0:1 - 58614 	[logged out]
+Apr 30, 2022 11:57:15 AM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 0:0:0:0:0:0:0:1 - 58662 	[logged out]
+Apr 30, 2022 11:58:26 AM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 0:0:0:0:0:0:0:1 - 60642 	[logged out]
+Apr 30, 2022 12:00:23 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Hattinger04 - 0:0:0:0:0:0:0:1 - 60717 	[logged out]
+Apr 30, 2022 12:02:04 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Hattinger04 - 0:0:0:0:0:0:0:1 - 60745 	[logged out]
+Apr 30, 2022 12:03:33 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 0:0:0:0:0:0:0:1 - 60763 	[logged out]
+Apr 30, 2022 12:04:12 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 0:0:0:0:0:0:0:1 - 60762 	[logged out]
+Apr 30, 2022 12:04:33 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 0:0:0:0:0:0:0:1 - 60763 	[logged out]
+Apr 30, 2022 12:07:29 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 0:0:0:0:0:0:0:1 - 60811 	[logged out]
+Apr 30, 2022 12:10:16 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin2 - 0:0:0:0:0:0:0:1 - 57235 	[logged out]
+Apr 30, 2022 12:10:31 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 0:0:0:0:0:0:0:1 - 57235 	[logged out]
+Apr 30, 2022 12:14:12 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Julius - 0:0:0:0:0:0:0:1 - 57378 	[logged out]
+Apr 30, 2022 12:28:35 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Julius - 0:0:0:0:0:0:0:1 - 52719 	[logged out]
+Apr 30, 2022 12:29:35 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 0:0:0:0:0:0:0:1 - 52720 	[logged out]

@@ -15,7 +15,7 @@ import io.github.Hattinger04.hamsterEvaluation.workbench.Workbench;
 public class HamsterController {
 	
 	@GetMapping(value = "/home/hamster")
-	public String getHamster(@ModelAttribute HamsterForm form	) {
+	public String getHamster(@ModelAttribute HamsterForm form) {
 		return "home/hamster"; 
 	}
 	@PostMapping(value = "/home/hamster")

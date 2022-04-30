@@ -26,49 +26,51 @@
 			<button class="btn btn-md btn-danger btn-block" name="registration" type="Submit">Logout
 			</button>
 		</form>
-	</div>
-	<hr>
-		<table id="example" class="display" style="width:100%">
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>Username</th>
-					<th>Password</th>
-					<th>Bearbeiten</th>
-				</tr>
-			</thead>
-			<tbody>
 
-				<tr th:each="user : ${userlist}">
-					<td th:text="${user.id}"></td>
-					<td th:text="${user.username}"></td>
-					<td th:text="${user.password}"></td>
-					<td>
-						<!-- Point 2: Dynamic URL -->
-						<a class="btn btn-primary" th:href="@{'/home/userDetail/' + ${user.id}}">
-							bearbeiten
-						</a>
-					</td>
-				</tr>
-			</tbody>
-			<tfoot>
-            <tr>
-					<th>ID</th>
-					<th>Username</th>
-					<th>Password</th>
-					<th>Bearbeiten</th>
-            </tr>
-        </tfoot>
-		</table>
-		<div sec:authorize="hasRole('ADMIN')">
+		<div sec:authorize="hasAuthority('ADMIN')">
+			<hr>
+			<table id="example" class="display" style="width:100%">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Username</th>
+						<th>Password</th>
+						<th>Bearbeiten</th>
+					</tr>
+				</thead>
+				<tbody>
+
+					<tr th:each="user : ${userlist}">
+						<td th:text="${user.id}"></td>
+						<td th:text="${user.username}"></td>
+						<td th:text="${user.password}"></td>
+						<td>
+							<!-- Point 2: Dynamic URL -->
+							<a class="btn btn-primary" th:href="@{'/home/userDetail/' + ${user.id}}">
+								bearbeiten
+							</a>
+						</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<th>ID</th>
+						<th>Username</th>
+						<th>Password</th>
+						<th>Bearbeiten</th>
+					</tr>
+				</tfoot>
+			</table>
 			<a class="btn btn-primary" th:href="@{/home/userDetail/-1}"> Create new User </a>
 		</div>
+		</br>
 		<a class="btn btn-primary" th:href="@{/home/hamster}"> Hamster </a>
-		<p th:text="${result}"/>
+		<p th:text="${result}" />
 </body>
 <script>
 	$(document).ready(function () {
-			$('#example').DataTable();
-		});
+		$('#example').DataTable();
+	});
 </script>
+
 </html>

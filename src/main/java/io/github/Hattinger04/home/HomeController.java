@@ -3,6 +3,7 @@ package io.github.Hattinger04.home;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,7 @@ public class HomeController {
 		return "home/index";
 	}
 	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/home/userDetail/{id:.+}")
 	public String getUserDetail(@RequestParam(name="passwordRepeat", required = false) String passwordRepeat, @ModelAttribute UserForm form, Model model, @PathVariable("id") String userID) {
 		if(userID.equals("-1")) {
@@ -42,6 +44,7 @@ public class HomeController {
 			User user = userService.findUserByID(Integer.valueOf(userID)); 
 			form.setUser_id(String.valueOf(user.getId())); 
 			form.setUsername(user.getUsername());
+			// TODO: Change to js
 			model.addAttribute("passwordRepeat", "check if password is the same"); 
 			model.addAttribute("userForm", form); 
 		}
@@ -65,7 +68,7 @@ public class HomeController {
 		}
 		return getUserDetail(passwordRepeat, form, model, String.valueOf(user.getId())); 	
 	}
-
+	
 	@PostMapping(value = "/home/userDetail", params = "delete")
 	public String postUserDetailDelete(@ModelAttribute UserForm form, Model model, RedirectAttributes redirectAtt) {
 		User user = new User();
