@@ -19,9 +19,9 @@
 </head>
 
 <body>
-
 	<div class="container-fluid header clearfix p-3">
 		<h1 class="float-start">Startseite</h1>
+		<p th:text="${username}"> </p>
 		<form th:action="@{/user/logout}" method="get" class="float-end">
 			<button class="btn btn-md btn-danger btn-block" name="registration" type="Submit">Logout
 			</button>
@@ -39,7 +39,6 @@
 					</tr>
 				</thead>
 				<tbody>
-
 					<tr th:each="user : ${userlist}">
 						<td th:text="${user.id}"></td>
 						<td th:text="${user.username}"></td>

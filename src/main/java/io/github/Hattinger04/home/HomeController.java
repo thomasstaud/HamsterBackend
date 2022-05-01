@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,7 @@ public class HomeController {
 		List<User> userList = userService.selectMany();
 		model.addAttribute("userlist", userList);
 		long count = userService.count();
+		model.addAttribute("username", SecurityContextHolder.getContext().getAuthentication().getName()); 
 		model.addAttribute("userListCount", count);
 		return "home/index";
 	}
