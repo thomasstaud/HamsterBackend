@@ -2,7 +2,6 @@ package io.github.Hattinger04.hamsterEvaluation.model;
 
 import java.io.Serializable;
 import io.github.Hattinger04.hamsterEvaluation.workbench.Utils;
-import io.github.Hattinger04.hamsterEvaluation.workbench.Workbench;
 
 /**
  * Diese Instruktions-Klasse umfasst alle Befehle, die von einem Hamster
@@ -66,7 +65,6 @@ public class HamsterInstruction extends Instruction implements Serializable {
 			return Utils.getResource("hamster.kornDa") + "()";
 		case MOUTH_EMPTY:
 			return Utils.getResource("hamster.maulLeer") + "()";
-
 		case GET_ROW:
 			return Utils.getResource("hamster.getReihe") + "()";
 		case GET_COL:

@@ -1,0 +1,3 @@
+2022-04-08 14:37:48,515 DEBUG io.github.Hattinger04.aop.LogAspect [http-nio-0.0.0.0-8080-exec-6] Admin - 0:0:0:0:0:0:0:1 - 55587 	[logged out]
+2022-04-08 14:43:02,924 DEBUG io.github.Hattinger04.aop.LogAspect [http-nio-0.0.0.0-8080-exec-6] Admin - 0:0:0:0:0:0:0:1 - 51169 	[logged out]
+2022-04-08 14:46:54,692 DEBUG io.github.Hattinger04.aop.LogAspect [http-nio-0.0.0.0-8080-exec-6] Admin - 0:0:0:0:0:0:0:1 - 50462 	[logged out]
