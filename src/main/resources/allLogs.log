@@ -64,3 +64,7 @@ Apr 30, 2022 4:19:24 PM io.github.Hattinger04.aop.LogAspect logoutLog
 FEIN: Admin - 0:0:0:0:0:0:0:1 - 60822 	[logged out]
 Apr 30, 2022 4:20:36 PM io.github.Hattinger04.aop.LogAspect logoutLog
 FEIN: Admin2 - 0:0:0:0:0:0:0:1 - 60818 	[logged out]
+Mai 03, 2022 8:09:57 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 0:0:0:0:0:0:0:1 - 57262 	[logged out]
+Mai 03, 2022 8:10:12 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FEIN: Admin - 0:0:0:0:0:0:0:1 - 57281 	[logged out]
