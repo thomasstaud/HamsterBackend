@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 public class ErrorAspect {
 	@AfterThrowing(value="execution(* *..*..*(..))" + " && (bean(*Controller) || bean(*Service) || bean(*Repository))", throwing="ex")
 	public void throwingException(Exception ex) {
-		System.out.println("==============================");
 		System.out.println("Exception has occurred. :" + ex.getMessage());
-		System.out.println("==============================");
 	}
 }

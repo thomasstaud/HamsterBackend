@@ -8,9 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.github.Hattinger04.role.Role;
 import io.github.Hattinger04.role.RoleRepository;
 
@@ -20,9 +17,6 @@ public class UserService {
 	private UserRepository userRepository;
 	private RoleRepository roleRepository;
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-	private ObjectMapper objectMapper;
-
 	
 	@Autowired
 	public UserService(UserRepository userRepository, RoleRepository roleRepository,
@@ -30,7 +24,6 @@ public class UserService {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-		this.objectMapper = new ObjectMapper(); 
 	}
 
 
@@ -86,22 +79,6 @@ public class UserService {
 
 	public long count() {
 		return userRepository.count();
-	}
-	
-	public String serializeUser(User user) {
-		try {
-			return objectMapper.writeValueAsString(user);
-		} catch (JsonProcessingException e) {
-			return "error - json"; 
-		} 
-	}
-	
-	public User deserializeUser(String json) {
-		try {
-			return objectMapper.readValue(json, User.class);
-		} catch (JsonProcessingException e) {
-			return new User();
-		} 
 	}
 
 }

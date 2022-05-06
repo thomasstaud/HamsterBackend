@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import io.github.Hattinger04.RestServices;
 import io.github.Hattinger04.user.model.User;
 import io.github.Hattinger04.user.model.UserService;
 
@@ -21,27 +19,34 @@ public class UserRController {
 
 	@Autowired
 	private UserService userService;
-	ObjectMapper objectMapper = new ObjectMapper();
+	@Autowired
+	private RestServices restServices; 
 
 
 //	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/getAllUsers")
 	public String getAllUsers() {
-		try {
-			return objectMapper.writeValueAsString(userService.selectMany());
-		} catch (JsonProcessingException e) {
-			return "error - json"; 
-		}
+		return restServices.serialize(userService.selectMany()); 
 	}
 	
 //	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/createUser")
 	public String createUser(@RequestBody String json) {
-		User user = userService.deserializeUser(json);
+		User user = (User) restServices.deserialize(json);
 		if(user != null && userService.saveUser(user)) {
-			return "true";
+			return restServices.serialize(user); 
 		}
-		
-		return "dbinsert - error"; 
+		return restServices.errorMessage("error in db");
 	}
+	
+	@PostMapping("/register")
+	public String registerUser(@RequestBody String json) {
+		User user = (User) restServices.deserialize(json);
+		if(user != null) {
+			return restServices.errorMessage("already existing"); 
+		}
+		userService.saveUser(user); 
+		return restServices.serialize(user); 
+	}
+	
 }
