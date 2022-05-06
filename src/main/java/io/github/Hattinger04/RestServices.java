@@ -11,7 +11,7 @@ import io.github.Hattinger04.user.model.User;
 public class RestServices {
 
 	private ObjectMapper objectMapper = new ObjectMapper();
-	public final String jsonErrorMsg = "[{\"error\": \"json\"}]"; 
+	public final String jsonErrorMsg = "[{\"error\", \"json\"}]"; 
 	
 	public String serialize(Object msg) {
 		try {

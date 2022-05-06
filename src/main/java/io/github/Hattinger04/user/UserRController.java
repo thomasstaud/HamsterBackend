@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.Hattinger04.RestServices;
@@ -21,7 +22,7 @@ public class UserRController {
 	private UserService userService;
 	@Autowired
 	private RestServices restServices; 
-
+	
 
 //	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/getAllUsers")
@@ -31,22 +32,20 @@ public class UserRController {
 	
 //	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/createUser")
+	@ResponseBody
 	public String createUser(@RequestBody String json) {
 		User user = (User) restServices.deserialize(json);
-		if(user != null && userService.saveUser(user)) {
-			return restServices.serialize(user); 
-		}
-		return restServices.errorMessage("error in db");
-	}
-	
-	@PostMapping("/register")
-	public String registerUser(@RequestBody String json) {
-		User user = (User) restServices.deserialize(json);
 		if(user != null) {
-			return restServices.errorMessage("already existing"); 
+			return restServices.errorMessage("wrong data");
 		}
-		userService.saveUser(user); 
+		if(!userService.saveUser(user)) {
+			return restServices.errorMessage("error in db");
+		}
 		return restServices.serialize(user); 
 	}
-	
+		
+	@GetMapping("/home")
+	public String successHome() {
+		return restServices.serialize("success");
+	}
 }

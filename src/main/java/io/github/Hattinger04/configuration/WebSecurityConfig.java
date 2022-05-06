@@ -9,7 +9,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
 import io.github.Hattinger04.user.model.MyUserDetailsService;
@@ -24,7 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private MyUserDetailsService userDetailsService;
-
+	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
@@ -34,21 +37,30 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		String loginPage = "/user/login"; 
 		String registrationPage = "/user/registration"; 
+		
 
 		http.authorizeRequests()
 				.antMatchers(loginPage, registrationPage, "/user/**").permitAll()
 				.anyRequest().authenticated()
-				.and().csrf().disable()
-				.formLogin().loginPage(loginPage).failureUrl("/user/login?error=true").defaultSuccessUrl("/home")
+				.and().csrf().disable().httpBasic().and()
+				.formLogin().loginPage(loginPage).failureUrl("/user/login?error=true").defaultSuccessUrl("/user/home")
 				.usernameParameter("username").passwordParameter("password").and().logout()
 				.logoutSuccessUrl(loginPage).and()
-				.exceptionHandling().and()
-				.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
+				.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()).and()
+				.exceptionHandling().authenticationEntryPoint((request, response, exception) -> {
+	                response.setStatus(401);
+	            })  
+	            .accessDeniedHandler((request, response, exception) -> {
+	                response.setStatus(403);
+	            });
 	}
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**", "/webjars/**");
 	}
+	
+	
+	
 
 }
