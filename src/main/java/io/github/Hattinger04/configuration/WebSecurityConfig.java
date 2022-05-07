@@ -40,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		
 
 		http.authorizeRequests()
-				.antMatchers(loginPage, registrationPage, "/user/**").permitAll()
+				.antMatchers(loginPage, registrationPage, "/user/**", "/hamster/**").permitAll()
 				.anyRequest().authenticated()
 				.and().csrf().disable().httpBasic().and()
 				.formLogin().loginPage(loginPage).failureUrl("/user/login?error=true").defaultSuccessUrl("/user/home")

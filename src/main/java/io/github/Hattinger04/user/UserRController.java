@@ -1,6 +1,7 @@
 package io.github.Hattinger04.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,18 +35,18 @@ public class UserRController {
 	@PostMapping("/createUser")
 	@ResponseBody
 	public String createUser(@RequestBody String json) {
-		User user = (User) restServices.deserialize(json);
-		if(user != null) {
+		User user = restServices.deserializeUser(json);
+		if(user == null) {
 			return restServices.errorMessage("wrong data");
 		}
 		if(!userService.saveUser(user)) {
-			return restServices.errorMessage("error in db");
+			return restServices.errorMessage("error in db ");
 		}
 		return restServices.serialize(user); 
 	}
 		
 	@GetMapping("/home")
 	public String successHome() {
-		return restServices.serialize("success");
+		return restServices.serialize(SecurityContextHolder.getContext().getAuthentication().getName());
 	}
 }
