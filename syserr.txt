@@ -1,7 +1,0 @@
-java.lang.ClassNotFoundException: vuetest
-	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641)
-	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188)
-	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:520)
-	at java.base/java.lang.Class.forName0(Native Method)
-	at java.base/java.lang.Class.forName(Class.java:375)
-	at io.github.Hattinger04.hamsterEvaluation.debugger.model.RemoteRunner.main(RemoteRunner.java:117)

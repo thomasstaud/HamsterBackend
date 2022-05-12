@@ -18,7 +18,6 @@ import io.github.Hattinger04.RestServices;
 import io.github.Hattinger04.hamster.model.Hamster;
 import io.github.Hattinger04.hamsterEvaluation.workbench.Workbench;
 
-@CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
 @RequestMapping("/hamster")
 public class HamsterRController {
@@ -53,13 +52,13 @@ public class HamsterRController {
 	@PostMapping("/defaultTerrain")
 	@ResponseBody
 	public String defaultTerrain(@RequestBody String json) {
-		System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+		System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
 		System.out.println(json);
 		Hamster hamster = restServices.deserializeHamster(json);
 		System.out.println(hamster.toString());
-		String path = String.format("src/main/resources/hamster/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getPrincipal(), hamster.getProgramName());
+		String path = String.format("src/main/resources/hamster/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName());
 		if(createNewFile(path, hamster.getProgram())) {
-			return restServices.serialize(wb.startProgram(path));	
+			return restServices.serialize(wb.startProgram(path));
 		}
 		return restServices.errorMessage("File could not be created!"); 
 	}

@@ -14,7 +14,6 @@ import io.github.Hattinger04.RestServices;
 import io.github.Hattinger04.user.model.User;
 import io.github.Hattinger04.user.model.UserService;
 
-@CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
 @RequestMapping("/user")
 public class UserRController {
@@ -40,13 +39,14 @@ public class UserRController {
 			return restServices.errorMessage("wrong data");
 		}
 		if(!userService.saveUser(user)) {
-			return restServices.errorMessage("error in db ");
+			return restServices.errorMessage("error in db");
 		}
 		return restServices.serialize(user); 
 	}
 		
 	@GetMapping("/home")
 	public String successHome() {
+		System.out.println("success: " + SecurityContextHolder.getContext().getAuthentication().getName());
 		return restServices.serialize(SecurityContextHolder.getContext().getAuthentication().getName());
 	}
 }

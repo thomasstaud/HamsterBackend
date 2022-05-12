@@ -27,6 +27,6 @@ public class HamsterController {
 			return "home/hamster";
 		} catch (JsonProcessingException e) {
 			return "home/hamster"; 
-		} 
+		}
 	}
 }
