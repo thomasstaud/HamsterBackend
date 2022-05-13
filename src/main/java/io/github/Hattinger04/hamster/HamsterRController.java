@@ -34,17 +34,25 @@ public class HamsterRController {
 	 * 
 	 * @param path
 	 */
-	private boolean createNewFile(String path, String program) {
+	private File createNewFile(String path) {
 		try {
 			File file = new File(path); 
 			file.getParentFile().mkdir(); 
 			file.createNewFile();
+			return file; 
+		} catch (IOException e) {
+			return null; 
+		}
+	}
+	
+	private boolean writeProgramToFile(File file, String program) {
+		try {
 			FileOutputStream fileOutputStream = new FileOutputStream(file, false);
 			fileOutputStream.write(program.getBytes());
 			fileOutputStream.flush();
 			fileOutputStream.close();
 			return true; 
-		} catch (IOException e) {
+		} catch (IOException | NullPointerException e) {
 			return false; 
 		}
 	}
@@ -59,10 +67,10 @@ public class HamsterRController {
 		Hamster hamster = restServices.deserializeHamster(json);
 		System.out.println(hamster.toString());
 		String path = String.format("src/main/resources/hamster/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName());
-		if(createNewFile(path, hamster.getProgram())) {
-			return restServices.serialize(wb.startProgram(path));
-		}
-		return restServices.errorMessage("File could not be created!"); 
+		createNewFile(path); 
+		writeProgramToFile(new File(path), hamster.getProgram());
+		wb.getJsonObject().clear();
+		return restServices.serialize(wb.startProgram(path));	
 	}
 	
 	public String exisitingTerrain(@RequestBody String json) {

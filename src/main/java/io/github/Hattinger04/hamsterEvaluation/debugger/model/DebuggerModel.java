@@ -135,6 +135,7 @@ public class DebuggerModel extends Observable implements Runnable {
 	public void start(HamsterFile file) {
 		if (this.state != DebuggerModel.NOT_RUNNING) {
 			// TODO: ueber Exceptions
+			System.out.println("not good");
 			return;
 		}
 		this.currentFile = file;
@@ -357,11 +358,6 @@ public class DebuggerModel extends Observable implements Runnable {
 			this.setChanged();
 			this.suspended = true;
 			this.notifyObservers(DebuggerModel.ARG_STATE);
-			try {
-				Thread.sleep(this.delay);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-			}
 			if (this.state == DebuggerModel.RUNNING) {
 				this.suspended = false;
 				this.setChanged();

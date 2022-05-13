@@ -42,14 +42,7 @@ public class LocalProcessor implements InstructionProcessor, Runnable {
 			throw new RuntimeException(STOP_STRING);
 
 		Object o = null;
-		try {
 			o = processor.process(instruction);
-			Thread.sleep(debuggerModel.getDelay());
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Thread.currentThread().interrupt();
-		}
 		return o;
 	}
 
@@ -81,6 +74,7 @@ public class LocalProcessor implements InstructionProcessor, Runnable {
 		}
 		finished();
 		debuggerModel.setState(DebuggerModel.NOT_RUNNING);
+
 	}
 
 	public void pause() {

@@ -567,12 +567,7 @@ public class Hamster {
 	}
 
 	public void sleep() {
-		int delay = Workbench.getWorkbench().getDebugger().getDebuggerModel().getDelay() / 3;
-		try {
-			Thread.sleep(delay);
-		} catch (InterruptedException exc) {
-			Thread.currentThread().interrupt();
-		}
+		// DO NOTHING
 	}
 
 	static class ArrayListIntern extends ArrayList {

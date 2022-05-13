@@ -63,8 +63,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 	 */
 	public static final int SUSPENDED = 2;
 
-	
-	public List<Integer> hamsterTurns; 
+	public List<Integer> hamsterTurns;
 	/**
 	 * This array contains hamsters, that where constructed during the current
 	 * simulation.
@@ -75,7 +74,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 	 * This is the current terrain.
 	 */
 	private Terrain terrain;
-
+	private boolean error = false;
 	public Terrain savedTerrain;
 
 	/**
@@ -91,7 +90,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 		hamster = new ArrayList<Hamster>();
 		terrain = new Terrain(14, 10); // dibo
 		logSinks = new ArrayList<LogSink>();
-		hamsterTurns = new ArrayList<Integer>(); 
+		hamsterTurns = new ArrayList<Integer>();
 	}
 
 	public void addLogSink(LogSink sink) {
@@ -176,27 +175,27 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 	}
 
 	public void finished() {
-		setState(SimulationModel.NOT_RUNNING);
-		// TODO: Writing correct json object!	
-		for(int i = 0; i < hamsterTurns.size(); i++) {
-			Workbench.getWorkbench().getJsonObject().put(i, String.valueOf(hamsterTurns.get(i)));
+		if (!error) {
+			setState(SimulationModel.NOT_RUNNING);
+			for (int i = 0; i < hamsterTurns.size(); i++) {
+				Workbench.getWorkbench().getJsonObject().put(String.valueOf(i), String.valueOf(hamsterTurns.get(i)));
+			}
+			Workbench.getWorkbench().getJsonObject().put("finished", "working");
 		}
-		Workbench.getWorkbench().getJsonObject().put(-1, "working");
-		// TODO: call method from spring server to send data to client 
+		error = false; 
+		hamsterTurns.clear();
+		reset();
 	}
 
-	public synchronized Object processHamsterInstruction(
-			HamsterInstruction instruction) {
+	public synchronized Object processHamsterInstruction(HamsterInstruction instruction) {
 		synchronized (terrain) { // dibo 120907
 			int id = instruction.getHamster();
 			if (instruction instanceof CreateInstruction) {
 				CreateInstruction ci = (CreateInstruction) instruction;
-				if (terrain.getWall(ci.getCol(), ci.getRow())
-						|| ci.getDir() < 0 || ci.getDir() > 3
+				if (terrain.getWall(ci.getCol(), ci.getRow()) || ci.getDir() < 0 || ci.getDir() > 3
 						|| ci.getMouth() < 0)
 					throw new HamsterInitialisierungsException(null);
-				hamster.add(new Hamster(id, ci.getCol(), ci.getRow(), ci
-						.getDir(), ci.getMouth(), ci.getColor()));
+				hamster.add(new Hamster(id, ci.getCol(), ci.getRow(), ci.getDir(), ci.getMouth(), ci.getColor()));
 				setChanged();
 				notifyObservers(TERRAIN);
 				return "ok";
@@ -204,7 +203,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 				TerminalInstruction ti = (TerminalInstruction) instruction;
 				return "ok";
 			} else {
-				hamsterTurns.add(instruction.getType()); 
+				hamsterTurns.add(instruction.getType());
 				switch (instruction.getType()) {
 				case HamsterInstruction.FORWARD:
 					return forward(id);
@@ -231,8 +230,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 					return new Integer(getHamster(id).getMouth());
 
 				case HamsterInstruction.GET_DATA:
-					return new int[] { getHamster(id).getY(),
-							getHamster(id).getX(), getHamster(id).getDir(),
+					return new int[] { getHamster(id).getY(), getHamster(id).getX(), getHamster(id).getDir(),
 							getHamster(id).getMouth() };
 				}
 			}
@@ -240,18 +238,15 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 		}
 	}
 
-	public synchronized Object processTerrainCellInstruction(
-			TerrainCellInstruction tci) {
+	public synchronized Object processTerrainCellInstruction(TerrainCellInstruction tci) {
 		synchronized (terrain) { // dibo 120907
 			switch (tci.getType()) {
 			case TerrainCellInstruction.IS_WALL:
 				return new Boolean(terrain.getWall(tci.getCol(), tci.getRow()));
 			case TerrainCellInstruction.COUNT_CORN:
-				return new Integer(terrain.getCornCount(tci.getCol(), tci
-						.getRow()));
+				return new Integer(terrain.getCornCount(tci.getCol(), tci.getRow()));
 			case TerrainCellInstruction.COUNT_HAMSTER:
-				return new Integer(getHamsterIDs(tci.getCol(), tci.getRow())
-						.size());
+				return new Integer(getHamsterIDs(tci.getCol(), tci.getRow()).size());
 			case TerrainCellInstruction.GET_HAMSTER:
 				return getHamsterIDs(tci.getCol(), tci.getRow());
 			}
@@ -259,8 +254,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 		}
 	}
 
-	public synchronized Object processTerrainInstruction(
-			TerrainInstruction instruction) {
+	public synchronized Object processTerrainInstruction(TerrainInstruction instruction) {
 		synchronized (terrain) { // dibo 120907
 			switch (instruction.getType()) {
 			case TerrainInstruction.COUNT_ROWS:
@@ -278,8 +272,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 		}
 	}
 
-	public synchronized Object processTerminalInstruction(
-			TerminalInstruction instruction) {
+	public synchronized Object processTerminalInstruction(TerminalInstruction instruction) {
 		int id = instruction.getHamster();
 		String message = instruction.getMessage();
 		switch (instruction.getType()) {
@@ -307,9 +300,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 			try {
 				Object result = null;
 				if (instruction instanceof TerminalInstruction) {
-
 					result = processTerminalInstruction((TerminalInstruction) instruction);
-
 				} else if (instruction instanceof HamsterInstruction) {
 					result = processHamsterInstruction((HamsterInstruction) instruction);
 				} else if (instruction instanceof TerrainCellInstruction) {
@@ -317,14 +308,16 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 				} else if (instruction instanceof TerrainInstruction) {
 					result = processTerrainInstruction((TerrainInstruction) instruction);
 				}
-				log(new LogEntry(instruction, result));
+//				log(new LogEntry(instruction, result));
 				return result;
 			} catch (HamsterException e) {
-				log(new LogEntry(instruction, e));
-				for(int i = 0; i < hamsterTurns.size(); i++) {
-					Workbench.getWorkbench().getJsonObject().put(i, String.valueOf(hamsterTurns.get(i)));
+//				log(new LogEntry(instruction, e));
+				for (int i = 0; i < hamsterTurns.size(); i++) {
+					Workbench.getWorkbench().getJsonObject().put(String.valueOf(i),
+							String.valueOf(hamsterTurns.get(i)));
 				}
-				Workbench.getWorkbench().getJsonObject().put(hamsterTurns.size(), e.toString()); 				
+				Workbench.getWorkbench().getJsonObject().put("finished", e.toString());
+				error = true;
 				return e;
 			}
 		}
@@ -366,7 +359,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 		}
 		return total;
 	}
-	
+
 	public boolean blockingFlag = false; // dibo 10032016
 
 	public synchronized void processException(Throwable t) {
@@ -386,8 +379,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 		return null;
 	}
 
-	public synchronized Object newHamster(int id, int r, int s, int b, int k,
-			int c) {
+	public synchronized Object newHamster(int id, int r, int s, int b, int k, int c) {
 		if (terrain.getWall(s, r) || b < 0 || b > 3 || k < 0)
 			throw new HamsterInitialisierungsException(null);
 		hamster.add(new Hamster(id, s, r, b, k, c));
@@ -450,14 +442,9 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 					hamster.setXY(nextX, nextY);
 					setChanged();
 					notifyObservers(TERRAIN);
-					try {
-						Thread.sleep(300);
-					} catch (InterruptedException ex) {
-						ex.printStackTrace();
-					}
 				}
 			}
-		}//
+		} //
 		int count = terrain.getCornCount(hamster.getX(), hamster.getY());
 		if (count == 0) {
 			throw new KachelLeerException(null, hamster.getY(), hamster.getX());
@@ -469,20 +456,13 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 				setChanged();
 				notifyObservers(TERRAIN);
 				/* lego */if (id == -2) {
-					try {
-						turnLeft(id);
-						Thread.sleep(200);
-						turnLeft(id);
-						Thread.sleep(200);
-						forward(id);
-						Thread.sleep(200);
-						turnLeft(id);
-						Thread.sleep(200);
-						turnLeft(id);
-						Thread.sleep(200);
-					} catch (InterruptedException ex) {
-						ex.printStackTrace();
-					}
+
+					turnLeft(id);
+					turnLeft(id);
+					forward(id);
+					turnLeft(id);
+					turnLeft(id);
+
 				}
 			}
 			return "ok";
@@ -491,12 +471,8 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 
 	public synchronized Object layDown(int id) {
 		/* lego */if (id == -2) {
-			try {
-				forward(id);
-				Thread.sleep(200);
-			} catch (InterruptedException ex) {
-				ex.printStackTrace();
-			}
+			forward(id);
+
 		}
 		Hamster hamster = getHamster(id);
 		int count = terrain.getCornCount(hamster.getX(), hamster.getY());
@@ -509,20 +485,12 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 				setChanged();
 				notifyObservers(TERRAIN);
 				/* lego */if (id == -2) {
-					try {
-						turnLeft(id);
-						Thread.sleep(200);
-						turnLeft(id);
-						Thread.sleep(200);
-						forward(id);
-						Thread.sleep(200);
-						turnLeft(id);
-						Thread.sleep(200);
-						turnLeft(id);
-						Thread.sleep(200);
-					} catch (InterruptedException ex) {
-						ex.printStackTrace();
-					}
+					turnLeft(id);
+					turnLeft(id);
+					forward(id);
+					turnLeft(id);
+					turnLeft(id);
+
 				}
 			}
 			return "ok";
@@ -535,9 +503,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 
 	public synchronized boolean free(int id) {
 		Hamster hamster = getHamster(id);
-		return !terrain.getWall(hamster.getX() + DX[hamster.getDir()], hamster
-				.getY()
-				+ DY[hamster.getDir()]);
+		return !terrain.getWall(hamster.getX() + DX[hamster.getDir()], hamster.getY() + DY[hamster.getDir()]);
 	}
 
 	public synchronized boolean cornAvailable(int id) {
@@ -563,8 +529,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 	}
 
 	/**
-	 * @param terminal
-	 *            The terminal to set.
+	 * @param terminal The terminal to set.
 	 */
 	public synchronized void setTerminal(Terminal terminal) {
 		this.terminal = terminal;

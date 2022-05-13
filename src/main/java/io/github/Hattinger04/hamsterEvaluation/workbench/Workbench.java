@@ -9,6 +9,7 @@ import java.util.TreeMap;
 
 import io.github.Hattinger04.hamsterEvaluation.compiler.controller.CompilerController;
 import io.github.Hattinger04.hamsterEvaluation.debugger.controller.DebuggerController;
+import io.github.Hattinger04.hamsterEvaluation.debugger.model.DebuggerModel;
 import io.github.Hattinger04.hamsterEvaluation.interpreter.Territorium;
 import io.github.Hattinger04.hamsterEvaluation.lego.controller.LegoController;
 import io.github.Hattinger04.hamsterEvaluation.model.HamsterFile;
@@ -71,13 +72,13 @@ public class Workbench {
 	public boolean simulatdorOnly;
 	
 	@Getter @Setter
-	private TreeMap<Integer, String> jsonObject; 
+	private TreeMap<String, String> jsonObject; 
 	
 	protected Workbench(boolean simulatorOnly, SimulationModel simModel) {
 		workbench = this; // Prolog
 		settings = new Properties();
 
-		jsonObject = new TreeMap<Integer, String>(); 
+		jsonObject = new TreeMap<String, String>(); 
 		
 		model = new WorkbenchModel(simulatorOnly, simModel);
 		simulation = new SimulationController(model.getSimulationModel(), this);
@@ -121,7 +122,8 @@ public class Workbench {
 	 * 
 	 * @param path
 	 */
-	public TreeMap<Integer, String> startProgram(String path) {
+	public TreeMap<String, String> startProgram(String path) {
+		debugger.getDebuggerModel().setState(DebuggerModel.NOT_RUNNING);
 		HamsterFile file = HamsterFile.createHamsterFile(path, HamsterFile.OBJECT); 
 		compiler.setActiveFile(file);
 		file.setType(HamsterFile.OBJECT);
@@ -136,7 +138,7 @@ public class Workbench {
 	 * @param path
 	 * @param ter
 	 */
-	public TreeMap<Integer, String> startProgram(String path, String ter) {
+	public TreeMap<String, String> startProgram(String path, String ter) {
 		System.out.println("Loading Terrain...");
 		Territorium.ladeTerritorium(ter);
 		return startProgram(path);
@@ -148,7 +150,7 @@ public class Workbench {
 	 * @param path
 	 * @param ter
 	 */
-	public TreeMap<Integer, String> startProgram(String path, String ter, TerrainForm form) {
+	public TreeMap<String, String> startProgram(String path, String ter, TerrainForm form) {
 		System.out.println("Creating Terrain...");
 		Terrain t = new Terrain(createTerrain(form)); 
 		createTerrainFile(t, ter); 
