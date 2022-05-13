@@ -71,13 +71,13 @@ public class Workbench {
 	public boolean simulatdorOnly;
 	
 	@Getter @Setter
-	private TreeMap<String, String> jsonObject; 
+	private TreeMap<Integer, String> jsonObject; 
 	
 	protected Workbench(boolean simulatorOnly, SimulationModel simModel) {
 		workbench = this; // Prolog
 		settings = new Properties();
 
-		jsonObject = new TreeMap<String, String>(); 
+		jsonObject = new TreeMap<Integer, String>(); 
 		
 		model = new WorkbenchModel(simulatorOnly, simModel);
 		simulation = new SimulationController(model.getSimulationModel(), this);
@@ -121,7 +121,7 @@ public class Workbench {
 	 * 
 	 * @param path
 	 */
-	public TreeMap<String, String> startProgram(String path) {
+	public TreeMap<Integer, String> startProgram(String path) {
 		HamsterFile file = HamsterFile.createHamsterFile(path, HamsterFile.OBJECT); 
 		compiler.setActiveFile(file);
 		file.setType(HamsterFile.OBJECT);
@@ -136,7 +136,7 @@ public class Workbench {
 	 * @param path
 	 * @param ter
 	 */
-	public TreeMap<String, String> startProgram(String path, String ter) {
+	public TreeMap<Integer, String> startProgram(String path, String ter) {
 		System.out.println("Loading Terrain...");
 		Territorium.ladeTerritorium(ter);
 		return startProgram(path);
@@ -148,7 +148,7 @@ public class Workbench {
 	 * @param path
 	 * @param ter
 	 */
-	public TreeMap<String, String> startProgram(String path, String ter, TerrainForm form) {
+	public TreeMap<Integer, String> startProgram(String path, String ter, TerrainForm form) {
 		System.out.println("Creating Terrain...");
 		Terrain t = new Terrain(createTerrain(form)); 
 		createTerrainFile(t, ter); 

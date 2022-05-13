@@ -27,6 +27,7 @@ public class HamsterRController {
 	
 	private Workbench wb = Workbench.getWorkbench(); 
 
+	// TODO: Unterordner / nicht nur eine Datei! 
 	/**
 	 * Creates new File and will create a parent folder if not existing
 	 * It also writes the given program into the file
@@ -48,7 +49,8 @@ public class HamsterRController {
 		}
 	}
 	
-//	@PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')") // no idea if this is actually working like that
+//	@PreAuthorize("hasAuthority('ADMIN')") // no idea if this is actually working like that
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/defaultTerrain")
 	@ResponseBody
 	public String defaultTerrain(@RequestBody String json) {
