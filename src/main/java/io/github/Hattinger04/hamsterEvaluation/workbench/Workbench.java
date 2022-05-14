@@ -112,8 +112,8 @@ public class Workbench {
 			this.corn = corn; 
 			this.cornAnzahl = cornAnzahl; 
 			this.wall = wall; 
-			this.x = x; 
-			this.y = y; 
+			this.x = x;
+			this.y = y;
 		}
 	}
 	

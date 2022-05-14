@@ -56,15 +56,11 @@ public class HamsterRController {
 		}
 	}
 	
-	@PreAuthorize("hasAuthority('ADMIN')")
-//	@PreAuthorize("isAuthenticated()")
+	@PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER')")
 	@PostMapping("/defaultTerrain")
 	@ResponseBody
 	public String defaultTerrain(@RequestBody String json) {
-		System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
-		System.out.println(json);
 		Hamster hamster = restServices.deserializeHamster(json);
-		System.out.println(hamster.toString());
 		String path = String.format("src/main/resources/hamster/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName());
 		createNewFile(path); 
 		writeProgramToFile(new File(path), hamster.getProgram());

@@ -43,6 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(loginPage, registrationPage, "/user/**", "/hamster/**").permitAll()
 				.anyRequest().authenticated()
 				.and().csrf().disable().httpBasic().and()
+				.requiresChannel().antMatchers("/**").requiresSecure().and()
 				.formLogin().loginPage(loginPage).failureUrl("/user/login?error=true").defaultSuccessUrl("/user/home")
 				.usernameParameter("username").passwordParameter("password").and().logout()
 				.logoutSuccessUrl(loginPage).and()
