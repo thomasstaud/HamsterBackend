@@ -7,7 +7,6 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,8 +56,8 @@ public class HamsterRController {
 		}
 	}
 	
-//	@PreAuthorize("hasAuthority('ADMIN')") // no idea if this is actually working like that
-	@PreAuthorize("isAuthenticated()")
+	@PreAuthorize("hasAuthority('ADMIN')")
+//	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/defaultTerrain")
 	@ResponseBody
 	public String defaultTerrain(@RequestBody String json) {

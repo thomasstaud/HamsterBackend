@@ -182,7 +182,7 @@ public class SimulationModel extends Observable implements InstructionProcessor 
 			}
 			Workbench.getWorkbench().getJsonObject().put("finished", "working");
 		}
-		error = false; 
+		error = false;
 		hamsterTurns.clear();
 		reset();
 	}
