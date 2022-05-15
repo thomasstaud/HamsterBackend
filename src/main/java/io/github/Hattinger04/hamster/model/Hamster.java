@@ -18,8 +18,9 @@ public class Hamster {
 	@Id
 	private Integer hamster_id;
 	private String programName; 
+	private String terrainName;
 	private String program; 
 	private int leange, breite, x, y;
 	private int[] cornAnzahl; 
-	private int[][] corn, wall;  
+	private int[][] corn, wall; 
 }
