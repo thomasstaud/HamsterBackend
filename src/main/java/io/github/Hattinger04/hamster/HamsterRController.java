@@ -77,6 +77,7 @@ public class HamsterRController {
 		String hamsterPath = String.format("src/main/resources/hamster/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName());
 		String terrainPath = String.format("src/main/resources/hamster/%s/%s.ter", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getTerrainName());
 		createNewFile(hamsterPath); 
+		createNewFile(terrainPath); // not sure if needed
 		writeTextToFile(new File(hamsterPath), hamster.getProgram());
 		wb.getJsonObject().clear(); 
 		return restServices.serialize(wb.startProgram(hamsterPath, terrainPath));
@@ -97,5 +98,4 @@ public class HamsterRController {
 		return restServices.serialize(wb.startProgram(hamsterPath, terrainPath, 
 				wb.new TerrainForm(hamster.getLeange(), hamster.getBreite(), hamster.getCorn(), hamster.getCornAnzahl(), hamster.getWall(), hamster.getX(), hamster.getY())));
 	}
-	
 }
