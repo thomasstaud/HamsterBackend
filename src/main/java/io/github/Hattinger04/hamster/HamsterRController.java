@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import io.github.Hattinger04.RestServices;
 import io.github.Hattinger04.hamster.model.Hamster;
 import io.github.Hattinger04.hamsterEvaluation.workbench.Workbench;
-import io.github.Hattinger04.hamsterEvaluation.workbench.Workbench.TerrainForm;
 
 @RestController
 @RequestMapping("/hamster")
@@ -45,7 +44,7 @@ public class HamsterRController {
 		}
 	}
 	
-	private boolean writeProgramToFile(File file, String program) {
+	private boolean writeTextToFile(File file, String program) {
 		try {
 			FileOutputStream fileOutputStream = new FileOutputStream(file, false);
 			fileOutputStream.write(program.getBytes());
@@ -64,30 +63,36 @@ public class HamsterRController {
 		Hamster hamster = restServices.deserializeHamster(json);
 		String path = String.format("src/main/resources/hamster/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName());
 		createNewFile(path); 
-		writeProgramToFile(new File(path), hamster.getProgram());
+		writeTextToFile(new File(path), hamster.getProgram());
 		wb.getJsonObject().clear();
 		return restServices.serialize(wb.startProgram(path));	
 	}
 	
 	// not tested!
+	@PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER')")
+	@PostMapping("/existingTerrain")
+	@ResponseBody
 	public String exisitingTerrain(@RequestBody String json) {
 		Hamster hamster = restServices.deserializeHamster(json);
 		String hamsterPath = String.format("src/main/resources/hamster/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName());
 		String terrainPath = String.format("src/main/resources/hamster/%s/%s.ter", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getTerrainName());
 		createNewFile(hamsterPath); 
-		writeProgramToFile(new File(hamsterPath), hamster.getProgram());
+		writeTextToFile(new File(hamsterPath), hamster.getProgram());
 		wb.getJsonObject().clear(); 
 		return restServices.serialize(wb.startProgram(hamsterPath, terrainPath));
 	}
 	
 	// not tested!
+	@PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER')")
+	@PostMapping("/newTerrain")
+	@ResponseBody
 	public String newTerrain(@RequestBody String json) {
 		Hamster hamster = restServices.deserializeHamster(json);
 		String hamsterPath = String.format("src/main/resources/hamster/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName());
 		String terrainPath = String.format("src/main/resources/hamster/%s/%s.ter", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getTerrainName());
 		createNewFile(hamsterPath); 
 		createNewFile(terrainPath); 
-		writeProgramToFile(new File(hamsterPath), hamster.getProgram());
+		writeTextToFile(new File(hamsterPath), hamster.getProgram());
 		wb.getJsonObject().clear(); 
 		return restServices.serialize(wb.startProgram(hamsterPath, terrainPath, 
 				wb.new TerrainForm(hamster.getLeange(), hamster.getBreite(), hamster.getCorn(), hamster.getCornAnzahl(), hamster.getWall(), hamster.getX(), hamster.getY())));
