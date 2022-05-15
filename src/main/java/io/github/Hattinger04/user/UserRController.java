@@ -47,7 +47,6 @@ public class UserRController {
 		
 	@GetMapping("/home")
 	public String successHome() {
-		System.out.println("success: " + SecurityContextHolder.getContext().getAuthentication().getName());
 		return restServices.serialize(SecurityContextHolder.getContext().getAuthentication().getName());
 	}
 }
