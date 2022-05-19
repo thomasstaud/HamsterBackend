@@ -1,8 +1,14 @@
 package io.github.Hattinger04.home;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -11,7 +17,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import io.github.Hattinger04.user.model.User;
@@ -107,4 +116,19 @@ public class HomeController {
 		model.addAttribute("error", "Das Formular ist nicht korrekt ausgefüllt!"); 
 		return getUserDetail(passwordRepeat, form, model, "-1"); 	
 	}
+	
+	@RequestMapping(value = "/files/{filename:.+}", method = RequestMethod.GET, produces = "text/zip")
+	@ResponseBody
+	public FileSystemResource getFile(@PathVariable String filename, HttpServletResponse response) {
+	    String path = Paths.get("src/main/resources/" + filename).toAbsolutePath().toString(); 
+        response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+        try {
+			response.flushBuffer();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	    return new FileSystemResource(new File(path));
+	}
+
+	
 }
