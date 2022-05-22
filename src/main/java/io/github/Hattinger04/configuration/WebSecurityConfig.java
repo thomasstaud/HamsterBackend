@@ -38,8 +38,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.authorizeRequests()
 				.antMatchers(loginPage, registrationPage, "/user/**", "/hamster/**").permitAll()
-				.anyRequest().authenticated()
-				.and().csrf().disable().httpBasic().and()
+				.anyRequest().authenticated().and()
+				.cors().disable()	
+				.csrf().disable().httpBasic().and()
 				.requiresChannel().antMatchers("/**").requiresSecure().and()
 				.formLogin().loginPage(loginPage).failureUrl("/user/login?error=true").defaultSuccessUrl("/user/home")
 				.usernameParameter("username").passwordParameter("password").and().logout()
@@ -57,5 +58,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**", "/webjars/**");
 	}
-
 }

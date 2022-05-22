@@ -15,7 +15,6 @@ public class ProjektWebsiteApplication {
 		SpringApplication.run(ProjektWebsiteApplication.class, args);
 	}
 
-	// Redirecting http to https (not quite sure if really needed)
 	@Bean
 	public TomcatServletWebServerFactory servletContainer() {
 		TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory() {
