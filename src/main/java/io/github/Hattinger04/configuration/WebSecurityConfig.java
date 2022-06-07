@@ -2,7 +2,9 @@
 package io.github.Hattinger04.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,6 +32,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
 	}
 
+    @Bean
+    @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
+
+	
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		String loginPage = "/user/login"; 
@@ -37,15 +47,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		
 
 		http.authorizeRequests()
-				.antMatchers(loginPage, registrationPage, "/user/**", "/hamster/**").permitAll()
+				.antMatchers(loginPage, registrationPage, "/user/**", "/hamster/**", "/login").permitAll()
 				.anyRequest().authenticated().and()
-				.cors().disable()	
-				.csrf().disable().httpBasic().and()
+				.csrf().disable()
 				.requiresChannel().antMatchers("/**").requiresSecure().and()
-				.formLogin().loginPage(loginPage).failureUrl("/user/login?error=true").defaultSuccessUrl("/user/home")
-				.usernameParameter("username").passwordParameter("password").and().logout()
-				.logoutSuccessUrl(loginPage).and()
-				.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()).and()
+//				.formLogin().loginPage(loginPage).failureUrl("/user/login?error=true").defaultSuccessUrl("/user/home")
+//				.usernameParameter("username").passwordParameter("password").and()
+				.logout().logoutSuccessUrl(loginPage).and()
+				.cors().and()
 				.exceptionHandling().authenticationEntryPoint((request, response, exception) -> {
 	                response.setStatus(401);
 	            })  
