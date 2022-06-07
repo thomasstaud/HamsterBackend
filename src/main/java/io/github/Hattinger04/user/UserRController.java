@@ -4,7 +4,7 @@ package io.github.Hattinger04.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +16,7 @@ import io.github.Hattinger04.RestServices;
 import io.github.Hattinger04.user.model.User;
 import io.github.Hattinger04.user.model.UserService;
 
+@CrossOrigin(origins = "https://localhost:8081",allowCredentials = "true")
 @RestController
 @RequestMapping("/user")
 public class UserRController {
@@ -32,7 +33,7 @@ public class UserRController {
 		return restServices.serialize(userService.selectMany()); 
 	}
 	
-//	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/createUser")
 	@ResponseBody
 	public String createUser(@RequestBody String json) {

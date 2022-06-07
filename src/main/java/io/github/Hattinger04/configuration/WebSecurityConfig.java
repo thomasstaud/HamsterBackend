@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
 
 import io.github.Hattinger04.user.model.MyUserDetailsService;
 
@@ -37,8 +36,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
     }
-
-	
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -47,13 +44,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		
 
 		http.authorizeRequests()
-				.antMatchers(loginPage, registrationPage, "/user/**", "/hamster/**", "/login").permitAll()
+				.antMatchers(loginPage, registrationPage, "/login").permitAll()
 				.anyRequest().authenticated().and()
 				.csrf().disable()
 				.requiresChannel().antMatchers("/**").requiresSecure().and()
 //				.formLogin().loginPage(loginPage).failureUrl("/user/login?error=true").defaultSuccessUrl("/user/home")
 //				.usernameParameter("username").passwordParameter("password").and()
-				.logout().logoutSuccessUrl(loginPage).and()
+//				.logout().logoutSuccessUrl(loginPage).and()
 				.cors().and()
 				.exceptionHandling().authenticationEntryPoint((request, response, exception) -> {
 	                response.setStatus(401);
