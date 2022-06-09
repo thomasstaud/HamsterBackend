@@ -42,7 +42,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		String loginPage = "/user/login"; 
 		String registrationPage = "/user/registration"; 
 		
-
 		http.authorizeRequests()
 				.antMatchers(loginPage, registrationPage, "/login").permitAll()
 				.anyRequest().authenticated().and()
@@ -54,7 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.cors().and()
 				.exceptionHandling().authenticationEntryPoint((request, response, exception) -> {
 	                response.setStatus(401);
-	            })  
+	            })
 	            .accessDeniedHandler((request, response, exception) -> {
 	                response.setStatus(403);
 	            });

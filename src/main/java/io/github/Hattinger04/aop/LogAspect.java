@@ -1,5 +1,6 @@
 package io.github.Hattinger04.aop;
 
+import java.time.LocalDateTime;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -7,7 +8,9 @@ import java.util.logging.SimpleFormatter;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
@@ -22,6 +25,16 @@ public class LogAspect {
 		logger.setLevel(Level.ALL);
 	}
 
+	@After(("execution(* io.github.Hattinger04.configuration.AuthController.login(..))"))
+	public void loginLog(JoinPoint jp) throws Throwable {
+		FileHandler fileHandler = new FileHandler("src/main/resources/allLogs.log", true);
+		logger.addHandler(fileHandler);
+		SimpleFormatter formatter = new SimpleFormatter(); 
+		fileHandler.setFormatter(formatter); 
+		logger.fine(String.format("%s - [logged in]", jp.getArgs()[0])); 
+		logger.removeHandler(fileHandler); 
+		fileHandler.close(); 
+	}
 	
 	@Around(("execution(* io.github.Hattinger04.user.UserController.logoutPage(..))"))
 	public Object logoutLog(ProceedingJoinPoint jp) throws Throwable {
