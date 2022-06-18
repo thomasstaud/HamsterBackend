@@ -19,7 +19,7 @@ public class GlobalControlAdvice {
 	
 	@ExceptionHandler(Exception.class)
 	public String exceptionHandler(Exception ex, Model model) {
-		return restServices.serialize(new Error("Internal server error: GlobalControlAdvice", "Exception occured", HttpStatus.INTERNAL_SERVER_ERROR));  
+		return restServices.serialize(new Error("Internal server error: GlobalControlAdvice", ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));  
 	}
 	
 	@ExceptionHandler(AccessDeniedException.class)

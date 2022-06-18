@@ -30,15 +30,6 @@ public class UserController {
 		return modelAndView;
 	}
 
-	@GetMapping(value = "/user/logout")
-	public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth != null) {
-			new SecurityContextLogoutHandler().logout(request, response, auth);
-		}
-		return "redirect:/user/login";
-	}
-
 	@GetMapping(value = "/user/registration")
 	public ModelAndView registration() {
 		ModelAndView modelAndView = new ModelAndView();

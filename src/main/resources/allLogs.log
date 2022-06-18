@@ -2,3 +2,9 @@ Juni 09, 2022 3:23:17 PM io.github.Hattinger04.aop.LogAspect loginLog
 FEIN: User(id=null, username=Admin, email=null, password=Admin, name=null, lastName=null, active=null, roles=null) - [logged in]
 Juni 09, 2022 3:23:43 PM io.github.Hattinger04.aop.LogAspect loginLog
 FEIN: User(id=null, username=Admin4, email=null, password=Admin, name=null, lastName=null, active=null, roles=null) - [logged in]
+Juni 18, 2022 8:26:35 PM io.github.Hattinger04.aop.LogAspect loginLog
+FEIN: User(id=null, username=admin, email=null, password=admin, name=null, lastName=null, active=null, roles=null) - [logged in]
+Juni 18, 2022 8:27:53 PM io.github.Hattinger04.aop.LogAspect loginLog
+FEIN: User(id=null, username=admin, email=null, password=admin, name=null, lastName=null, active=null, roles=null) - [logged in]
+Juni 18, 2022 8:28:17 PM io.github.Hattinger04.aop.LogAspect loginLog
+FEIN: User(id=null, username=Admin, email=null, password=Admin, name=null, lastName=null, active=null, roles=null) - [logged in]

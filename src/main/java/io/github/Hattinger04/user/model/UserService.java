@@ -17,7 +17,7 @@ public class UserService {
 	private UserRepository userRepository;
 	private RoleRepository roleRepository;
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
-	
+
 	@Autowired
 	public UserService(UserRepository userRepository, RoleRepository roleRepository,
 			BCryptPasswordEncoder bCryptPasswordEncoder) {
@@ -25,7 +25,6 @@ public class UserService {
 		this.roleRepository = roleRepository;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 	}
-
 
 	public User findUserByID(int id) {
 		return userRepository.findById(id);
@@ -39,17 +38,13 @@ public class UserService {
 		return userRepository.findByUsername(username);
 	}
 
-	public boolean saveUser(User user) {
-		try {
-			user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-			user.setActive(true);
-			Role userRole = roleRepository.findByRole("USER");
-			user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
-			userRepository.save(user);
-			return true; 
-		} catch (Exception e) {
-			return false; 
-		} 
+	public boolean saveUser(User user)  {
+		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+		user.setActive(true);
+		Role userRole = roleRepository.findByRole("USER");
+		user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
+		userRepository.save(user);
+		return true;
 	}
 
 	public boolean updateUser(User user) {
@@ -63,9 +58,9 @@ public class UserService {
 			return false;
 		}
 	}
-	
+
 	public long getFutureID() {
-		return userRepository.getNextSeriesId().get(1); 
+		return userRepository.getNextSeriesId().get(1);
 	}
 
 	public boolean deleteUser(User user) {
