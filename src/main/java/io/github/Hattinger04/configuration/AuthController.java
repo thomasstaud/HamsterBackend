@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.github.Hattinger04.user.model.User;
 
-@CrossOrigin(origins = "https://localhost:8081",allowCredentials = "true")
+@CrossOrigin(origins = "https://localhost",allowCredentials = "true")
 @RestController
 public class AuthController {
 	@Autowired

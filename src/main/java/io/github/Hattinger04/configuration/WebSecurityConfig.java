@@ -41,9 +41,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		String loginPage = "/api/login"; 
 		String registrationPage = "/api/registration"; 
+		String errorPage = "/api/error"; 
 		
 		http.authorizeRequests()
-				.antMatchers(loginPage, registrationPage).permitAll()
+				.antMatchers(loginPage, registrationPage, errorPage).permitAll()
 				.anyRequest().authenticated().and()
 				.csrf().disable()
 				.requiresChannel().antMatchers("/**").requiresSecure().and()
