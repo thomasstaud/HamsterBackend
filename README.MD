@@ -1,4 +1,8 @@
-# README
+# Backend Spring
+
+## Info
+
+This is the API Background where our frontend framework (= VueJS) sends request to.
 
 ## Enable HTTPS for Spring
 source: https://www.tutorialspoint.com/spring_boot/spring_boot_enabling_https.htm
