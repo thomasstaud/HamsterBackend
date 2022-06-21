@@ -26,16 +26,16 @@ This is the API Background where our frontend framework (= VueJS) sends request 
 }
 3. hamster
 {
-  programName: (String),  
-  program: (String),  
-  terrainName: (String),   
-  laenge: (int),  
-  breite: (int),  
-  x: (int),  
-  y: (int),  
-  cornAnzahl: (int[])  
-  corn: (int[][])
-  wall: (int[][])  
+  &ensp;programName: (String),  
+  &ensp;program: (String),  
+  &ensp;terrainName: (String),   
+  &ensp;laenge: (int),  
+  &ensp;breite: (int),  
+  &ensp;x: (int),  
+  &ensp;y: (int),  
+  &ensp;cornAnzahl: (int[])  
+  &ensp;corn: (int[][])
+  &ensp;wall: (int[][])  
 }  
 
 ### Services 
