@@ -4,6 +4,15 @@
 
 This is the API Background where our frontend framework (= VueJS) sends request to.
 
+## The commands 
+
+- vor(); 
+- linksUm(); 
+- nimm(); 
+- gib(); 
+- vornFrei(); 
+- kornDa(); 
+- maulLeer();
 
 ## Rest Services
 
@@ -17,17 +26,17 @@ This is the API Background where our frontend framework (= VueJS) sends request 
 }
 3. hamster
 {
-  programName: "<programName>", 
-  program: "<program>",
-  terrainName: "<terrainName>", 
-  laenge: <laenge>, 
-  breite: <breite>, 
-  x: <x>, 
-  y: <y>,
-  cornAnzahl: <cornAnzahl[]>
-  corn: <corn[][]>
-  wall: <wall[][]>
-}
+  programName: "<programName>",  
+  program: "<program>",  
+  terrainName: "<terrainName>",   
+  laenge: <laenge>,  
+  breite: <breite>,  
+  x: <x>,  
+  y: <y>,  
+  cornAnzahl: <cornAnzahl[]>  
+  corn: <corn[][]>  
+  wall: <wall[][]>  
+}  
 
 ### Services 
   
