@@ -18,13 +18,13 @@ This is the API Background where our frontend framework (= VueJS) sends request 
 
 ### Objects 
 
-1. user: 
-{
-  username: (String), 
-  password: (String), 
-  email: (String)
-}
-3. hamster
+1. <ins>user:</ins> 
+{  
+  &ensp;username: (String), 
+  &ensp;password: (String), 
+  &ensp;email: (String)
+}  
+3. <ins>hamster:</ins>
 {
   &ensp;programName: (String),  
   &ensp;program: (String),  
@@ -49,10 +49,11 @@ This are all Services which involves user data (links in brackets not made yet)
 - logout (GET)
 - createUser (POST)
 2. /hamster services 
+All services which handles requests containing hamstercode
 - /defaultTerrain (POST)
 - /existingTerrain (POST)
 - /newTerrain (POST)
-All services which handles requests containing hamstercode
+
 
 3. /login service
 The login service; request sent as json => {username: "<username>", password: "<password>"}
