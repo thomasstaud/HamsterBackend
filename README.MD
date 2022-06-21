@@ -20,22 +20,22 @@ This is the API Background where our frontend framework (= VueJS) sends request 
 
 1. user: 
 {
-  username: "<username>", 
-  password: "<password>", 
-  email: "<email>"
+  username: (String), 
+  password: (String), 
+  email: (String)
 }
 3. hamster
 {
-  programName: "<programName>",  
-  program: "<program>",  
-  terrainName: "<terrainName>",   
-  laenge: <laenge>,  
-  breite: <breite>,  
-  x: <x>,  
-  y: <y>,  
-  cornAnzahl: <cornAnzahl[]>  
-  corn: <corn[][]>  
-  wall: <wall[][]>  
+  programName: (String),  
+  program: (String),  
+  terrainName: (String),   
+  laenge: (int),  
+  breite: (int),  
+  x: (int),  
+  y: (int),  
+  cornAnzahl: (int[])  
+  corn: (int[][])
+  wall: (int[][])  
 }  
 
 ### Services 
