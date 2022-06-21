@@ -46,8 +46,8 @@ All Services starts with /api!
 This are all Services which involves user data (links in brackets not made yet)
 - /getAllUsers (GET)
 - (/getUser/<int:id> (GET))
-- logout (GET)
-- createUser (POST)
+- /logout (GET)
+- /createUser (POST)
 2. /hamster services 
 All services which handles requests containing hamstercode
 - /defaultTerrain (POST)
