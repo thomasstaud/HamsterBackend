@@ -18,14 +18,14 @@ This is the API Background where our frontend framework (= VueJS) sends request 
 
 ### Objects 
 
-1. <ins>user:</ins> 
+1. <ins>user:</ins>  
 {  
-  &ensp;username: (String), 
-  &ensp;password: (String), 
-  &ensp;email: (String)
+  &ensp;username: (String),  
+  &ensp;password: (String),  
+  &ensp;email: (String)  
 }  
-3. <ins>hamster:</ins>
-{
+3. <ins>hamster:</ins>  
+{  
   &ensp;programName: (String),  
   &ensp;program: (String),  
   &ensp;terrainName: (String),   
