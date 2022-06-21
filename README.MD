@@ -47,7 +47,7 @@ This are all Services which involves user data beginning with /user (links in br
 - /logout (GET)
 - /createUser (POST)
 2. /hamster services  
-All services which handles requests containing hamstercode beginning with /hamster  
+All services which handles requests containing hamstercode beginning with /hamster
 - /defaultTerrain (POST)
 - /existingTerrain (POST)
 - /newTerrain (POST)
