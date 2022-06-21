@@ -1,7 +1,5 @@
 # Backend Spring
 
-## Info
-
 This is the API Background where our frontend framework (= VueJS) sends request to.
 
 ## The commands 
