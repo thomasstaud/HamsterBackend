@@ -42,14 +42,14 @@ This is the API Background where our frontend framework (= VueJS) sends request 
   
 All Services starts with /api!
 
-1. /user servives
+1. /user services  
 This are all Services which involves user data (links in brackets not made yet)
 - /getAllUsers (GET)
 - (/getUser/<int:id> (GET))
 - /logout (GET)
 - /createUser (POST)
-2. /hamster services 
-All services which handles requests containing hamstercode
+2. /hamster services  
+All services which handles requests containing hamstercode  
 - /defaultTerrain (POST)
 - /existingTerrain (POST)
 - /newTerrain (POST)
