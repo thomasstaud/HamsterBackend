@@ -55,9 +55,9 @@ All services which handles requests containing hamstercode
 - /newTerrain (POST)
 
 
-3. /login service
+3. /login service  
 The login service; request sent as json => {username: "<username>", password: "<password>"}
-4. /register service
+4. /register service  
 The register service; request sent as json => {}
   
 ## Enable HTTPS for Spring (maybe better not to do)
