@@ -106,8 +106,6 @@ public class HomeController {
 		user.setUsername(form.getUsername()); 
 		user.setPassword(form.getPassword()); 
 		user.setEmail(form.getEmail()); 
-		user.setLastName(form.getLastname()); 
-		user.setName(form.getName()); 
 		boolean result = userService.saveUser(user);
 		if(result) {
 			model.addAttribute("result", "Insert success");
