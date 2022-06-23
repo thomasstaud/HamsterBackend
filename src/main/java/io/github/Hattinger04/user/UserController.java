@@ -34,13 +34,13 @@ public class UserController {
 	private RestServices restServices; 
 	
 
-	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('DEV')")
 	@GetMapping("/getAllUsers")
 	public ResponseEntity<?> getAllUsers() {
 		return new ResponseEntity<>(userService.selectMany(), HttpStatus.OK); 
 	}
 	
-	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('DEV')")
 	@PostMapping("/createUser")
 	@ResponseBody
 	public ResponseEntity<?> createUser(@RequestBody String json) {
@@ -70,7 +70,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/updateUser")
-	@PreAuthorize("hasAuthority('Admin')")
+	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> updateUser(@RequestBody String json) {
 		User user = restServices.deserializeUser(json); 
 		if(userService.updateUser(user)) {

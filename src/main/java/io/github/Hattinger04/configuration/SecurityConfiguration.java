@@ -2,6 +2,8 @@ package io.github.Hattinger04.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -28,4 +30,13 @@ public class SecurityConfiguration implements WebMvcConfigurer {
 		registry.addMapping("/**").allowedOrigins("https://localhost").allowedMethods("GET", "POST", "OPTIONS")
 		.allowCredentials(true).allowedHeaders("*").exposedHeaders("set-cookie").maxAge(3600); 
 	}
+	
+	@Bean
+	public RoleHierarchy roleHierarchy() {
+	    RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+	    String hierarchy = "ADMIN > DEV \n DEV > TEACHER \n TEACHER > USER";
+	    roleHierarchy.setHierarchy(hierarchy);
+	    return roleHierarchy;
+	}
+
 }

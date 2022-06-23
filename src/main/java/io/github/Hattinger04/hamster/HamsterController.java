@@ -58,7 +58,7 @@ public class HamsterController {
 		}
 	}
 	
-	@PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("/defaultTerrain")
 	@ResponseBody
 	public ResponseEntity<?> defaultTerrain(@RequestBody String json) {
@@ -71,7 +71,7 @@ public class HamsterController {
 	}
 	
 	// not tested!
-	@PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("/existingTerrain")
 	@ResponseBody
 	public ResponseEntity<?> exisitingTerrain(@RequestBody String json) {
@@ -86,7 +86,7 @@ public class HamsterController {
 	}
 	
 	// not tested!
-	@PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("/newTerrain")
 	@ResponseBody
 	public ResponseEntity<?> newTerrain(@RequestBody String json) {
