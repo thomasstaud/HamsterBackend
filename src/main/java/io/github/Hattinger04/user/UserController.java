@@ -11,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +23,6 @@ import io.github.Hattinger04.UserRole;
 import io.github.Hattinger04.user.model.User;
 import io.github.Hattinger04.user.model.UserService;
 
-@CrossOrigin(origins = "https://localhost:8081",allowCredentials = "true")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -97,7 +95,14 @@ public class UserController {
 		}
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
-	
+	/**
+	 * 
+	 * Removing role from user.
+	 * Needs as RequestBody role_id and user_id
+	 * 
+	 * @param json
+	 * @return
+	 */
 	@PostMapping("/removeRole")
 	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> removeRole(@RequestBody String json) {
