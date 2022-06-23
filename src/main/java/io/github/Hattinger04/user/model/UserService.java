@@ -79,5 +79,23 @@ public class UserService {
 	public long count() {
 		return userRepository.count();
 	}
+	
+	public boolean insertUserRole(int user_id, int role_id) {
+		try {
+			userRepository.insertUserRole(user_id, role_id); 
+			return true; 
+		} catch (Exception e) {
+			return false; 
+		}
+	}
+	
+	public boolean removeUserRole(int user_id, int role_id) {
+		try {
+			userRepository.removeUserRole(user_id, role_id); 
+			return true; 
+		} catch (Exception e) {
+			return false; 
+		}
+	}
 
 }

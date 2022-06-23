@@ -28,4 +28,14 @@ public class RestServices {
 			return null;
 		}
 	}
+	
+	public UserRole deserializeUserRole(String json) {
+		try {
+			return objectMapper.readValue(json, UserRole.class);
+		} catch (JsonProcessingException e) {
+			return null;
+		}
+	}
+
+
 }

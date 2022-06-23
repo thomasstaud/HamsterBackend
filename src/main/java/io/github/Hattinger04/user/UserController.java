@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.Hattinger04.RestServices;
+import io.github.Hattinger04.UserRole;
 import io.github.Hattinger04.user.model.User;
 import io.github.Hattinger04.user.model.UserService;
 
@@ -78,4 +79,33 @@ public class UserController {
 		}
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
+	
+	/**
+	 * 
+	 * Adding role to user.
+	 * Needs as RequestBody role_id and user_id
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@PostMapping("/addRole")
+	@PreAuthorize("hasAuthority('DEV')")
+	public ResponseEntity<?> addRole(@RequestBody String json) {
+		UserRole userRole = restServices.deserializeUserRole(json);
+		if(!userService.insertUserRole(userRole.getUser_id(), userRole.getRole_id())) {
+			return new ResponseEntity<>("Could not insert new Role!", HttpStatus.NOT_FOUND); 
+		}
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
+	
+	@PostMapping("/removeRole")
+	@PreAuthorize("hasAuthority('DEV')")
+	public ResponseEntity<?> removeRole(@RequestBody String json) {
+		UserRole userRole = restServices.deserializeUserRole(json);
+		if(!userService.removeUserRole(userRole.getUser_id(), userRole.getRole_id())) {
+			return new ResponseEntity<>("Could not remove Role!", HttpStatus.NOT_FOUND); 
+		}
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
+	
 }
