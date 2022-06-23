@@ -36,7 +36,7 @@ public class LogAspect {
 		fileHandler.close(); 
 	}
 	
-	@Around(("execution(* io.github.Hattinger04.user.UserRController.logoutPage(..))"))
+	@Around(("execution(* io.github.Hattinger04.user.UserController.logoutPage(..))"))
 	public Object logoutLog(ProceedingJoinPoint jp) throws Throwable {
 		Object o; 
 		HttpServletRequest request = (HttpServletRequest) jp.getArgs()[0]; 

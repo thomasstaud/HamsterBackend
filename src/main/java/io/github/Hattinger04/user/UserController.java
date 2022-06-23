@@ -26,7 +26,7 @@ import io.github.Hattinger04.user.model.UserService;
 @CrossOrigin(origins = "https://localhost:8081",allowCredentials = "true")
 @RestController
 @RequestMapping("/user")
-public class UserRController {
+public class UserController {
 
 	@Autowired
 	private UserService userService;
