@@ -46,18 +46,20 @@ This are all Services which involves user data beginning with /user (links in br
 - (/getUser/<int:id> (GET))
 - /logout (GET)
 - /createUser (POST)
+- /updateUser (PSOT)
+- /addRole (POST)
+- /removeRole (POST)
 2. /hamster services  
 All services which handles requests containing hamstercode beginning with /hamster
 - /defaultTerrain (POST)
 - /existingTerrain (POST)
-- /newTerrain (POST)
-
+- /newTerrain (POST)  
 
 3. /login service  
-The login service; request sent as json => {username: "<username>", password: "<password>"}
+The login service; request sent as json => {"username": "username", "password": "password"}
 4. /register service  
-The register service; request sent as json => {}
-  
+The register service; request sent as json => {"username": "username", "password": "password", "email": "email"}  
+
 ## Enable HTTPS for Spring (maybe better not to do)
 source: https://www.tutorialspoint.com/spring_boot/spring_boot_enabling_https.htm
 
