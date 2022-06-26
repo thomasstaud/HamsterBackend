@@ -27,7 +27,8 @@ public class SecurityConfiguration implements WebMvcConfigurer {
     
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**").allowedOrigins("https://localhost", "https://192.168.0.42").allowedMethods("GET", "POST", "OPTIONS")
+		// TODO: delete not needed origins when publising 
+		registry.addMapping("/**").allowedOrigins("https://localhost", "https://192.168.0.42", "https://93.82.91.106").allowedMethods("GET", "POST", "OPTIONS")
 		.allowCredentials(true).allowedHeaders("*").exposedHeaders("set-cookie").maxAge(3600); 
 	}
 	
