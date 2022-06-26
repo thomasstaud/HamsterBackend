@@ -67,8 +67,8 @@ public class UserService {
 		return userRepository.getNextSeriesId().get(1);
 	}
 
-	public boolean deleteUser(User user) {
-		userRepository.delete(user);
+	public boolean deleteUser(int id) {
+		userRepository.delete(findUserByID(id));
 		return true;
 	}
 

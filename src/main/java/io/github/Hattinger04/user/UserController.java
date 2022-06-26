@@ -52,21 +52,6 @@ public class UserController {
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-		
-	@GetMapping("/home")
-	public ResponseEntity<?>  successHome() {
-		return new ResponseEntity<>((SecurityContextHolder.getContext().getAuthentication().getName()), HttpStatus.OK);
-	}
-	
-	@GetMapping("/logout")
-	@PreAuthorize("isAuthenticated()") 
-	public ResponseEntity<?> logoutPage(HttpServletRequest request, HttpServletResponse response) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth != null) {
-			new SecurityContextLogoutHandler().logout(request, response, auth);
-		}
-		return new ResponseEntity<>(HttpStatus.OK);
-	}
 	
 	@PostMapping("/updateUser")
 	@PreAuthorize("hasAuthority('DEV')")
@@ -74,6 +59,23 @@ public class UserController {
 		User user = restServices.deserializeUser(json); 
 		if(userService.updateUser(user)) {
 			return new ResponseEntity<>("Could not update user!", HttpStatus.NOT_FOUND); 
+		}
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
+	
+	/**
+	 * Deleting user
+	 * Needs as RequestBody id
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@PostMapping("/deleteUser")
+	@PreAuthorize("hasAuthority('DEV')")
+	public ResponseEntity<?> deleteUser(@RequestBody String json) {
+		UserRole user = restServices.deserializeUserRole(json); 
+		if(!userService.deleteUser(user.getUser_id())) {
+			return new ResponseEntity<>("Could not delete user!", HttpStatus.NOT_FOUND); 
 		}
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
@@ -113,4 +115,19 @@ public class UserController {
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
+	
+	@GetMapping("/home")
+	public ResponseEntity<?>  successHome() {
+		return new ResponseEntity<>((SecurityContextHolder.getContext().getAuthentication().getName()), HttpStatus.OK);
+	}
+	
+	@GetMapping("/logout")
+	@PreAuthorize("isAuthenticated()") 
+	public ResponseEntity<?> logoutPage(HttpServletRequest request, HttpServletResponse response) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null) {
+			new SecurityContextLogoutHandler().logout(request, response, auth);
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
 }
