@@ -242,21 +242,7 @@ public class Utils {
 	static Properties p;
 
 	public static void loadProperties() {
-		try {
-			p = new Properties();
-
-			File file = new File("hamster.properties");
-			doLoading(p, file);
-
-			String home = System.getProperties().getProperty("user.home");
-			if (home != null) {
-				file = new File(home + File.separator + "hamster.properties");
-				doLoading(p, file);
-			}
-
-		} catch (Exception exc) {
-		}
-
+		
 	}
 
 	public static void doLoading(Properties p, File file) {
