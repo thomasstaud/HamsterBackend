@@ -242,7 +242,7 @@ public class Utils {
 	static Properties p;
 
 	public static void loadProperties() {
-		
+		// not needed in our version
 	}
 
 	public static void doLoading(Properties p, File file) {
