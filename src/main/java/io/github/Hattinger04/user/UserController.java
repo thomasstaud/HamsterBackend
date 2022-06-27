@@ -1,6 +1,5 @@
 package io.github.Hattinger04.user;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -115,6 +114,23 @@ public class UserController {
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
+	/**
+	 * 
+	 * Get user by username.
+	 * Needs as RequestBody username
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@PostMapping("/getUser")
+	@PreAuthorize("hasAuthority('DEV')")
+	public ResponseEntity<?> getUser(@RequestBody String json) {
+		User user= userService.findUserByUsername(restServices.deserializeUser(json).getUsername());
+		if(user != null) {
+			return new ResponseEntity<>("Couldn't find user!", HttpStatus.NOT_FOUND); 
+		}
+		return new ResponseEntity<>(user, HttpStatus.OK); 
+	}
 	
 	@GetMapping("/home")
 	public ResponseEntity<?>  successHome() {
