@@ -1,5 +1,6 @@
 package io.github.Hattinger04;
 
+import org.hibernate.exception.DataException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -21,6 +22,11 @@ public class GlobalControlAdvice {
 	
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<?> exceptionDeniedHandler(AccessDeniedException ex, Model model) {
-		return new ResponseEntity<>(new Error("Access denied!", "You are not allowed visiting this site!", HttpStatus.FORBIDDEN), HttpStatus.INTERNAL_SERVER_ERROR); 
+		return new ResponseEntity<>(new Error("Access denied!", "You are not allowed visiting this site!", HttpStatus.FORBIDDEN), HttpStatus.FORBIDDEN); 
+	}
+	
+	@ExceptionHandler(DataException.class)
+	public ResponseEntity<?> exceptionDeniedHandler(DataException ex, Model model) {
+		return new ResponseEntity<>(new Error("Wrong sql!", "You have made some mistake in your sql statement!", HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR); 
 	}
 }

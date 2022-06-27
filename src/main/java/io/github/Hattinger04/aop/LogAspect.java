@@ -1,6 +1,5 @@
 package io.github.Hattinger04.aop;
 
-import java.time.LocalDateTime;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +18,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class LogAspect {
 
+	// TODO: is logger really needed when using nginx? 
+	
 	private static Logger logger;
 	static {
 		logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
