@@ -14,6 +14,12 @@ This is the API Background where our frontend framework (= VueJS) sends request 
 
 ## Rest Services
 
+Standard user to log in with admin rights:  
+username: admin  
+password: admin  
+
+Should be changed when publishing it!
+
 ### Objects 
 
 1. <ins>user:</ins>  
@@ -43,8 +49,8 @@ All Services starts with /api!
 1. /user services  
 This are all Services which involves user data beginning with /user (links in brackets not made yet)
 - /getAllUsers (GET)
-- (/getUser/<int:id> (GET))
 - /logout (GET)
+- /getUser (POST - byUsername)
 - /createUser (POST)
 - /updateUser (PSOT)
 - /addRole (POST)
