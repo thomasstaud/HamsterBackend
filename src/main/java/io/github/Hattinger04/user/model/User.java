@@ -12,7 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.validator.constraints.Length;
@@ -41,10 +40,6 @@ public class User {
 	@Length(min = 5, message = "Your username must have at least 5 characters")
 	@NotEmpty(message = "*Please provide a username")
 	private String username;
-	@Column(name = "email", unique = true, nullable = false)
-	@Email(message = "*Please provide a valid Email")
-	@NotEmpty(message = "*Please provide an Email")
-	private String email;
 	@Column(name = "password")
 	@Length(min = 5, message = "*Your password must have at least 5 characters")
 	@NotEmpty(message = "*Please provide your password")

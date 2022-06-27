@@ -194,3 +194,7 @@ Juni 27, 2022 9:21:22 AM io.github.Hattinger04.aop.LogAspect loginLog
 FINE: User(id=null, username=Admin, email=null, password=Admin, active=null, roles=null) - [logged in]
 Juni 27, 2022 9:58:52 AM io.github.Hattinger04.aop.LogAspect loginLog
 FINE: User(id=null, username=Admin, email=null, password=Admin, active=null, roles=null) - [logged in]
+Juni 27, 2022 10:29:52 AM io.github.Hattinger04.aop.LogAspect loginLog
+FINE: User(id=null, username=admin, password=admin, active=null, roles=null) - [logged in]
+Juni 27, 2022 10:31:21 AM io.github.Hattinger04.aop.LogAspect loginLog
+FINE: User(id=null, username=admin, password=admin, active=null, roles=null) - [logged in]
