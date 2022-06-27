@@ -31,13 +31,24 @@ public class UserController {
 	@Autowired
 	private RestServices restServices; 
 	
-
+	/**
+	 * Get all user from database
+	 * 
+	 * @return
+	 */
 	@PreAuthorize("hasAuthority('DEV')")
 	@GetMapping("/getAllUsers")
 	public ResponseEntity<?> getAllUsers() {
 		return new ResponseEntity<>(userService.selectMany(), HttpStatus.OK); 
 	}
 	
+	/**
+	 * Creating new user if not exist
+	 * Needs as RequestBody user object
+	 * 
+	 * @param json
+	 * @return
+	 */
 	@PreAuthorize("hasAuthority('DEV')")
 	@PostMapping("/createUser")
 	@ResponseBody
@@ -51,7 +62,13 @@ public class UserController {
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-	
+	/**
+	 * Updating user
+	 * Needs as RequestBody user object
+	 * 
+	 * @param json
+	 * @return
+	 */
 	@PostMapping("/updateUser")
 	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> updateUser(@RequestBody String json) {
