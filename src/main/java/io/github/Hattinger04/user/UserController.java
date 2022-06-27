@@ -126,7 +126,7 @@ public class UserController {
 	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> getUser(@RequestBody String json) {
 		User user= userService.findUserByUsername(restServices.deserializeUser(json).getUsername());
-		if(user != null) {
+		if(user == null) {
 			return new ResponseEntity<>("Couldn't find user!", HttpStatus.NOT_FOUND); 
 		}
 		return new ResponseEntity<>(user, HttpStatus.OK); 
