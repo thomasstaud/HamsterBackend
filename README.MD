@@ -51,10 +51,10 @@ This are all Services which involves user data beginning with /user (links in br
 - /getAllUsers (GET)
 - /logout (GET)
 - /getUser (POST - byUsername)
-- /createUser (POST)
-- /updateUser (PSOT)
-- /addRole (POST)
-- /removeRole (POST)
+- /createUser (PUT)
+- /updateUser (POST)
+- /addRole (PUT)
+- /removeRole (DELETE)
 2. /hamster services  
 All services which handles requests containing hamstercode beginning with /hamster
 - /defaultTerrain (POST)
