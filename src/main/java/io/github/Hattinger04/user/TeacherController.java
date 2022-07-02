@@ -49,12 +49,26 @@ public class TeacherController {
 	}
 	
 	@PreAuthorize("hasAuthority('TEACHER')")
-	@DeleteMapping("/createClass")
+	@DeleteMapping("/deleteClass")
 	@ResponseBody
 	public ResponseEntity<?> deleteClass(@RequestBody String json) {
 		// TODO: deleting existing class and remove all database entries
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
-
+	@PreAuthorize("hasAuthority('TEACHER')")
+	@PostMapping("/addStudentClass")
+	@ResponseBody
+	public ResponseEntity<?> addStudentClass(@RequestBody String json) {
+		// TODO: adding students to class 
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
+	
+	@PreAuthorize("hasAuthority('TEACHER')")
+	@DeleteMapping("/removeStudentClass")
+	@ResponseBody
+	public ResponseEntity<?> removeStudentClass(@RequestBody String json) {
+		// TODO: removing students from class 
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
 }
