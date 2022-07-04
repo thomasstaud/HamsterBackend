@@ -32,7 +32,7 @@ public class TeacherController {
 	 * @return
 	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
-	@PostMapping("/getAllUsers")
+	@PostMapping("/getAllStudents")
 	@ResponseBody
 	public ResponseEntity<?> getAllStudents(@RequestBody String json) {
 		// TODO: adding to database class table or smth like that
