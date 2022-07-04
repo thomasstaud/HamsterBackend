@@ -71,4 +71,36 @@ public class TeacherController {
 		// TODO: removing students from class 
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
+	
+	@PreAuthorize("hasAuthority('TEACHER')")
+	@PutMapping("/createExercise")
+	@ResponseBody
+	public ResponseEntity<?> createExercise(@RequestBody String json) {
+		// TODO: create new exercise for class 
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
+	
+	@PreAuthorize("hasAuthority('TEACHER')")
+	@PostMapping("/rateExercise")
+	@ResponseBody
+	public ResponseEntity<?> rateExercise(@RequestBody String json) {
+		// TODO: rate exercise from student 
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
+	
+	@PreAuthorize("hasAuthority('TEACHER')")
+	@PostMapping("/publishExercise")
+	@ResponseBody
+	public ResponseEntity<?> publishExercise(@RequestBody String json) {
+		// TODO: rate exercise from student 
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
+	
+	@PreAuthorize("hasAuthority('TEACHER')")
+	@PutMapping("/deleteExercise")
+	@ResponseBody
+	public ResponseEntity<?> deleteExercise(@RequestBody String json) {
+		// TODO: delete existing exercise
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
 }
