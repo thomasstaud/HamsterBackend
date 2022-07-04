@@ -46,7 +46,7 @@ Should be changed when publishing it!
   
 All Services starts with /api!
 
-1. /user services  
+1. /user services - available from DEV
 This are all Services which involves user data beginning with /user (links in brackets not made yet)
 - /getAllUsers (GET)
 - /logout (GET)
@@ -55,11 +55,18 @@ This are all Services which involves user data beginning with /user (links in br
 - /updateUser (POST)
 - /addRole (PUT)
 - /removeRole (DELETE)
-2. /hamster services  
+2. /hamster services - for all registered user available: 
 All services which handles requests containing hamstercode beginning with /hamster
 - /defaultTerrain (POST)
 - /existingTerrain (POST)
 - /newTerrain (POST)  
+3. Teacher services - available from TEACHER
+Services which are available for teachers to take control over their students begin with /teacher
+- /getAllStudents (GET)
+- /createClass (PUT)
+- /deleteClass (DELETE)
+- /addStudentClass (POST)
+- /removeStudentClass (DELETE)
 
 3. /login service  
 The login service; request sent as json => {"username": "username", "password": "password"}
