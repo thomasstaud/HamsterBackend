@@ -234,3 +234,25 @@ Juli 05, 2022 9:26:00 PM io.github.Hattinger04.aop.LogAspect loginLog
 FINE: User(id=null, username=fsahkfn, password=fnd.,nf, active=null, roles=null) - [logged in]
 Juli 05, 2022 9:26:20 PM io.github.Hattinger04.aop.LogAspect loginLog
 FINE: User(id=null, username=admin, password=admin, active=null, roles=null) - [logged in]
+Juli 05, 2022 9:31:27 PM io.github.Hattinger04.aop.LogAspect loginLog
+FINE: User(id=null, username=admin, password=admin, active=null, roles=null) - [logged in]
+Juli 05, 2022 9:36:21 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FINE: admin - 192.168.31.64 - 63244 	[logged out]
+Juli 05, 2022 9:39:55 PM io.github.Hattinger04.aop.LogAspect loginLog
+FINE: User(id=null, username=admin, password=admin, active=null, roles=null) - [logged in]
+Juli 05, 2022 9:41:26 PM io.github.Hattinger04.aop.LogAspect loginLog
+FINE: User(id=null, username=admin, password=admin, active=null, roles=null) - [logged in]
+Juli 05, 2022 9:41:47 PM io.github.Hattinger04.aop.LogAspect loginLog
+FINE: User(id=null, username=null, password=null, active=null, roles=null) - [logged in]
+Juli 05, 2022 9:42:17 PM io.github.Hattinger04.aop.LogAspect loginLog
+FINE: User(id=null, username=null, password=null, active=null, roles=null) - [logged in]
+Juli 05, 2022 9:42:21 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FINE: admin - 192.168.31.64 - 63519 	[logged out]
+Juli 05, 2022 9:42:22 PM io.github.Hattinger04.aop.LogAspect loginLog
+FINE: User(id=null, username=null, password=null, active=null, roles=null) - [logged in]
+Juli 05, 2022 9:44:54 PM io.github.Hattinger04.aop.LogAspect loginLog
+FINE: User(id=null, username=admin, password=admin, active=null, roles=null) - [logged in]
+Juli 05, 2022 9:45:20 PM io.github.Hattinger04.aop.LogAspect logoutLog
+FINE: admin - 192.168.31.64 - 63662 	[logged out]
+Juli 05, 2022 9:45:39 PM io.github.Hattinger04.aop.LogAspect loginLog
+FINE: User(id=null, username=admin, password=admin, active=null, roles=null) - [logged in]
