@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 
-@SpringBootApplication()
+@SpringBootApplication() 
 public class ProjektWebsiteApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ProjektWebsiteApplication.class, args);
