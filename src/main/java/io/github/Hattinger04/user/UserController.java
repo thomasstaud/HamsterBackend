@@ -55,10 +55,10 @@ public class UserController {
 	public ResponseEntity<?> createUser(@RequestBody String json) {
 		User user = restServices.deserializeUser(json);
 		if(user == null) {
-			return new ResponseEntity<>("wrong data", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Could not save user -> wrong data", HttpStatus.BAD_REQUEST);
 		}
 		if(!userService.saveUser(user)) {
-			return new ResponseEntity<>("error in db", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Could not save user -> error in database", HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -156,7 +156,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/logout")
-	@PreAuthorize("isAuthenticated()") 
+	@PreAuthorize("isAuthenticated()") // not really needed
 	public ResponseEntity<?> logoutPage(HttpServletRequest request, HttpServletResponse response) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth != null) {

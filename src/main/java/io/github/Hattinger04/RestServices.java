@@ -13,7 +13,12 @@ public class RestServices {
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 	
-	
+	/**
+	 * Convert JSON-String to User object
+	 * 
+	 * @param json
+	 * @return
+	 */
 	public User deserializeUser(String json) {
 		try {
 			return objectMapper.readValue(json, User.class);
@@ -21,6 +26,13 @@ public class RestServices {
 			return null;
 		}
 	}
+	
+	/**
+	 * Convert JSON-String to Hamster object
+	 * 
+	 * @param json
+	 * @return
+	 */
 	public Hamster deserializeHamster(String json) {
 		try {
 			return objectMapper.readValue(json, Hamster.class);
@@ -29,6 +41,12 @@ public class RestServices {
 		}
 	}
 	
+	/**
+	 * Convert JSON-String to UserRole object
+	 * 
+	 * @param json
+	 * @return
+	 */
 	public UserRole deserializeUserRole(String json) {
 		try {
 			return objectMapper.readValue(json, UserRole.class);

@@ -24,13 +24,13 @@ public class AuthController {
 
 	
 	@PostMapping("/login")
-	public ResponseEntity<HttpStatus> login(@RequestBody User user) throws Exception {	
+	public ResponseEntity<?> login(@RequestBody User user) throws Exception {	
 		try {
 			SecurityContextHolder.getContext().setAuthentication(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())));
 		} catch (BadCredentialsException e) {
 			throw new Exception("Invalid credentials");
 		}
-		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	// TODO: is checking data with constraints working?
