@@ -2,6 +2,16 @@
 
 This is the API Background where our frontend framework (= VueJS) sends request to.
 
+## Installation guide for developer (not using docker)
+
+- git clone https://github.com/xJHamster/BackendSpring
+- open maven spring project in your IDE 
+- run ProjectWebsiteApplication 
+- create mysql database called "springserver"
+- go to application.properties and change spring.sql.init.mode=never to spring.sql.init.mode=always 
+- restart spring
+- then undo changes in application.properties and restart again 
+
 ## The commands 
 
 - vor(); 
