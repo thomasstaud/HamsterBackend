@@ -9,7 +9,7 @@ This is the API Background where our frontend framework (= VueJS) sends request 
 - run ProjectWebsiteApplication 
 - create mysql database called "springserver"
 - go to application.properties and change spring.sql.init.mode=never to spring.sql.init.mode=always 
-- restart spring
+- restart program
 - then undo changes in application.properties and restart again 
 
 ## The commands 
