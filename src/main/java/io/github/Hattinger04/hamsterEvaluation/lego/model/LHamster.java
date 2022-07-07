@@ -38,15 +38,12 @@ public class LHamster extends Thread {
 
 	// dibo 20.04.2005
 	private void _intern_sleep_200405() {
-		try {
-			if (!this.parallel) {
-				return;
-			}
-			int msec = (int) (Math.random() * 1000 * Thread.NORM_PRIORITY / this.getPriority());
-			Thread.sleep(0); // dibo to change msec);
-		} catch (InterruptedException exc) {
-			interrupt();
+		if (!this.parallel) {
+			return;
 		}
+		int msec = (int) (Math.random() * 1000 * Thread.NORM_PRIORITY / this.getPriority());
+//			Thread.sleep(0); // dibo to change msec);
+
 	}
 
 	public void vor() {

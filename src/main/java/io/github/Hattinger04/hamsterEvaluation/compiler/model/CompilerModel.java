@@ -53,15 +53,12 @@ public class CompilerModel extends Observable {
 	 */
 	public boolean compile(HamsterFile file) throws IOException {
 		if (!precompiler.precompile(file)) {
-			System.out.println("Precompiler error!");
 		    return false;
 		}
-		System.out.println("Compiling...");
 		compilerErrors = javaCompiler.compile(file);
 		setChanged();
 		notifyObservers(COMPILER_ERRORS);
 		if (compilerErrors == null || compilerErrors.size() == 0) {
-			System.out.println("No Compiler Errors");
 			return true;
 		}
 		for(Object o : compilerErrors) {
