@@ -63,7 +63,7 @@ public class HamsterController {
 	@ResponseBody
 	public ResponseEntity<?> defaultTerrain(@RequestBody String json) {
 		Hamster hamster = restServices.deserializeHamster(json);
-		String path = String.format("src/main/resources/hamster/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName());
+		String path = String.format("src/main/resources/hamster/%s/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getProgramName());
 		createNewFile(path); 
 		writeTextToFile(new File(path), hamster.getProgram());
 		wb.getJsonObject().clear();
@@ -76,8 +76,8 @@ public class HamsterController {
 	@ResponseBody
 	public ResponseEntity<?> exisitingTerrain(@RequestBody String json) {
 		Hamster hamster = restServices.deserializeHamster(json);
-		String hamsterPath = String.format("src/main/resources/hamster/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName());
-		String terrainPath = String.format("src/main/resources/hamster/%s/%s.ter", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getTerrainName());
+		String hamsterPath = String.format("src/main/resources/hamster/%s/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getProgramName());
+		String terrainPath = String.format("src/main/resources/hamster/%s/%s/%s.ter", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getTerrainName());
 		createNewFile(hamsterPath); 
 		createNewFile(terrainPath); // not sure if needed
 		writeTextToFile(new File(hamsterPath), hamster.getProgram());
@@ -91,8 +91,8 @@ public class HamsterController {
 	@ResponseBody
 	public ResponseEntity<?> newTerrain(@RequestBody String json) {
 		Hamster hamster = restServices.deserializeHamster(json);
-		String hamsterPath = String.format("src/main/resources/hamster/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName());
-		String terrainPath = String.format("src/main/resources/hamster/%s/%s.ter", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getTerrainName());
+		String hamsterPath = String.format("src/main/resources/hamster/%s/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getProgramName());
+		String terrainPath = String.format("src/main/resources/hamster/%s/%s/%s.ter", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getTerrainName());
 		createNewFile(hamsterPath); 
 		createNewFile(terrainPath); 
 		writeTextToFile(new File(hamsterPath), hamster.getProgram());
