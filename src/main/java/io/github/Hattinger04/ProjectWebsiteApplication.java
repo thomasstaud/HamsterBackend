@@ -10,9 +10,9 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication() 
-public class ProjektWebsiteApplication {
+public class ProjectWebsiteApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(ProjektWebsiteApplication.class, args);
+		SpringApplication.run(ProjectWebsiteApplication.class, args);
 	}
 
 	@Bean
