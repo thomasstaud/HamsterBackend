@@ -4,6 +4,7 @@ import org.hibernate.exception.DataException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,5 +29,10 @@ public class GlobalControlAdvice {
 	@ExceptionHandler(DataException.class)
 	public ResponseEntity<?> exceptionDeniedHandler(DataException ex, Model model) {
 		return new ResponseEntity<>(new Error("Wrong sql!", "You have made some mistake in your sql statement!", HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR); 
+	}
+	
+	@ExceptionHandler(InternalAuthenticationServiceException.class)
+	public ResponseEntity<?> exceptionAuthentication(InternalAuthenticationServiceException ex, Model model) {
+		return new ResponseEntity<>(new Error("Authentication failed!", "Wrong username and / or password!", HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR); 
 	}
 }
