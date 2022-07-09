@@ -18,7 +18,7 @@ public class GlobalControlAdvice {
 	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<?> exceptionHandler(Exception ex, Model model) {
-		return new ResponseEntity<>(new Error("Internal server error: GlobalControlAdvice", ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);  
+		return new ResponseEntity<>(new Error("Exception occurred!", ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);  
 	}
 	
 	@ExceptionHandler(AccessDeniedException.class)
