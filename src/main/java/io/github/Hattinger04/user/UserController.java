@@ -151,7 +151,7 @@ public class UserController {
 	
 	// TODO: Delete if not needed anymore
 	@GetMapping("/home")
-	public ResponseEntity<?>  successHome() {
+	public ResponseEntity<?> successHome() {
 		return new ResponseEntity<>((SecurityContextHolder.getContext().getAuthentication().getName()), HttpStatus.OK);
 	}
 	

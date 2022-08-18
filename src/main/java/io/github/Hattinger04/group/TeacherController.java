@@ -1,4 +1,4 @@
-package io.github.Hattinger04.user;
+package io.github.Hattinger04.group;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,7 @@ public class TeacherController {
 
 	
 	/**
-	 * Get all students in class from database
+	 * Get all students in Group from database
 	 * 
 	 * @return
 	 */
@@ -35,40 +35,40 @@ public class TeacherController {
 	@PostMapping("/getAllStudents")
 	@ResponseBody
 	public ResponseEntity<?> getAllStudents(@RequestBody String json) {
-		// TODO: adding to database class table or smth like that
-		// and return here all students of class
+		// TODO: adding to database Group table or smth like that
+		// and return here all students of Group
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
 	@PreAuthorize("hasAuthority('TEACHER')")
-	@PutMapping("/createClass")
+	@PutMapping("/createGroup")
 	@ResponseBody
-	public ResponseEntity<?> createClass(@RequestBody String json) {
-		// TODO: Create new class with teacher and students
+	public ResponseEntity<?> createGroup(@RequestBody String json) {
+		// TODO: Create new Group with teacher and students
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasAuthority('TEACHER')")
-	@DeleteMapping("/deleteClass")
+	@DeleteMapping("/deleteGroup")
 	@ResponseBody
-	public ResponseEntity<?> deleteClass(@RequestBody String json) {
-		// TODO: deleting existing class and remove all database entries
+	public ResponseEntity<?> deleteGroup(@RequestBody String json) {
+		// TODO: deleting existing Group and remove all database entries
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('TEACHER')")
-	@PostMapping("/addStudentClass")
+	@PostMapping("/addStudentGroup")
 	@ResponseBody
-	public ResponseEntity<?> addStudentClass(@RequestBody String json) {
-		// TODO: adding students to class 
+	public ResponseEntity<?> addStudentGroup(@RequestBody String json) {
+		// TODO: adding students to Group 
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
 	@PreAuthorize("hasAuthority('TEACHER')")
-	@DeleteMapping("/removeStudentClass")
+	@DeleteMapping("/removeStudentGroup")
 	@ResponseBody
-	public ResponseEntity<?> removeStudentClass(@RequestBody String json) {
-		// TODO: removing students from class 
+	public ResponseEntity<?> removeStudentGroup(@RequestBody String json) {
+		// TODO: removing students from Group 
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
@@ -76,7 +76,7 @@ public class TeacherController {
 	@PutMapping("/createExercise")
 	@ResponseBody
 	public ResponseEntity<?> createExercise(@RequestBody String json) {
-		// TODO: create new exercise for class 
+		// TODO: create new exercise for Group 
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
@@ -89,10 +89,10 @@ public class TeacherController {
 	}
 	
 	@PreAuthorize("hasAuthority('TEACHER')")
-	@PostMapping("/publishExercise")
+	@PostMapping("/patchExercise")
 	@ResponseBody
-	public ResponseEntity<?> publishExercise(@RequestBody String json) {
-		// TODO: rate exercise from student 
+	public ResponseEntity<?> patchExercise(@RequestBody String json) {
+		// TODO: change exercise for Group
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
