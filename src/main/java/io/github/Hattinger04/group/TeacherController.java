@@ -27,8 +27,10 @@ public class TeacherController {
 
 	
 	/**
-	 * Get all students in Group from database
+	 * Get all students in group from database
+	 * Needs group name 
 	 * 
+	 * @param json
 	 * @return
 	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
@@ -40,6 +42,13 @@ public class TeacherController {
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
+	/**
+	 * Create a new group
+	 * Needs group name
+	 * 
+	 * @param json
+	 * @return
+	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
 	@PutMapping("/createGroup")
 	@ResponseBody
@@ -48,6 +57,13 @@ public class TeacherController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
+	/**
+	 * Deletes a existing group
+	 * Needs group name
+	 * 
+	 * @param json
+	 * @return
+	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
 	@DeleteMapping("/deleteGroup")
 	@ResponseBody
@@ -56,6 +72,13 @@ public class TeacherController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	/**
+	 * Adds student to existing group
+	 * Needs group name + student name
+	 * 
+	 * @param json
+	 * @return
+	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
 	@PostMapping("/addStudentGroup")
 	@ResponseBody
@@ -64,6 +87,13 @@ public class TeacherController {
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
+	/**
+	 * Removes student from group
+	 * Needs group name + student name 
+	 * 
+	 * @param json
+	 * @return
+	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
 	@DeleteMapping("/removeStudentGroup")
 	@ResponseBody
@@ -71,7 +101,14 @@ public class TeacherController {
 		// TODO: removing students from Group 
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
-	
+
+	/**
+	 * Creates a new exercise in a existing group 
+	 * Needs group name + exercise object 
+	 * 
+	 * @param json
+	 * @return
+	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
 	@PutMapping("/createExercise")
 	@ResponseBody
@@ -80,14 +117,13 @@ public class TeacherController {
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
-	@PreAuthorize("hasAuthority('TEACHER')")
-	@PostMapping("/rateExercise")
-	@ResponseBody
-	public ResponseEntity<?> rateExercise(@RequestBody String json) {
-		// TODO: rate exercise from student 
-		return new ResponseEntity<>(HttpStatus.OK); 
-	}
-	
+	/**
+	 * Changes already existing (and published) exercises
+	 * Needs group name + exercise object
+	 * 
+	 * @param json
+	 * @return
+	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
 	@PostMapping("/patchExercise")
 	@ResponseBody
@@ -96,6 +132,13 @@ public class TeacherController {
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
+	/**
+	 * Deletes existing exercise 
+	 * Needs group name + exercise name
+	 * 
+	 * @param json
+	 * @return
+	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
 	@PutMapping("/deleteExercise")
 	@ResponseBody
@@ -103,4 +146,20 @@ public class TeacherController {
 		// TODO: delete existing exercise
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
+	
+	/**
+	 * Gives a rating to an exercise for one student
+	 * Needs group name + exercise name + student name 
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@PreAuthorize("hasAuthority('TEACHER')")
+	@PostMapping("/rateExercise")
+	@ResponseBody
+	public ResponseEntity<?> rateExercise(@RequestBody String json) {
+		// TODO: rate exercise from student 
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
+
 }
