@@ -9,7 +9,10 @@ import lombok.Setter;
 public class Group {
 	
 	@Getter @Setter
-	private String name; 
+	private int id; // TODO: unique 
+	
+	@Getter @Setter
+	private String name;  // TODO: unique
 	
 	@Getter @Setter
 	private List<User> teacher; // in case of multiple teacher in one group
