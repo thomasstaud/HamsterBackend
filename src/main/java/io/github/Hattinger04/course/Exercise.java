@@ -1,4 +1,4 @@
-package io.github.Hattinger04.group;
+package io.github.Hattinger04.course;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,5 +19,5 @@ public class Exercise {
 		// TODO: if already published: publish changes to all students
 	}
 	
-	// does exercise refer to student or group? 
+	// does exercise refer to student or course? 
 }

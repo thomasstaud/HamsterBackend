@@ -1,4 +1,4 @@
-package io.github.Hattinger04.group;
+package io.github.Hattinger04.course;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,8 +27,8 @@ public class TeacherController {
 
 	
 	/**
-	 * Get all students in group from database
-	 * Needs group name 
+	 * Get all students in Course from database
+	 * Needs Course name 
 	 * 
 	 * @param json
 	 * @return
@@ -37,74 +37,74 @@ public class TeacherController {
 	@PostMapping("/getAllStudents")
 	@ResponseBody
 	public ResponseEntity<?> getAllStudents(@RequestBody String json) {
-		// TODO: adding to database Group table or smth like that
-		// and return here all students of Group
+		// TODO: adding to database Course table or smth like that
+		// and return here all students of Course
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
 	/**
-	 * Create a new group
-	 * Needs group name
+	 * Create a new Course
+	 * Needs Course name
 	 * 
 	 * @param json
 	 * @return
 	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
-	@PutMapping("/createGroup")
+	@PutMapping("/createCourse")
 	@ResponseBody
-	public ResponseEntity<?> createGroup(@RequestBody String json) {
-		// TODO: Create new Group with teacher and students
+	public ResponseEntity<?> createCourse(@RequestBody String json) {
+		// TODO: Create new Course with teacher and students
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	/**
-	 * Deletes a existing group
-	 * Needs group name
+	 * Deletes a existing Course
+	 * Needs Course name
 	 * 
 	 * @param json
 	 * @return
 	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
-	@DeleteMapping("/deleteGroup")
+	@DeleteMapping("/deleteCourse")
 	@ResponseBody
-	public ResponseEntity<?> deleteGroup(@RequestBody String json) {
-		// TODO: deleting existing Group and remove all database entries
+	public ResponseEntity<?> deleteCourse(@RequestBody String json) {
+		// TODO: deleting existing Course and remove all database entries
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
-	 * Adds student to existing group
-	 * Needs group name + student name
+	 * Adds student to existing Course
+	 * Needs Course name + student name
 	 * 
 	 * @param json
 	 * @return
 	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
-	@PostMapping("/addStudentGroup")
+	@PostMapping("/addStudentCourse")
 	@ResponseBody
-	public ResponseEntity<?> addStudentGroup(@RequestBody String json) {
-		// TODO: adding students to Group 
+	public ResponseEntity<?> addStudentCourse(@RequestBody String json) {
+		// TODO: adding students to Course 
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
 	/**
-	 * Removes student from group
-	 * Needs group name + student name 
+	 * Removes student from Course
+	 * Needs Course name + student name 
 	 * 
 	 * @param json
 	 * @return
 	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
-	@DeleteMapping("/removeStudentGroup")
+	@DeleteMapping("/removeStudentCourse")
 	@ResponseBody
-	public ResponseEntity<?> removeStudentGroup(@RequestBody String json) {
-		// TODO: removing students from Group 
+	public ResponseEntity<?> removeStudentCourse(@RequestBody String json) {
+		// TODO: removing students from Course 
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 
 	/**
-	 * Creates a new exercise in a existing group 
-	 * Needs group name + exercise object 
+	 * Creates a new exercise in a existing Course 
+	 * Needs Course name + exercise object 
 	 * 
 	 * @param json
 	 * @return
@@ -113,13 +113,13 @@ public class TeacherController {
 	@PutMapping("/createExercise")
 	@ResponseBody
 	public ResponseEntity<?> createExercise(@RequestBody String json) {
-		// TODO: create new exercise for Group 
+		// TODO: create new exercise for Course 
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
 	/**
 	 * Changes already existing (and published) exercises
-	 * Needs group name + exercise object
+	 * Needs Course name + exercise object
 	 * 
 	 * @param json
 	 * @return
@@ -128,13 +128,13 @@ public class TeacherController {
 	@PostMapping("/patchExercise")
 	@ResponseBody
 	public ResponseEntity<?> patchExercise(@RequestBody String json) {
-		// TODO: change exercise for Group
+		// TODO: change exercise for Course
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
 	/**
 	 * Deletes existing exercise 
-	 * Needs group name + exercise name
+	 * Needs Course name + exercise name
 	 * 
 	 * @param json
 	 * @return
@@ -149,7 +149,7 @@ public class TeacherController {
 	
 	/**
 	 * Gives a rating to an exercise for one student
-	 * Needs group name + exercise name + student name 
+	 * Needs Course name + exercise name + student name 
 	 * 
 	 * @param json
 	 * @return
