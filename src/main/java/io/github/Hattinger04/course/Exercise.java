@@ -1,12 +1,19 @@
 package io.github.Hattinger04.course;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+//@Entity
+//@Table(name = "exercise")
+@AllArgsConstructor
 public class Exercise {
 
 	@Getter @Setter
-	private int id; // TODO: unique
+	private int id; // TODO: primary_key
 	
 	@Getter @Setter
 	private String name; // TODO: unique 
@@ -19,5 +26,14 @@ public class Exercise {
 		// TODO: if already published: publish changes to all students
 	}
 	
-	// does exercise refer to student or course? 
+	@Getter @Setter
+	private int course_id; 
+	
+	@Getter @Setter
+	private int teacher_id; 
+	
+	@Getter @Setter
+	private int student_id; 
+	
+	
 }
