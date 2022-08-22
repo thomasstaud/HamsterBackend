@@ -35,5 +35,12 @@ public class Exercise {
 	@Getter @Setter
 	private int student_id; 
 	
+/* TODO: best solution? 
+ * @Getter @Setter
+	private boolean finished;
 	
+	@Getter @Setter
+	private String answer; 
+ 
+ */
 }
