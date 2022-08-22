@@ -24,7 +24,7 @@ public class Course {
 //	@GeneratedValue(strategy = GenerationType.IDENTITY)
 //	@Column(name = "user_id")
 	@Getter @Setter
-	private int id; // TODO: primary_key
+	private Integer id; // TODO: primary_key
 	
 	@Getter @Setter
 	private String name;  // TODO: unique

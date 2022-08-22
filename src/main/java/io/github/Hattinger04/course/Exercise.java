@@ -13,7 +13,7 @@ import lombok.Setter;
 public class Exercise {
 
 	@Getter @Setter
-	private int id; // TODO: primary_key
+	private Integer id; // TODO: primary_key
 	
 	@Getter @Setter
 	private String name; // TODO: unique 
@@ -27,17 +27,17 @@ public class Exercise {
 	}
 	
 	@Getter @Setter
-	private int course_id; 
+	private Integer course_id; 
 	
 	@Getter @Setter
-	private int teacher_id; 
+	private Integer teacher_id; 
 	
 	@Getter @Setter
-	private int student_id; 
+	private Integer student_id; 
 	
 /* TODO: best solution? 
  * @Getter @Setter
-	private boolean finished;
+	private Boolean finished;
 	
 	@Getter @Setter
 	private String answer; 

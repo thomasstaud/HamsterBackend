@@ -14,7 +14,7 @@ import lombok.Setter;
 public class Teacher {
 	
 	@Getter @Setter
-	private int id; // TODO: primary_key
+	private Integer id; // TODO: primary_key
 	
 	@Getter @Setter
 	private String name; // TODO: unique
