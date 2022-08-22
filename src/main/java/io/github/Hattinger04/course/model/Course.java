@@ -1,4 +1,4 @@
-package io.github.Hattinger04.course;
+package io.github.Hattinger04.course.model;
 
 import java.util.Set;
 

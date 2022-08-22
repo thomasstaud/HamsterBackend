@@ -16,7 +16,7 @@ import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.validator.constraints.Length;
 
-import io.github.Hattinger04.course.Course;
+import io.github.Hattinger04.course.model.Course;
 import io.github.Hattinger04.role.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

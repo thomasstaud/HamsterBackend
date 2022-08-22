@@ -1,4 +1,4 @@
-package io.github.Hattinger04.course;
+package io.github.Hattinger04.course.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -9,10 +9,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 //@Entity
-//@Table(name = "teacher")
+//@Table(name = "student")
 @AllArgsConstructor
-public class Teacher {
-	
+public class Student {
+
 	@Getter @Setter
 	private Integer id; // TODO: primary_key
 	
