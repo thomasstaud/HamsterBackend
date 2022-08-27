@@ -18,7 +18,7 @@ import io.github.Hattinger04.user.model.UserService;
 
 @RestController
 @RequestMapping("/teacher")
-public class TeacherController {
+public class CourseController {
 
 	@Autowired
 	private UserService userService;
