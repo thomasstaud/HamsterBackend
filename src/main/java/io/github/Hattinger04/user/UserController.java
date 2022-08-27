@@ -53,7 +53,7 @@ public class UserController {
 	@PostMapping("/createUser")
 	@ResponseBody
 	public ResponseEntity<?> createUser(@RequestBody String json) {
-		User user = restServices.deserializeUser(json);
+		User user = (User) restServices.deserialize(User.class, json); 
 		if(user == null) {
 			return new ResponseEntity<>("Could not save user -> wrong data", HttpStatus.BAD_REQUEST);
 		}
@@ -72,7 +72,7 @@ public class UserController {
 	@PostMapping("/updateUser")
 	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> updateUser(@RequestBody String json) {
-		User user = restServices.deserializeUser(json); 
+		User user = (User) restServices.deserialize(User.class, json); 
 		if(userService.updateUser(user)) {
 			return new ResponseEntity<>("Could not update user!", HttpStatus.NOT_FOUND); 
 		}
@@ -89,7 +89,7 @@ public class UserController {
 	@PostMapping("/deleteUser")
 	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> deleteUser(@RequestBody String json) {
-		UserRole user = restServices.deserializeUserRole(json); 
+		UserRole user = (UserRole) restServices.deserialize(UserRole.class, json); 
 		if(!userService.deleteUser(user.getUser_id())) {
 			return new ResponseEntity<>("Could not delete user!", HttpStatus.NOT_FOUND); 
 		}
@@ -107,7 +107,7 @@ public class UserController {
 	@PostMapping("/addRole")
 	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> addRole(@RequestBody String json) {
-		UserRole userRole = restServices.deserializeUserRole(json);
+		UserRole userRole = (UserRole) restServices.deserialize(UserRole.class, json);
 		if(!userService.insertUserRole(userRole.getUser_id(), userRole.getRole_id())) {
 			return new ResponseEntity<>("Could not insert new Role!", HttpStatus.NOT_FOUND); 
 		}
@@ -124,7 +124,7 @@ public class UserController {
 	@PostMapping("/removeRole")
 	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> removeRole(@RequestBody String json) {
-		UserRole userRole = restServices.deserializeUserRole(json);
+		UserRole userRole = (UserRole) restServices.deserialize(UserRole.class, json);
 		if(!userService.removeUserRole(userRole.getUser_id(), userRole.getRole_id())) {
 			return new ResponseEntity<>("Could not remove Role!", HttpStatus.NOT_FOUND); 
 		}
@@ -142,7 +142,7 @@ public class UserController {
 	@PostMapping("/getUser")
 	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> getUser(@RequestBody String json) {
-		User user= userService.findUserByUsername(restServices.deserializeUser(json).getUsername());
+		User user = userService.findUserByUsername(((User) (restServices.deserialize(User.class, json))).getUsername());
 		if(user == null) {
 			return new ResponseEntity<>("Couldn't find user!", HttpStatus.NOT_FOUND); 
 		}

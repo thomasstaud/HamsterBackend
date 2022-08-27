@@ -62,7 +62,7 @@ public class HamsterController {
 	@PostMapping("/defaultTerrain")
 	@ResponseBody
 	public ResponseEntity<?> defaultTerrain(@RequestBody String json) {
-		Hamster hamster = restServices.deserializeHamster(json);
+		Hamster hamster = (Hamster) restServices.deserialize(Hamster.class, json);
 		String path = String.format("src/main/resources/hamster/%s/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getProgramName());
 		createNewFile(path); 
 		writeTextToFile(new File(path), hamster.getProgram());
@@ -75,7 +75,7 @@ public class HamsterController {
 	@PostMapping("/existingTerrain")
 	@ResponseBody
 	public ResponseEntity<?> exisitingTerrain(@RequestBody String json) {
-		Hamster hamster = restServices.deserializeHamster(json);
+		Hamster hamster = (Hamster) restServices.deserialize(Hamster.class, json);
 		String hamsterPath = String.format("src/main/resources/hamster/%s/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getProgramName());
 		String terrainPath = String.format("src/main/resources/hamster/%s/%s/%s.ter", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getTerrainName());
 		createNewFile(hamsterPath); 
@@ -90,7 +90,7 @@ public class HamsterController {
 	@PostMapping("/newTerrain")
 	@ResponseBody
 	public ResponseEntity<?> newTerrain(@RequestBody String json) {
-		Hamster hamster = restServices.deserializeHamster(json);
+		Hamster hamster = (Hamster) restServices.deserialize(Hamster.class, json);
 		String hamsterPath = String.format("src/main/resources/hamster/%s/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getProgramName());
 		String terrainPath = String.format("src/main/resources/hamster/%s/%s/%s.ter", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getTerrainName());
 		createNewFile(hamsterPath); 
