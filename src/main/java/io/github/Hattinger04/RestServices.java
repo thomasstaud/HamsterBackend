@@ -10,7 +10,7 @@ import io.github.Hattinger04.user.model.User;
 
 @Service
 public class RestServices {
-
+	// TODO: asking how to write better!
 	private ObjectMapper objectMapper = new ObjectMapper();
 	
 	/**
