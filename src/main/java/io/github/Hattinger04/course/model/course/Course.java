@@ -1,4 +1,4 @@
-package io.github.Hattinger04.course.model;
+package io.github.Hattinger04.course.model.course;
 
 import java.util.Set;
 
@@ -19,6 +19,10 @@ import lombok.Setter;
 //@Table(name = "course")
 @AllArgsConstructor
 public class Course {
+
+	public Course(String name) {
+		this.name = name; 
+	}
 	
 //	@Id
 //	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,15 +32,12 @@ public class Course {
 	
 	@Getter @Setter
 	private String name;  // TODO: unique
-	
-	@Getter @Setter
-	private Set<User> teacher; // in case of multiple teacher in one group
-	
-	@Getter @Setter
-	private Set<User> students; 
-	
-	public Course(String name) {
-		this.name = name; 
-	}
-	
+		
+/*
+	Not tested!
+	Connection between course and user (n - m solution)
+	@ManyToMany(cascade = CascadeType.MERGE)
+	@JoinTable(name = "user_course", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
+	private Set<Course> courses;
+*/
 }

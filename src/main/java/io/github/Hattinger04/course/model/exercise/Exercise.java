@@ -1,4 +1,4 @@
-package io.github.Hattinger04.course.model;
+package io.github.Hattinger04.course.model.exercise;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -12,7 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Exercise {
 
-	public Exercise(String name) {
+	public Exercise(Integer course_id, String name) {
+		this.course_id = course_id; 
 		this.name = name; 
 	}
 	
@@ -26,20 +27,6 @@ public class Exercise {
 	private String text; 
 	
 	@Getter @Setter
-	private Integer course_id; 
-	
-	@Getter @Setter
-	private Integer teacher_id; 
-	
-	@Getter @Setter
-	private Integer student_id; 
-	
-/* TODO: best solution? 
- * @Getter @Setter
-	private Boolean finished;
-	
-	@Getter @Setter
-	private String answer; 
- 
- */
+	private Integer course_id; // TODO: FK
+
 }

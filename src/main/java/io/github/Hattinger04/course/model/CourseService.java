@@ -2,54 +2,79 @@ package io.github.Hattinger04.course.model;
 
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import io.github.Hattinger04.course.model.course.Course;
+import io.github.Hattinger04.course.model.course.CourseRepository;
+import io.github.Hattinger04.course.model.exercise.Exercise;
+import io.github.Hattinger04.course.model.exercise.ExerciseRepository;
+import io.github.Hattinger04.course.model.solution.SolutionRepository;
 import io.github.Hattinger04.user.model.User;
+import io.github.Hattinger04.user.model.UserRepository;
 
 public class CourseService {
 
+	// TODO: Nothing(!) tested yet
+	
+	private CourseRepository courseRepository; 
+	private ExerciseRepository exerciseRepository; 
+	private SolutionRepository solutionRepository; 
+	
+	@Autowired
+	public CourseService(CourseRepository courseRepository, ExerciseRepository exerciseRepository, SolutionRepository solutionRepository) {
+		this.courseRepository = courseRepository;
+		this.exerciseRepository = exerciseRepository;
+		this.solutionRepository = solutionRepository;
+	}
+
+	
 	public Course createCourse(String name) {
-		// TODO: implementation in db
-		return new Course(name); 
+		Course course = new Course(name); 
+		courseRepository.save(course); 
+		return course; 
 	}
 	
 	public void deleteCourse(String name) {
-		// TODO: implementation in db 
+		courseRepository.delete(courseRepository.findByName(name));
 	}
 	
 	public Course getCourseByID(int id) {
-		// TODO: get course by id
-		return null; 
+		return courseRepository.findById(id); 
 	}
 	
 	public Course getCourseByName(String name) {
-		// TODO: get course by name
-		return null; 
+		return courseRepository.findByName(name); 
 	}
 	
 	public void addStudentToCourse(Course course, User student) {
-		course.getStudents().add(student); // Not sure if this works! - implementation in db!
+		
 	}
 	
 	public void addStudentsToCourse(Course course, Set<User> student) {
-		course.getStudents().addAll(student); // Not sure if this works! - implementation in db!
+	
 	}
 	
 	public void removeStudentFromCourse(Course course, User student) {
-		course.getStudents().remove(student); // Not sure if this works! - implementation in db!
 
 	}
 	
 	public void removeStudentsFromCourse(Course course, Set<User> student) {
-		course.getStudents().removeAll(student); // Not sure if this works! - implementation in db!
+
 	}
 	
+	public Exercise getExerciseByID(int id) {
+		return exerciseRepository.findById(id); 
+	}
+		
 	// wont work like that ofc
-	public Exercise createExercise(String name) {
-		// TODO: implementation in db
-		return new Exercise(name); 
+	public Exercise createExercise(Integer course_id, String name) {
+		Exercise exercise = new Exercise(course_id, name);
+		exerciseRepository.save(exercise); 
+		return exercise; 
 	}
 	
-	public void deleteExercise(String name) {
-		// TODO: implementation in db
+	public void deleteExercise(Integer course_id, String name) {
+		exerciseRepository.delete(exerciseRepository.findByCourse(course_id, name));
 	}
 	
 	// TODO: students submitting solution

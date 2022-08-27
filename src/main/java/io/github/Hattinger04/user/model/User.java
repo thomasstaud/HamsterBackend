@@ -16,7 +16,6 @@ import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.validator.constraints.Length;
 
-import io.github.Hattinger04.course.model.Course;
 import io.github.Hattinger04.role.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,12 +49,5 @@ public class User {
 	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles;
-
-/*
-	Not tested!
-	Connection between course and user (n - m solution)
-	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "user_course", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
-	private Set<Course> courses;
-*/
+	
 }
