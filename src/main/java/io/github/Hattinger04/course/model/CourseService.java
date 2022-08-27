@@ -8,9 +8,9 @@ import io.github.Hattinger04.course.model.course.Course;
 import io.github.Hattinger04.course.model.course.CourseRepository;
 import io.github.Hattinger04.course.model.exercise.Exercise;
 import io.github.Hattinger04.course.model.exercise.ExerciseRepository;
+import io.github.Hattinger04.course.model.solution.Solution;
 import io.github.Hattinger04.course.model.solution.SolutionRepository;
 import io.github.Hattinger04.user.model.User;
-import io.github.Hattinger04.user.model.UserRepository;
 
 public class CourseService {
 
@@ -30,8 +30,7 @@ public class CourseService {
 	
 	public Course createCourse(String name) {
 		Course course = new Course(name); 
-		courseRepository.save(course); 
-		return course; 
+		return courseRepository.save(course); 
 	}
 	
 	public void deleteCourse(String name) {
@@ -46,6 +45,7 @@ public class CourseService {
 		return courseRepository.findByName(name); 
 	}
 	
+	// TODO: working with student / teacher table 
 	public void addStudentToCourse(Course course, User student) {
 		
 	}
@@ -62,21 +62,53 @@ public class CourseService {
 
 	}
 	
-	public Exercise getExerciseByID(int id) {
-		return exerciseRepository.findById(id); 
-	}
-		
+	
 	// wont work like that ofc
 	public Exercise createExercise(Integer course_id, String name) {
 		Exercise exercise = new Exercise(course_id, name);
-		exerciseRepository.save(exercise); 
-		return exercise; 
+		return exerciseRepository.save(exercise); 
+	}
+	
+	public Exercise getExerciseByID(int id) {
+		return exerciseRepository.findById(id); 
+	}
+	/**
+	 * Get exercise by course_id and course name 
+	 * 
+	 * @param course_id
+	 * @param name
+	 * @return
+	 */
+	public Exercise getExerciseByCourse(int course_id, String name) {
+		return exerciseRepository.findByCourse(course_id, name); 
 	}
 	
 	public void deleteExercise(Integer course_id, String name) {
 		exerciseRepository.delete(exerciseRepository.findByCourse(course_id, name));
 	}
 	
-	// TODO: students submitting solution
+	
+	public Solution createSolution(int exercise_id, String text) {
+		Solution solution = new Solution(exercise_id, text); 
+		return solutionRepository.save(solution); 
+	}
+	
+	public Solution getSolutionByID(int id) {
+		return solutionRepository.findById(id); 
+	}
+	/**
+	 * Get solution by exercise_id and exercise name 
+	 * 
+	 * @param exercise_id
+	 * @param name
+	 * @return
+	 */
+	public Solution getSolutionByExercise(int exercise_id, String name) {
+		return solutionRepository.findByExercise(exercise_id, name);
+	}
+	
+	public void deleteSolution(int id) {
+		solutionRepository.delete(solutionRepository.findById(id));
+	}
 	// TODO: teacher correcting students work 
 }
