@@ -1,5 +1,6 @@
 package io.github.Hattinger04.course.model;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +28,11 @@ public class CourseService {
 		this.solutionRepository = solutionRepository;
 	}
 
-	
-//	public Course createCourse(String name) {
-//		Course course = new Course(name); 
+//	public Course createCourse(Course course) {
 //		return courseRepository.save(course); 
 //	}
-//	
-//	public void deleteCourse(String name) {
-//		courseRepository.delete(courseRepository.findByName(name));
+//	public void deleteCourse(Course course) {
+//		courseRepository.delete(course);
 //	}
 	
 	public Course getCourseByID(int id) {
@@ -43,6 +41,11 @@ public class CourseService {
 	
 	public Course getCourseByName(String name) {
 		return courseRepository.findByName(name); 
+	}
+	
+	public List<Student> getAllStudents() {
+		// TODO: Get all students
+		return null;
 	}
 	
 	// TODO: working with student / teacher table 
@@ -63,10 +66,11 @@ public class CourseService {
 	}
 	
 	
-	// wont work like that ofc
-//	public Exercise createExercise(Integer course_id, String name) {
-//		Exercise exercise = new Exercise(course_id, name);
+//	public Exercise createExercise(Exercise exercise) {
 //		return exerciseRepository.save(exercise); 
+//	}
+//	public void deleteExercise(Exercise exercise) {
+//		exerciseRepository.delete(exercise);
 //	}
 	
 	public Exercise getExerciseByID(int id) {
@@ -83,16 +87,16 @@ public class CourseService {
 		return exerciseRepository.findByCourse(course_id, name); 
 	}
 	
-//	public void deleteExercise(Integer course_id, String name) {
-//		exerciseRepository.delete(exerciseRepository.findByCourse(course_id, name));
-//	}
+
 //	
 //	
-//	public Solution createSolution(int exercise_id, String text) {
-//		Solution solution = new Solution(exercise_id, text); 
+//	public Solution createSolution(Solution solution) { 
 //		return solutionRepository.save(solution); 
 //	}
-	
+//	public void deleteSolution(Solution solution) {
+//		solutionRepository.delete(solution);
+//	}
+
 	public Solution getSolutionByID(int id) {
 		return solutionRepository.findById(id); 
 	}
@@ -107,8 +111,5 @@ public class CourseService {
 		return solutionRepository.findByExercise(exercise_id, name);
 	}
 	
-//	public void deleteSolution(int id) {
-//		solutionRepository.delete(solutionRepository.findById(id));
-//	}
 	// TODO: teacher correcting students work 
 }

@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.Hattinger04.RestServices;
-import io.github.Hattinger04.user.model.User;
+import io.github.Hattinger04.course.model.CourseService;
+import io.github.Hattinger04.course.model.course.Course;
 import io.github.Hattinger04.user.model.UserService;
 
 @RestController
@@ -22,6 +23,8 @@ public class CourseController {
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private CourseService courseService;
 	@Autowired
 	private RestServices restServices; 
 
@@ -36,10 +39,8 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('TEACHER')")
 	@PostMapping("/getAllStudents")
 	@ResponseBody
-	public ResponseEntity<?> getAllStudents(@RequestBody String json) {
-		// TODO: adding to database Course table or smth like that
-		// and return here all students of Course
-		return new ResponseEntity<>(HttpStatus.OK); 
+	public ResponseEntity<?> getAllStudents() {
+		return new ResponseEntity<>(courseService.getAllStudents(), HttpStatus.OK); 
 	}
 	
 	/**
@@ -53,7 +54,8 @@ public class CourseController {
 	@PutMapping("/createCourse")
 	@ResponseBody
 	public ResponseEntity<?> createCourse(@RequestBody String json) {
-		// TODO: Create new Course with teacher and students
+		Course course = (Course) restServices.deserialize(Course.class, json);
+//		courseService.createCourse(course);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
@@ -68,7 +70,7 @@ public class CourseController {
 	@DeleteMapping("/deleteCourse")
 	@ResponseBody
 	public ResponseEntity<?> deleteCourse(@RequestBody String json) {
-		// TODO: deleting existing Course and remove all database entries
+//		courseService.deleteCourse((Course) restServices.deserialize(Course.class, json););
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -113,7 +115,7 @@ public class CourseController {
 	@PutMapping("/createExercise")
 	@ResponseBody
 	public ResponseEntity<?> createExercise(@RequestBody String json) {
-		// TODO: create new exercise for Course 
+//		courseService.createExercise((Exercise) restServices.deserialize(Exercise.class, json););
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
@@ -128,7 +130,7 @@ public class CourseController {
 	@PostMapping("/patchExercise")
 	@ResponseBody
 	public ResponseEntity<?> patchExercise(@RequestBody String json) {
-		// TODO: change exercise for Course
+//		courseService.createExercise((Exercise) restServices.deserialize(Exercise.class, json););
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
@@ -143,7 +145,7 @@ public class CourseController {
 	@PutMapping("/deleteExercise")
 	@ResponseBody
 	public ResponseEntity<?> deleteExercise(@RequestBody String json) {
-		// TODO: delete existing exercise
+//		courseService.deleteExercise((Exercise) restServices.deserialize(Exercise.class, json););
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
