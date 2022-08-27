@@ -1,11 +1,11 @@
 package io.github.Hattinger04.course.model.solution;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 //@Entity
 //@Table(name = "Solution")
+@Data
 @AllArgsConstructor
 public class Solution {
 
@@ -14,13 +14,10 @@ public class Solution {
 		this.text = text; 
 	}
 	
-	@Getter @Setter
 	private Integer id; // TODO: primary_key
 		
-	@Getter @Setter
 	private String text; 
 	
-	@Getter @Setter
 	private Integer exercise_id; // TODO: FK
 
 }

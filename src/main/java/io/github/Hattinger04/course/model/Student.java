@@ -1,22 +1,21 @@
 package io.github.Hattinger04.course.model;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 //@Entity
 //@Table(name = "student")
+@Data
 @AllArgsConstructor
 public class Student {
 
-	@Getter @Setter
 	private Integer id; // TODO: primary_key
 	
-	@Getter @Setter
-	private String name; // TODO: unique
+	private Integer user_id; // TODO: FK
 	
 }

@@ -4,11 +4,11 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 //@Entity
 //@Table(name = "exercise")
+@Data
 @AllArgsConstructor
 public class Exercise {
 
@@ -17,16 +17,11 @@ public class Exercise {
 		this.name = name; 
 	}
 	
-	@Getter @Setter
 	private Integer id; // TODO: primary_key
 	
-	@Getter @Setter
 	private String name; // TODO: unique 
 	
-	@Getter @Setter
 	private String text; 
 	
-	@Getter @Setter
 	private Integer course_id; // TODO: FK
-
 }
