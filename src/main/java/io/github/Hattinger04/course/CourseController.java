@@ -18,7 +18,7 @@ import io.github.Hattinger04.course.model.course.Course;
 import io.github.Hattinger04.user.model.UserService;
 
 @RestController
-@RequestMapping("/teacher")
+@RequestMapping("/USER")
 public class CourseController {
 
 	@Autowired
@@ -29,6 +29,8 @@ public class CourseController {
 	private RestServices restServices; 
 
 	
+	// TODO: change hasAuthority('USER') to smth with teacher / student check
+	
 	/**
 	 * Get all students in Course from database
 	 * Needs Course name 
@@ -36,7 +38,7 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('TEACHER')")
+	@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("/getAllStudents")
 	@ResponseBody
 	public ResponseEntity<?> getAllStudents() {
@@ -50,12 +52,11 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('TEACHER')")
+	@PreAuthorize("hasAuthority('USER')")
 	@PutMapping("/createCourse")
 	@ResponseBody
 	public ResponseEntity<?> createCourse(@RequestBody String json) {
-		Course course = (Course) restServices.deserialize(Course.class, json);
-//		courseService.createCourse(course);
+//		courseService.createCourse((Course) restServices.deserialize(Course.class, json););
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
@@ -66,7 +67,7 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('TEACHER')")
+	@PreAuthorize("hasAuthority('USER')")
 	@DeleteMapping("/deleteCourse")
 	@ResponseBody
 	public ResponseEntity<?> deleteCourse(@RequestBody String json) {
@@ -81,7 +82,7 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('TEACHER')")
+	@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("/addStudentCourse")
 	@ResponseBody
 	public ResponseEntity<?> addStudentCourse(@RequestBody String json) {
@@ -96,7 +97,7 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('TEACHER')")
+	@PreAuthorize("hasAuthority('USER')")
 	@DeleteMapping("/removeStudentCourse")
 	@ResponseBody
 	public ResponseEntity<?> removeStudentCourse(@RequestBody String json) {
@@ -111,7 +112,7 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('TEACHER')")
+	@PreAuthorize("hasAuthority('USER')")
 	@PutMapping("/createExercise")
 	@ResponseBody
 	public ResponseEntity<?> createExercise(@RequestBody String json) {
@@ -126,7 +127,7 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('TEACHER')")
+	@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("/patchExercise")
 	@ResponseBody
 	public ResponseEntity<?> patchExercise(@RequestBody String json) {
@@ -141,7 +142,7 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('TEACHER')")
+	@PreAuthorize("hasAuthority('USER')")
 	@PutMapping("/deleteExercise")
 	@ResponseBody
 	public ResponseEntity<?> deleteExercise(@RequestBody String json) {
@@ -156,7 +157,7 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('TEACHER')")
+	@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("/rateExercise")
 	@ResponseBody
 	public ResponseEntity<?> rateExercise(@RequestBody String json) {
