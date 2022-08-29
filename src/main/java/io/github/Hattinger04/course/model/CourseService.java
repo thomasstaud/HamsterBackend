@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import io.github.Hattinger04.course.model.course.Course;
 import io.github.Hattinger04.course.model.course.CourseRepository;
@@ -13,6 +14,7 @@ import io.github.Hattinger04.course.model.solution.Solution;
 import io.github.Hattinger04.course.model.solution.SolutionRepository;
 import io.github.Hattinger04.user.model.User;
 
+@Service
 public class CourseService {
 
 	// TODO: Nothing(!) tested yet
