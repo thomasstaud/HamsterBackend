@@ -29,15 +29,15 @@ public class Exercise {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "exercise_id")
-	private Integer id; // TODO: primary_key
+	private Integer id;
 	
 	@Column(name = "name", unique = true, nullable = false)
-	private String name; // TODO: unique 
+	private String name;
 	
 	@Column(name = "text", unique = false, nullable = true)
 	private String text; 
 	
 	@ManyToOne
 	@JoinColumn(name="course_id", nullable = false)
-	private Course course; // TODO: FK
+	private Course course;
 }

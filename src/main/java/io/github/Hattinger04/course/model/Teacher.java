@@ -23,9 +23,9 @@ public class Teacher {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "teacher_id")
-	private Integer id; // TODO: primary_key
+	private Integer id;
 	
 	@ManyToOne
 	@JoinColumn(name="user_id", nullable = false)
-	private User user; // TODO: FK	
+	private User user;
 }

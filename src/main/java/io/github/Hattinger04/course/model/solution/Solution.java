@@ -28,13 +28,13 @@ public class Solution {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "solution_id")
-	private Integer id; // TODO: primary_key
+	private Integer id;
 	
 	@Column(name = "text", unique = false, nullable = true)	
 	private String text; 
 	
 	@ManyToOne
 	@JoinColumn(name="exercise_id", nullable = false)
-	private Exercise exercise; // TODO: FK
+	private Exercise exercise; 
 
 }

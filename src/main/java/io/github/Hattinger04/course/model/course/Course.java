@@ -31,14 +31,10 @@ public class Course {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "course_id")
-	private Integer id; // TODO: primary_key
+	private Integer id;
 	@Column(name = "name", unique = true, nullable = false)
-	private String name;  // TODO: unique
+	private String name;
 		
-/*
-	Not tested!
-	Connection between course and user (n - m solution)
-*/
 	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "user_course", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
 	private Set<Course> courses;
