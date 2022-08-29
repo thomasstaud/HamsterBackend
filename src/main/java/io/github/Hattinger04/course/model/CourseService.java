@@ -30,12 +30,12 @@ public class CourseService {
 		this.solutionRepository = solutionRepository;
 	}
 
-//	public Course createCourse(Course course) {
-//		return courseRepository.save(course); 
-//	}
-//	public void deleteCourse(Course course) {
-//		courseRepository.delete(course);
-//	}
+	public Course createCourse(Course course) {
+		return courseRepository.save(course); 
+	}
+	public void deleteCourse(Course course) {
+		courseRepository.delete(course);
+	}
 	
 	public Course getCourseByID(int id) {
 		return courseRepository.findById(id); 
@@ -68,12 +68,12 @@ public class CourseService {
 	}
 	
 	
-//	public Exercise createExercise(Exercise exercise) {
-//		return exerciseRepository.save(exercise); 
-//	}
-//	public void deleteExercise(Exercise exercise) {
-//		exerciseRepository.delete(exercise);
-//	}
+	public Exercise createExercise(Exercise exercise) {
+		return exerciseRepository.save(exercise); 
+	}
+	public void deleteExercise(Exercise exercise) {
+		exerciseRepository.delete(exercise);
+	}
 	
 	public Exercise getExerciseByID(int id) {
 		return exerciseRepository.findById(id); 
@@ -90,14 +90,14 @@ public class CourseService {
 	}
 	
 
-//	
-//	
-//	public Solution createSolution(Solution solution) { 
-//		return solutionRepository.save(solution); 
-//	}
-//	public void deleteSolution(Solution solution) {
-//		solutionRepository.delete(solution);
-//	}
+	
+	
+	public Solution createSolution(Solution solution) { 
+		return solutionRepository.save(solution); 
+	}
+	public void deleteSolution(Solution solution) {
+		solutionRepository.delete(solution);
+	}
 
 	public Solution getSolutionByID(int id) {
 		return solutionRepository.findById(id); 
