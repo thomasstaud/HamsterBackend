@@ -30,7 +30,7 @@ public class Course {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "user_id")
+	@Column(name = "course_id")
 	private Integer id; // TODO: primary_key
 	@Column(name = "name", unique = true, nullable = false)
 	private String name;  // TODO: unique
