@@ -64,37 +64,45 @@ public class CourseService {
 	}
 	
 	public void setCourseTeacher(Course course, Teacher teacher) {
-		
+		teacherRepository.save(teacher);
+		courseRepository.addUserToCourse(teacher.getId(), course.getId());
 	}
 	
 	// TODO: working with student / teacher table 
-	public void addStudentToCourse(Course course, User student) {
-		
+	public void addStudentToCourse(Course course, Student student) {
+		studentRepository.save(student); 
+		courseRepository.addUserToCourse(student.getId(), course.getId());
 	}
 	
-	public void addStudentsToCourse(Course course, Set<User> student) {
-	
+	public void addStudentsToCourse(Course course, Set<Student> students) {
+		for(Student student : students) {
+			studentRepository.save(student); 
+			courseRepository.addUserToCourse(student.getId(), course.getId());
+		}
 	}
 	
-	public void removeStudentFromCourse(Course course, User student) {
-
+	public void removeStudentFromCourse(Course course, Student student) {
+		studentRepository.delete(student);
+		courseRepository.removeUserFromCourse(student.getId(), student.getId());
 	}
 	
-	public void removeStudentsFromCourse(Course course, Set<User> student) {
-
+	public void removeStudentsFromCourse(Course course, Set<Student> students) {
+		for(Student student : students) {
+			studentRepository.delete(student);
+			courseRepository.removeUserFromCourse(student.getId(), student.getId());
+		}
 	}
 	
 	public boolean isUserTeacher(Course course, User user) {
-		if(isUserInCourse(course, user)) {
-			// TODO
-			return true; 
-		}
-		return false; 
+		return courseRepository.isUserTeacher(user.getId(), course.getId()) != 0; 
+	}
+	
+	public boolean isUserStudent(Course course, User user) {
+		return courseRepository.isUserStudent(user.getId(), course.getId()) != 0; 	
 	}
 	
 	public boolean isUserInCourse(Course course, User user) {
-		// TODO
-		return false; 
+		return courseRepository.isUserStudent(user.getId(), course.getId()) != 0 || courseRepository.isUserTeacher(user.getId(), course.getId()) != 0; 	
 	}
 	
 	public Exercise createExercise(Exercise exercise) {

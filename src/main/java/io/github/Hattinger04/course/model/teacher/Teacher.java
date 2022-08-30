@@ -20,6 +20,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class Teacher {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "teacher_id")

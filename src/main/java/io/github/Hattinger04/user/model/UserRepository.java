@@ -14,12 +14,15 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User, Long> {
 	User findById(int id);
 	User findByUsername(String username);
+	
 	@Query(value = "SELECT auto_increment FROM information_schema.tables WHERE table_name='users'", nativeQuery = true)
 	List<Long> getNextSeriesId();
+	
 	@Modifying
 	@Query(value = "Insert into user_role(user_id, role_id) VALUES (:user_id, :role_id)", nativeQuery = true)
 	@Transactional
 	public void insertUserRole(@Param("user_id") int user_id, @Param("role_id") int role_id); 
+	
 	@Modifying
 	@Query(value = "delete from user_role where user_id = :user_id and role_id=:role_id", nativeQuery = true)
 	@Transactional
