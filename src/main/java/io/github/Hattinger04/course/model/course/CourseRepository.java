@@ -11,12 +11,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import io.github.Hattinger04.course.model.student.Student;
+import io.github.Hattinger04.course.model.teacher.Teacher;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long>{
 	Course findById(int id);
 	Course findByName(String name);
 	// TODO: SQL not tested yet!
+	
+	@Query(value = "SELECT * FROM TEACHER t JOIN USER u using(user_id) JOIN course c using(course_id, user_id) where c.course_id=:course_id", nativeQuery = true)
+	Teacher getCourseTeacher(int course_id); 
 	
 	@Query(value = "SELECT * FROM STUDENT s JOIN USER u using(user_id) JOIN course c using(course_id, user_id) where c.course_id=:course_id", nativeQuery = true)
 	List<Student> getAllStudents(int course_id); 

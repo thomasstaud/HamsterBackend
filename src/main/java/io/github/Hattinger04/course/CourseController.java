@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import io.github.Hattinger04.RestServices;
 import io.github.Hattinger04.course.model.CourseService;
 import io.github.Hattinger04.course.model.course.Course;
+import io.github.Hattinger04.course.model.exercise.Exercise;
+import io.github.Hattinger04.course.model.student.Student;
 
 @RestController
-@RequestMapping("/USER")
+@RequestMapping("/TEACHER")
 public class CourseController {
 
 	@Autowired
@@ -26,7 +28,22 @@ public class CourseController {
 	private RestServices restServices; 
 
 	
-	// TODO: change hasAuthority('USER') to smth with teacher / student check
+	/**
+	 * Get student by id in Course from database
+	 * Needs course object 
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@PreAuthorize("hasAuthority('TEACHER')")
+	@PostMapping("/getStudentByID")
+	@ResponseBody
+	public ResponseEntity<?> getStudentByID(@RequestBody String json) {
+		// TODO: not sure if that will work - probably not
+		Course course = (Course) restServices.deserialize(Course.class, json);
+		Student student = (Student) restServices.deserialize(Student.class, json);
+		return new ResponseEntity<>(courseService.getStudent(course, student), HttpStatus.OK); 
+	}
 	
 	/**
 	 * Get all students in Course from database
@@ -35,12 +52,27 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('TEACHER')")
 	@PostMapping("/getAllStudents")
 	@ResponseBody
 	public ResponseEntity<?> getAllStudents(@RequestBody String json) {
 		Course course = (Course) restServices.deserialize(Course.class, json);
 		return new ResponseEntity<>(courseService.getAllStudents(course), HttpStatus.OK); 
+	}
+	
+	/**
+	 * Get all students in Course from database
+	 * Needs course object 
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@PreAuthorize("hasAuthority('TEACHER')")
+	@PostMapping("/getAllStudents")
+	@ResponseBody
+	public ResponseEntity<?> getCourseTeacher(@RequestBody String json) {
+		Course course = (Course) restServices.deserialize(Course.class, json);
+		return new ResponseEntity<>(courseService.getCourseTeacher(course), HttpStatus.OK); 
 	}
 	
 	/**
@@ -50,11 +82,11 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('TEACHER')")
 	@PutMapping("/createCourse")
 	@ResponseBody
 	public ResponseEntity<?> createCourse(@RequestBody String json) {
-//		courseService.createCourse((Course) restServices.deserialize(Course.class, json));
+		courseService.createCourse((Course) restServices.deserialize(Course.class, json));
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
@@ -65,11 +97,11 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('TEACHER')")
 	@DeleteMapping("/deleteCourse")
 	@ResponseBody
 	public ResponseEntity<?> deleteCourse(@RequestBody String json) {
-//		courseService.deleteCourse((Course) restServices.deserialize(Course.class, json););
+		courseService.deleteCourse((Course) restServices.deserialize(Course.class, json));
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -80,11 +112,14 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('TEACHER')")
 	@PostMapping("/addStudentCourse")
 	@ResponseBody
 	public ResponseEntity<?> addStudentCourse(@RequestBody String json) {
-		// TODO: adding students to Course 
+		// TODO: not sure if that will work - probably not
+		Course course = (Course) restServices.deserialize(Course.class, json);
+		Student student = (Student) restServices.deserialize(Student.class, json);
+		courseService.addStudentToCourse(course, student); 
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
@@ -95,11 +130,14 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('TEACHER')")
 	@DeleteMapping("/removeStudentCourse")
 	@ResponseBody
 	public ResponseEntity<?> removeStudentCourse(@RequestBody String json) {
-		// TODO: removing students from Course 
+		// TODO: not sure if that will work - probably not
+		Course course = (Course) restServices.deserialize(Course.class, json);
+		Student student = (Student) restServices.deserialize(Student.class, json);
+		courseService.removeStudentFromCourse(course, student); 
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 
@@ -110,11 +148,11 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('TEACHER')")
 	@PutMapping("/createExercise")
 	@ResponseBody
 	public ResponseEntity<?> createExercise(@RequestBody String json) {
-//		courseService.createExercise((Exercise) restServices.deserialize(Exercise.class, json););
+		courseService.createExercise((Exercise) restServices.deserialize(Exercise.class, json));
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
@@ -125,11 +163,11 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('TEACHER')")
 	@PostMapping("/patchExercise")
 	@ResponseBody
 	public ResponseEntity<?> patchExercise(@RequestBody String json) {
-//		courseService.createExercise((Exercise) restServices.deserialize(Exercise.class, json););
+		courseService.createExercise((Exercise) restServices.deserialize(Exercise.class, json));
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
@@ -140,11 +178,11 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('TEACHER')")
 	@PutMapping("/deleteExercise")
 	@ResponseBody
 	public ResponseEntity<?> deleteExercise(@RequestBody String json) {
-//		courseService.deleteExercise((Exercise) restServices.deserialize(Exercise.class, json););
+		courseService.deleteExercise((Exercise) restServices.deserialize(Exercise.class, json));
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
@@ -155,7 +193,7 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('TEACHER')")
 	@PostMapping("/rateExercise")
 	@ResponseBody
 	public ResponseEntity<?> rateExercise(@RequestBody String json) {

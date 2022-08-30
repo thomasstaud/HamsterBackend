@@ -54,18 +54,30 @@ public class CourseService {
 		return courseRepository.findByName(name); 
 	}
 	
+	public Student getStudent(Course course, Student student) {
+		Student s;
+		if((s = studentRepository.findById(student.getId())) == null) { // TODO: if not tested!
+			s = studentRepository.findByName(student.getUser().getUsername());
+		}
+		return s;
+	}
+	
 	public List<Student> getAllStudents(Course course) {
 		return courseRepository.getAllStudents(course.getId());
 	}
 	
 	public Teacher getCourseTeacher(Course course) {
-		// TODO
-		return null; 
+		return courseRepository.getCourseTeacher(course.getId()); 
 	}
 	
 	public void setCourseTeacher(Course course, Teacher teacher) {
 		teacherRepository.save(teacher);
 		courseRepository.addUserToCourse(teacher.getId(), course.getId());
+	}
+	
+	public void deleteCourseTeacher(Course course, Teacher teacher) {
+		teacherRepository.delete(teacher);
+		courseRepository.removeUserFromCourse(teacher.getId(), course.getId());
 	}
 	
 	// TODO: working with student / teacher table 
