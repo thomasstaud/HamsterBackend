@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import io.github.Hattinger04.RestServices;
 import io.github.Hattinger04.course.model.CourseService;
 import io.github.Hattinger04.course.model.course.Course;
-import io.github.Hattinger04.user.model.UserService;
 
 @RestController
 @RequestMapping("/USER")

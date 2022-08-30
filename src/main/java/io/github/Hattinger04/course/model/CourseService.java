@@ -13,7 +13,9 @@ import io.github.Hattinger04.course.model.exercise.ExerciseRepository;
 import io.github.Hattinger04.course.model.solution.Solution;
 import io.github.Hattinger04.course.model.solution.SolutionRepository;
 import io.github.Hattinger04.course.model.student.Student;
+import io.github.Hattinger04.course.model.student.StudentRepository;
 import io.github.Hattinger04.course.model.teacher.Teacher;
+import io.github.Hattinger04.course.model.teacher.TeacherRepository;
 import io.github.Hattinger04.user.model.User;
 
 @Service
@@ -24,12 +26,17 @@ public class CourseService {
 	private CourseRepository courseRepository; 
 	private ExerciseRepository exerciseRepository; 
 	private SolutionRepository solutionRepository; 
+	private TeacherRepository teacherRepository; 
+	private StudentRepository studentRepository; 
 	
 	@Autowired
-	public CourseService(CourseRepository courseRepository, ExerciseRepository exerciseRepository, SolutionRepository solutionRepository) {
+	public CourseService(CourseRepository courseRepository, ExerciseRepository exerciseRepository, SolutionRepository solutionRepository,
+			 TeacherRepository teacherRepository, StudentRepository studentRepository) {
 		this.courseRepository = courseRepository;
 		this.exerciseRepository = exerciseRepository;
 		this.solutionRepository = solutionRepository;
+		this.teacherRepository = teacherRepository; 
+		this.studentRepository = studentRepository; 
 	}
 
 	public Course createCourse(Course course) {
@@ -61,19 +68,19 @@ public class CourseService {
 	}
 	
 	// TODO: working with student / teacher table 
-	public void addStudentToCourse(Course course, Student student) {
+	public void addStudentToCourse(Course course, User student) {
 		
 	}
 	
-	public void addStudentsToCourse(Course course, Set<Student> student) {
+	public void addStudentsToCourse(Course course, Set<User> student) {
 	
 	}
 	
-	public void removeStudentFromCourse(Course course, Student student) {
+	public void removeStudentFromCourse(Course course, User student) {
 
 	}
 	
-	public void removeStudentsFromCourse(Course course, Set<Student> student) {
+	public void removeStudentsFromCourse(Course course, Set<User> student) {
 
 	}
 	
