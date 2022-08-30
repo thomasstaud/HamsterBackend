@@ -12,6 +12,8 @@ import io.github.Hattinger04.course.model.exercise.Exercise;
 import io.github.Hattinger04.course.model.exercise.ExerciseRepository;
 import io.github.Hattinger04.course.model.solution.Solution;
 import io.github.Hattinger04.course.model.solution.SolutionRepository;
+import io.github.Hattinger04.course.model.student.Student;
+import io.github.Hattinger04.course.model.teacher.Teacher;
 import io.github.Hattinger04.user.model.User;
 
 @Service
@@ -45,28 +47,48 @@ public class CourseService {
 		return courseRepository.findByName(name); 
 	}
 	
-	public List<Student> getAllStudents() {
-		// TODO: Get all students
-		return null;
+	public List<Student> getAllStudents(Course course) {
+		return courseRepository.getAllStudents(course.getId());
 	}
 	
-	// TODO: working with student / teacher table 
-	public void addStudentToCourse(Course course, User student) {
+	public Teacher getCourseTeacher(Course course) {
+		// TODO
+		return null; 
+	}
+	
+	public void setCourseTeacher(Course course, Teacher teacher) {
 		
 	}
 	
-	public void addStudentsToCourse(Course course, Set<User> student) {
+	// TODO: working with student / teacher table 
+	public void addStudentToCourse(Course course, Student student) {
+		
+	}
+	
+	public void addStudentsToCourse(Course course, Set<Student> student) {
 	
 	}
 	
-	public void removeStudentFromCourse(Course course, User student) {
+	public void removeStudentFromCourse(Course course, Student student) {
 
 	}
 	
-	public void removeStudentsFromCourse(Course course, Set<User> student) {
+	public void removeStudentsFromCourse(Course course, Set<Student> student) {
 
 	}
 	
+	public boolean isUserTeacher(Course course, User user) {
+		if(isUserInCourse(course, user)) {
+			// TODO
+			return true; 
+		}
+		return false; 
+	}
+	
+	public boolean isUserInCourse(Course course, User user) {
+		// TODO
+		return false; 
+	}
 	
 	public Exercise createExercise(Exercise exercise) {
 		return exerciseRepository.save(exercise); 

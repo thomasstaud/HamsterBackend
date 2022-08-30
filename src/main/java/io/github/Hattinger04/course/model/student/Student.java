@@ -1,4 +1,4 @@
-package io.github.Hattinger04.course.model;
+package io.github.Hattinger04.course.model.student;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,14 +15,15 @@ import lombok.Data;
 import lombok.ToString;
 
 @Entity
-@Table(name = "teacher")
+@Table(name = "student")
 @Data
 @AllArgsConstructor
 @ToString
-public class Teacher {
+public class Student {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "teacher_id")
+	@Column(name = "student_id")
 	private Integer id;
 	
 	@ManyToOne

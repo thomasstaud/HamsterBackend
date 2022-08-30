@@ -22,8 +22,6 @@ import io.github.Hattinger04.user.model.UserService;
 public class CourseController {
 
 	@Autowired
-	private UserService userService;
-	@Autowired
 	private CourseService courseService;
 	@Autowired
 	private RestServices restServices; 
@@ -33,7 +31,7 @@ public class CourseController {
 	
 	/**
 	 * Get all students in Course from database
-	 * Needs Course name 
+	 * Needs course object 
 	 * 
 	 * @param json
 	 * @return
@@ -41,13 +39,14 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("/getAllStudents")
 	@ResponseBody
-	public ResponseEntity<?> getAllStudents() {
-		return new ResponseEntity<>(courseService.getAllStudents(), HttpStatus.OK); 
+	public ResponseEntity<?> getAllStudents(@RequestBody String json) {
+		Course course = (Course) restServices.deserialize(Course.class, json);
+		return new ResponseEntity<>(courseService.getAllStudents(course), HttpStatus.OK); 
 	}
 	
 	/**
 	 * Create a new Course
-	 * Needs Course name
+	 * Needs course object
 	 * 
 	 * @param json
 	 * @return
@@ -56,13 +55,13 @@ public class CourseController {
 	@PutMapping("/createCourse")
 	@ResponseBody
 	public ResponseEntity<?> createCourse(@RequestBody String json) {
-//		courseService.createCourse((Course) restServices.deserialize(Course.class, json););
+//		courseService.createCourse((Course) restServices.deserialize(Course.class, json));
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	/**
 	 * Deletes a existing Course
-	 * Needs Course name
+	 * Needs course object
 	 * 
 	 * @param json
 	 * @return
@@ -77,7 +76,7 @@ public class CourseController {
 
 	/**
 	 * Adds student to existing Course
-	 * Needs Course name + student name
+	 * Needs course object + student object
 	 * 
 	 * @param json
 	 * @return
@@ -92,7 +91,7 @@ public class CourseController {
 	
 	/**
 	 * Removes student from Course
-	 * Needs Course name + student name 
+	 * Needs course object + student object 
 	 * 
 	 * @param json
 	 * @return
@@ -107,7 +106,7 @@ public class CourseController {
 
 	/**
 	 * Creates a new exercise in a existing Course 
-	 * Needs Course name + exercise object 
+	 * Needs course object + exercise object 
 	 * 
 	 * @param json
 	 * @return
@@ -122,7 +121,7 @@ public class CourseController {
 	
 	/**
 	 * Changes already existing (and published) exercises
-	 * Needs Course name + exercise object
+	 * Needs course object + exercise object
 	 * 
 	 * @param json
 	 * @return
@@ -137,7 +136,7 @@ public class CourseController {
 	
 	/**
 	 * Deletes existing exercise 
-	 * Needs Course name + exercise name
+	 * Needs course object + exercise object
 	 * 
 	 * @param json
 	 * @return
@@ -152,7 +151,7 @@ public class CourseController {
 	
 	/**
 	 * Gives a rating to an exercise for one student
-	 * Needs Course name + exercise name + student name 
+	 * Needs course object + exercise object + student object 
 	 * 
 	 * @param json
 	 * @return
