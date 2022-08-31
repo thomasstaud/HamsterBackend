@@ -27,6 +27,15 @@ public class RestServices {
 		} 
 	}
 	
+	/**
+	 * Convert JSON-String with multiple different classes to multiple objects
+	 * Convention: list the classes in an alphabetic sequence 
+	 * 
+	 * @param <T>
+	 * @param c
+	 * @param json
+	 * @return
+	 */
 	public <T> Object[] deserializeMany(Class<?> c[], String json) {
 		try {
 			JsonNode rootNode = objectMapper.readTree(json);
