@@ -1,5 +1,7 @@
 package io.github.Hattinger04.course;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import io.github.Hattinger04.course.model.CourseService;
 import io.github.Hattinger04.course.model.course.Course;
 import io.github.Hattinger04.course.model.exercise.Exercise;
 import io.github.Hattinger04.course.model.student.Student;
+import io.github.Hattinger04.course.model.teacher.Teacher;
 
 @RestController
 @RequestMapping("/course")
@@ -42,7 +45,7 @@ public class CourseController {
 		Object[] objects = restServices.deserializeMany(new Class[] {Course.class, Student.class}, json); 
 		Student student; 
 		if((student = courseService.getStudent((Course)objects[0], (Student)objects[1])) == null) {
-			return new ResponseEntity<>("Student not exisiting", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Student not exisiting!", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(student, HttpStatus.OK); 
 	}
@@ -59,7 +62,11 @@ public class CourseController {
 	@ResponseBody
 	public ResponseEntity<?> getAllStudents(@RequestBody String json) {
 		Course course = (Course) restServices.deserialize(Course.class, json);
-		return new ResponseEntity<>(courseService.getAllStudents(course), HttpStatus.OK); 
+		List<Student> students; 
+		if((students = courseService.getAllStudents(course)) == null) {
+			return new ResponseEntity<>("Course not existing or no users in course!", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(students, HttpStatus.OK); 
 	}
 	
 	/**
@@ -74,7 +81,11 @@ public class CourseController {
 	@ResponseBody
 	public ResponseEntity<?> getCourseTeacher(@RequestBody String json) {
 		Course course = (Course) restServices.deserialize(Course.class, json);
-		return new ResponseEntity<>(courseService.getCourseTeacher(course), HttpStatus.OK); 
+		Teacher teacher; 
+		if((teacher = courseService.getCourseTeacher(course)) == null) {
+			return new ResponseEntity<>("Teacher is not in course!", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(teacher, HttpStatus.OK); 
 	}
 	
 	/**

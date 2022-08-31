@@ -22,6 +22,7 @@ import io.github.Hattinger04.user.model.User;
 public class CourseService {
 
 	// TODO: Nothing(!) tested yet
+	// TODO: making void - boolean
 
 	private CourseRepository courseRepository;
 	private ExerciseRepository exerciseRepository;
