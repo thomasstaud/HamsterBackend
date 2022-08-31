@@ -36,7 +36,7 @@ public class RestServices {
 	 * @param json
 	 * @return
 	 */
-	public <T> Object[] deserializeMany(Class<?> c[], String json) {
+	public Object[] deserializeMany(Class<?> c[], String json) {
 		try {
 			JsonNode rootNode = objectMapper.readTree(json);
 			Object[] objects = new Object[c.length]; 
