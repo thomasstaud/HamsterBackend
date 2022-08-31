@@ -22,137 +22,145 @@ import io.github.Hattinger04.user.model.User;
 public class CourseService {
 
 	// TODO: Nothing(!) tested yet
-	
-	private CourseRepository courseRepository; 
-	private ExerciseRepository exerciseRepository; 
-	private SolutionRepository solutionRepository; 
-	private TeacherRepository teacherRepository; 
-	private StudentRepository studentRepository; 
-	
+
+	private CourseRepository courseRepository;
+	private ExerciseRepository exerciseRepository;
+	private SolutionRepository solutionRepository;
+	private TeacherRepository teacherRepository;
+	private StudentRepository studentRepository;
+
 	@Autowired
-	public CourseService(CourseRepository courseRepository, ExerciseRepository exerciseRepository, SolutionRepository solutionRepository,
-			 TeacherRepository teacherRepository, StudentRepository studentRepository) {
+	public CourseService(CourseRepository courseRepository, ExerciseRepository exerciseRepository,
+			SolutionRepository solutionRepository, TeacherRepository teacherRepository,
+			StudentRepository studentRepository) {
 		this.courseRepository = courseRepository;
 		this.exerciseRepository = exerciseRepository;
 		this.solutionRepository = solutionRepository;
-		this.teacherRepository = teacherRepository; 
-		this.studentRepository = studentRepository; 
+		this.teacherRepository = teacherRepository;
+		this.studentRepository = studentRepository;
 	}
 
 	public Course createCourse(Course course) {
-		return courseRepository.save(course); 
+		return courseRepository.save(course);
 	}
+
 	public void deleteCourse(Course course) {
 		courseRepository.delete(course);
 	}
-	
+
 	public Course getCourseByID(int id) {
-		return courseRepository.findById(id); 
+		return courseRepository.findById(id);
 	}
-	
+
 	public Course getCourseByName(String name) {
-		return courseRepository.findByName(name); 
+		return courseRepository.findByName(name);
 	}
-	
+
 	public Student getStudent(Course course, Student student) {
-		Student s;
-		if((s = studentRepository.findById(student.getId())) == null) { // TODO: if not tested!
-			s = studentRepository.findByName(student.getUser().getUsername());
+		Student s = null;
+		try {
+			if ((s = studentRepository.findById(student.getId())) == null) { // TODO: if not tested!
+				s = studentRepository.findByName(student.getUser().getUsername());
+			}
+		} catch (NullPointerException e) {
+			return s;
 		}
 		return s;
 	}
-	
+
 	public List<Student> getAllStudents(Course course) {
 		return courseRepository.getAllStudents(course.getId());
 	}
-	
+
 	public Teacher getCourseTeacher(Course course) {
-		return courseRepository.getCourseTeacher(course.getId()); 
+		return courseRepository.getCourseTeacher(course.getId());
 	}
-	
+
 	public void setCourseTeacher(Course course, Teacher teacher) {
 		teacherRepository.save(teacher);
 		courseRepository.addUserToCourse(teacher.getId(), course.getId());
 	}
-	
+
 	public void deleteCourseTeacher(Course course, Teacher teacher) {
 		teacherRepository.delete(teacher);
 		courseRepository.removeUserFromCourse(teacher.getId(), course.getId());
 	}
-	
-	// TODO: working with student / teacher table 
+
+	// TODO: working with student / teacher table
 	public void addStudentToCourse(Course course, Student student) {
-		studentRepository.save(student); 
+		studentRepository.save(student);
 		courseRepository.addUserToCourse(student.getId(), course.getId());
 	}
-	
+
 	public void addStudentsToCourse(Course course, Set<Student> students) {
-		for(Student student : students) {
-			studentRepository.save(student); 
+		for (Student student : students) {
+			studentRepository.save(student);
 			courseRepository.addUserToCourse(student.getId(), course.getId());
 		}
 	}
-	
+
 	public void removeStudentFromCourse(Course course, Student student) {
 		studentRepository.delete(student);
 		courseRepository.removeUserFromCourse(student.getId(), student.getId());
 	}
-	
+
 	public void removeStudentsFromCourse(Course course, Set<Student> students) {
-		for(Student student : students) {
+		for (Student student : students) {
 			studentRepository.delete(student);
 			courseRepository.removeUserFromCourse(student.getId(), student.getId());
 		}
 	}
-	
+
 	public boolean isUserTeacher(Course course, User user) {
-		return courseRepository.isUserTeacher(user.getId(), course.getId()) != 0; 
+		return courseRepository.isUserTeacher(user.getId(), course.getId()) != 0;
 	}
-	
+
 	public boolean isUserStudent(Course course, User user) {
-		return courseRepository.isUserStudent(user.getId(), course.getId()) != 0; 	
+		return courseRepository.isUserStudent(user.getId(), course.getId()) != 0;
 	}
-	
+
 	public boolean isUserInCourse(Course course, User user) {
-		return courseRepository.isUserStudent(user.getId(), course.getId()) != 0 || courseRepository.isUserTeacher(user.getId(), course.getId()) != 0; 	
+		return courseRepository.isUserStudent(user.getId(), course.getId()) != 0
+				|| courseRepository.isUserTeacher(user.getId(), course.getId()) != 0;
 	}
-	
+
 	public Exercise createExercise(Exercise exercise) {
-		return exerciseRepository.save(exercise); 
+		return exerciseRepository.save(exercise);
 	}
+
 	public void deleteExercise(Exercise exercise) {
 		exerciseRepository.delete(exercise);
 	}
-	
+
 	public Exercise getExerciseByID(int id) {
-		return exerciseRepository.findById(id); 
+		return exerciseRepository.findById(id);
 	}
+
 	/**
-	 * Get exercise by course_id and course name 
+	 * Get exercise by course_id and course name
 	 * 
 	 * @param course_id
 	 * @param name
 	 * @return
 	 */
 	public Exercise getExerciseByCourse(int course_id, String name) {
-		return exerciseRepository.findByCourse(course_id, name); 
+		return exerciseRepository.findByCourse(course_id, name);
 	}
-	
 
-	
-	
-	public Solution createSolution(Solution solution) { 
-		return solutionRepository.save(solution); 
+	public Solution createSolution(Solution solution) {
+		return solutionRepository.save(solution);
 	}
+
 	public void deleteSolution(Solution solution) {
 		solutionRepository.delete(solution);
 	}
 
 	public Solution getSolutionByID(int id) {
-		return solutionRepository.findById(id); 
+		return solutionRepository.findById(id);
 	}
+
 	/**
-	 * Get solution by exercise_id and exercise name 
+	 * Get solution by exercise_id and exercise name
 	 * 
 	 * @param exercise_id
 	 * @param name
@@ -161,6 +169,6 @@ public class CourseService {
 	public Solution getSolutionByExercise(int exercise_id, String name) {
 		return solutionRepository.findByExercise(exercise_id, name);
 	}
-	
-	// TODO: teacher correcting students work 
+
+	// TODO: teacher correcting students work
 }

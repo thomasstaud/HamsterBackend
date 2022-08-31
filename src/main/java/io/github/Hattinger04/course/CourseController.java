@@ -19,7 +19,7 @@ import io.github.Hattinger04.course.model.exercise.Exercise;
 import io.github.Hattinger04.course.model.student.Student;
 
 @RestController
-@RequestMapping("/TEACHER")
+@RequestMapping("/course")
 public class CourseController {
 
 	@Autowired
@@ -39,10 +39,12 @@ public class CourseController {
 	@PostMapping("/getStudentByID")
 	@ResponseBody
 	public ResponseEntity<?> getStudentByID(@RequestBody String json) {
-		// TODO: not sure if that will work - probably not
-		Course course = (Course) restServices.deserialize(Course.class, json);
-		Student student = (Student) restServices.deserialize(Student.class, json);
-		return new ResponseEntity<>(courseService.getStudent(course, student), HttpStatus.OK); 
+		Object[] objects = restServices.deserializeMany(new Class[] {Course.class, Student.class}, json); 
+		Student student; 
+		if((student = courseService.getStudent((Course)objects[0], (Student)objects[1])) == null) {
+			return new ResponseEntity<>("Student not exisiting", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(student, HttpStatus.OK); 
 	}
 	
 	/**
@@ -68,7 +70,7 @@ public class CourseController {
 	 * @return
 	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
-	@PostMapping("/getAllStudents")
+	@PostMapping("/getCourseTeacher")
 	@ResponseBody
 	public ResponseEntity<?> getCourseTeacher(@RequestBody String json) {
 		Course course = (Course) restServices.deserialize(Course.class, json);
