@@ -10,8 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import io.github.Hattinger04.course.model.student.Student;
-import io.github.Hattinger04.course.model.teacher.Teacher;
+import io.github.Hattinger04.user.model.User;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long>{
@@ -19,11 +18,11 @@ public interface CourseRepository extends JpaRepository<Course, Long>{
 	Course findByName(String name);
 	// TODO: SQL not tested yet!
 	
-	@Query(value = "SELECT * FROM TEACHER t JOIN USER u using(user_id) JOIN course c using(course_id, user_id) where c.course_id=:course_id", nativeQuery = true)
-	Teacher getCourseTeacher(int course_id); 
+	@Query(value = "SELECT user_id, username FROM USER u JOIN TEACHER t using(user_id) JOIN course c using(course_id, user_id) where c.course_id=:course_id", nativeQuery = true)
+	User getCourseTeacher(int course_id); 
 	
-	@Query(value = "SELECT * FROM STUDENT s JOIN USER u using(user_id) JOIN course c using(course_id, user_id) where c.course_id=:course_id", nativeQuery = true)
-	List<Student> getAllStudents(int course_id); 
+	@Query(value = "SELECT user_id, username FROM USER u JOIN STUDENT s using(user_id) JOIN course c using(course_id, user_id) where c.course_id=:course_id", nativeQuery = true)
+	List<User> getAllStudents(int course_id); 
 	
 	@Modifying
 	@Query(value = "insert into user_course where user_id = :user_id and course_id=:course_id", nativeQuery = true)

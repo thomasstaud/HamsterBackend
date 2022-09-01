@@ -20,6 +20,7 @@ import io.github.Hattinger04.course.model.course.Course;
 import io.github.Hattinger04.course.model.exercise.Exercise;
 import io.github.Hattinger04.course.model.student.Student;
 import io.github.Hattinger04.course.model.teacher.Teacher;
+import io.github.Hattinger04.user.model.User;
 
 @RestController
 @RequestMapping("/course")
@@ -62,7 +63,7 @@ public class CourseController {
 	@ResponseBody
 	public ResponseEntity<?> getAllStudents(@RequestBody String json) {
 		Course course = (Course) restServices.deserialize(Course.class, json);
-		List<Student> students; 
+		List<User> students; 
 		if((students = courseService.getAllStudents(course)) == null) {
 			return new ResponseEntity<>("Course not existing or no users in course!", HttpStatus.NOT_FOUND);
 		}
@@ -81,7 +82,7 @@ public class CourseController {
 	@ResponseBody
 	public ResponseEntity<?> getCourseTeacher(@RequestBody String json) {
 		Course course = (Course) restServices.deserialize(Course.class, json);
-		Teacher teacher; 
+		User teacher; 
 		if((teacher = courseService.getCourseTeacher(course)) == null) {
 			return new ResponseEntity<>("Teacher is not in course!", HttpStatus.NOT_FOUND);
 		}

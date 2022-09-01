@@ -69,11 +69,11 @@ public class CourseService {
 		return s;
 	}
 
-	public List<Student> getAllStudents(Course course) {
+	public List<User> getAllStudents(Course course) {
 		return courseRepository.getAllStudents(course.getId());
 	}
 
-	public Teacher getCourseTeacher(Course course) {
+	public User getCourseTeacher(Course course) {
 		return courseRepository.getCourseTeacher(course.getId());
 	}
 

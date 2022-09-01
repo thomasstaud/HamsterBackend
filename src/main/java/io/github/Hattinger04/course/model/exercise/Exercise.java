@@ -28,8 +28,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @JsonTypeInfo(include=As.WRAPPER_OBJECT, use=com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, property="type")
-@JsonTypeName("course") 
-
+@JsonTypeName("exercise") 
 public class Exercise {
 
 	public Exercise(Course course, String name) {

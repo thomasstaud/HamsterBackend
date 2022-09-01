@@ -31,7 +31,6 @@ public class RestServices {
 	 * Convert JSON-String with multiple different classes to multiple objects
 	 * Convention: list the classes in an alphabetic sequence 
 	 * 
-	 * @param <T>
 	 * @param c
 	 * @param json
 	 * @return
