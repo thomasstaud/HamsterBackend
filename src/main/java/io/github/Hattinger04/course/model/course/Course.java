@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
+import io.github.Hattinger04.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -47,6 +48,6 @@ public class Course {
 		
 	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "user_course", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
-	private Set<Course> courses;
+	private Set<User> users;
 
 }

@@ -25,7 +25,7 @@ public interface CourseRepository extends JpaRepository<Course, Long>{
 	List<User> getAllStudents(int course_id); 
 	
 	@Modifying
-	@Query(value = "insert into user_course where user_id = :user_id and course_id=:course_id", nativeQuery = true)
+	@Query(value = "insert into user_course (user_id, course_id) values (:user_id,:course_id)", nativeQuery = true)
 	@Transactional
 	public void addUserToCourse(@Param("user_id") int user_id, @Param("course_id") int course_id);
 	

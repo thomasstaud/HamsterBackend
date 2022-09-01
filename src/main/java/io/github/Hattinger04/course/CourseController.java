@@ -126,7 +126,7 @@ public class CourseController {
 	 * @return
 	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
-	@PostMapping("/addStudentCourse")
+	@PutMapping("/addStudentCourse")
 	@ResponseBody
 	public ResponseEntity<?> addStudentCourse(@RequestBody String json) {
 		Object[] objects = restServices.deserializeMany(new Class[] {Course.class, Student.class}, json); 

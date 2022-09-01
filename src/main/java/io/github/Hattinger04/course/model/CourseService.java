@@ -106,7 +106,7 @@ public class CourseService {
 	public boolean addStudentToCourse(Course course, Student student) {
 		try {
 			studentRepository.save(student);
-			courseRepository.addUserToCourse(student.getId(), course.getId());
+			courseRepository.addUserToCourse(student.getUser().getId(), course.getId());
 			return true;
 		} catch (IllegalArgumentException e) {
 			return false;
