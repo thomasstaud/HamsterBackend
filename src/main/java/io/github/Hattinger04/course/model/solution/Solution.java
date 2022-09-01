@@ -1,6 +1,5 @@
 package io.github.Hattinger04.course.model.solution;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

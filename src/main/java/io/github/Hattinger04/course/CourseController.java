@@ -19,7 +19,6 @@ import io.github.Hattinger04.course.model.CourseService;
 import io.github.Hattinger04.course.model.course.Course;
 import io.github.Hattinger04.course.model.exercise.Exercise;
 import io.github.Hattinger04.course.model.student.Student;
-import io.github.Hattinger04.course.model.teacher.Teacher;
 import io.github.Hattinger04.user.model.User;
 
 @RestController
@@ -100,8 +99,8 @@ public class CourseController {
 	@PutMapping("/createCourse")
 	@ResponseBody
 	public ResponseEntity<?> createCourse(@RequestBody String json) {
-		courseService.createCourse((Course) restServices.deserialize(Course.class, json));
-		return new ResponseEntity<>(HttpStatus.OK);
+		return courseService.createCourse((Course) restServices.deserialize(Course.class, json)) != null ? 
+				new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>("Could not create course!", HttpStatus.NOT_IMPLEMENTED);
 	}
 	
 	/**
@@ -115,8 +114,8 @@ public class CourseController {
 	@DeleteMapping("/deleteCourse")
 	@ResponseBody
 	public ResponseEntity<?> deleteCourse(@RequestBody String json) {
-		courseService.deleteCourse((Course) restServices.deserialize(Course.class, json));
-		return new ResponseEntity<>(HttpStatus.OK);
+		return courseService.deleteCourse((Course) restServices.deserialize(Course.class, json)) ? 
+				new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>("Could not delete course!", HttpStatus.NOT_MODIFIED);
 	}
 
 	/**
@@ -130,11 +129,9 @@ public class CourseController {
 	@PostMapping("/addStudentCourse")
 	@ResponseBody
 	public ResponseEntity<?> addStudentCourse(@RequestBody String json) {
-		// TODO: not sure if that will work - probably not
-		Course course = (Course) restServices.deserialize(Course.class, json);
-		Student student = (Student) restServices.deserialize(Student.class, json);
-		courseService.addStudentToCourse(course, student); 
-		return new ResponseEntity<>(HttpStatus.OK); 
+		Object[] objects = restServices.deserializeMany(new Class[] {Course.class, Student.class}, json); 
+		return courseService.addStudentToCourse((Course) objects[0], (Student) objects[1]) ? 
+				new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>("Could not add student to course!", HttpStatus.NOT_IMPLEMENTED); 
 	}
 	
 	/**
@@ -148,11 +145,9 @@ public class CourseController {
 	@DeleteMapping("/removeStudentCourse")
 	@ResponseBody
 	public ResponseEntity<?> removeStudentCourse(@RequestBody String json) {
-		// TODO: not sure if that will work - probably not
-		Course course = (Course) restServices.deserialize(Course.class, json);
-		Student student = (Student) restServices.deserialize(Student.class, json);
-		courseService.removeStudentFromCourse(course, student); 
-		return new ResponseEntity<>(HttpStatus.OK); 
+		Object[] objects = restServices.deserializeMany(new Class[] {Course.class, Student.class}, json); 
+		return courseService.removeStudentFromCourse((Course) objects[0], (Student) objects[1]) ? 
+				new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>("Could not remove student from course!", HttpStatus.NOT_MODIFIED); 
 	}
 
 	/**
@@ -166,8 +161,8 @@ public class CourseController {
 	@PutMapping("/createExercise")
 	@ResponseBody
 	public ResponseEntity<?> createExercise(@RequestBody String json) {
-		courseService.createExercise((Exercise) restServices.deserialize(Exercise.class, json));
-		return new ResponseEntity<>(HttpStatus.OK); 
+		return courseService.createExercise((Exercise) restServices.deserialize(Exercise.class, json)) != null ?
+				new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>("Could not create exercise!", HttpStatus.NOT_IMPLEMENTED); 
 	}
 	
 	/**
@@ -181,8 +176,8 @@ public class CourseController {
 	@PostMapping("/patchExercise")
 	@ResponseBody
 	public ResponseEntity<?> patchExercise(@RequestBody String json) {
-		courseService.createExercise((Exercise) restServices.deserialize(Exercise.class, json));
-		return new ResponseEntity<>(HttpStatus.OK); 
+		return courseService.createExercise((Exercise) restServices.deserialize(Exercise.class, json)) != null ?
+				new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>("Could not patch exercise!", HttpStatus.NOT_IMPLEMENTED); 
 	}
 	
 	/**
@@ -196,8 +191,8 @@ public class CourseController {
 	@PutMapping("/deleteExercise")
 	@ResponseBody
 	public ResponseEntity<?> deleteExercise(@RequestBody String json) {
-		courseService.deleteExercise((Exercise) restServices.deserialize(Exercise.class, json));
-		return new ResponseEntity<>(HttpStatus.OK); 
+		return courseService.deleteExercise((Exercise) restServices.deserialize(Exercise.class, json)) ?
+				new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>("Could not delete exercise!", HttpStatus.NOT_IMPLEMENTED); 
 	}
 	
 	/**

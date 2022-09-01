@@ -45,8 +45,13 @@ public class CourseService {
 		return courseRepository.save(course);
 	}
 
-	public void deleteCourse(Course course) {
-		courseRepository.delete(course);
+	public boolean deleteCourse(Course course) {
+		try {
+			courseRepository.delete(course);
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
 	}
 
 	public Course getCourseByID(int id) {
@@ -77,38 +82,68 @@ public class CourseService {
 		return courseRepository.getCourseTeacher(course.getId());
 	}
 
-	public void setCourseTeacher(Course course, Teacher teacher) {
-		teacherRepository.save(teacher);
-		courseRepository.addUserToCourse(teacher.getId(), course.getId());
-	}
-
-	public void deleteCourseTeacher(Course course, Teacher teacher) {
-		teacherRepository.delete(teacher);
-		courseRepository.removeUserFromCourse(teacher.getId(), course.getId());
-	}
-
-	// TODO: working with student / teacher table
-	public void addStudentToCourse(Course course, Student student) {
-		studentRepository.save(student);
-		courseRepository.addUserToCourse(student.getId(), course.getId());
-	}
-
-	public void addStudentsToCourse(Course course, Set<Student> students) {
-		for (Student student : students) {
-			studentRepository.save(student);
-			courseRepository.addUserToCourse(student.getId(), course.getId());
+	public boolean setCourseTeacher(Course course, Teacher teacher) {
+		try {
+			teacherRepository.save(teacher);
+			courseRepository.addUserToCourse(teacher.getId(), course.getId());
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
 		}
 	}
 
-	public void removeStudentFromCourse(Course course, Student student) {
-		studentRepository.delete(student);
-		courseRepository.removeUserFromCourse(student.getId(), student.getId());
+	public boolean deleteCourseTeacher(Course course, Teacher teacher) {
+		try {
+			teacherRepository.delete(teacher);
+			courseRepository.removeUserFromCourse(teacher.getId(), course.getId());
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
 	}
 
-	public void removeStudentsFromCourse(Course course, Set<Student> students) {
-		for (Student student : students) {
+	// TODO: working with student / teacher table
+	public boolean addStudentToCourse(Course course, Student student) {
+		try {
+			studentRepository.save(student);
+			courseRepository.addUserToCourse(student.getId(), course.getId());
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
+
+	public boolean addStudentsToCourse(Course course, Set<Student> students) {
+		try {
+			for (Student student : students) {
+				studentRepository.save(student);
+				courseRepository.addUserToCourse(student.getId(), course.getId());
+			}
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
+
+	public boolean removeStudentFromCourse(Course course, Student student) {
+		try {
 			studentRepository.delete(student);
 			courseRepository.removeUserFromCourse(student.getId(), student.getId());
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
+
+	public boolean removeStudentsFromCourse(Course course, Set<Student> students) {
+		try {
+			for (Student student : students) {
+				studentRepository.delete(student);
+				courseRepository.removeUserFromCourse(student.getId(), student.getId());
+			}
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
 		}
 	}
 
@@ -129,8 +164,13 @@ public class CourseService {
 		return exerciseRepository.save(exercise);
 	}
 
-	public void deleteExercise(Exercise exercise) {
-		exerciseRepository.delete(exercise);
+	public boolean deleteExercise(Exercise exercise) {
+		try {
+			exerciseRepository.delete(exercise);
+			return true; 
+		} catch (IllegalArgumentException e) {
+			return false; 
+		}
 	}
 
 	public Exercise getExerciseByID(int id) {
@@ -152,8 +192,13 @@ public class CourseService {
 		return solutionRepository.save(solution);
 	}
 
-	public void deleteSolution(Solution solution) {
-		solutionRepository.delete(solution);
+	public boolean deleteSolution(Solution solution) {
+		try {
+			solutionRepository.delete(solution);
+			return true; 
+		} catch (IllegalArgumentException e) {
+			return false; 
+		}
 	}
 
 	public Solution getSolutionByID(int id) {
