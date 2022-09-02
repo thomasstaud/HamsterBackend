@@ -1,5 +1,6 @@
 package io.github.Hattinger04.course.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -62,32 +63,93 @@ public class CourseService {
 		return courseRepository.findByName(name);
 	}
 
-	public Student getStudent(Course course, Student student) {
-		Student s = null;
+	/**
+	 * Returns user by student
+	 * 
+	 * @param student
+	 * @return
+	 */
+	public User getUserByStudent(Student student) {
+		User user = getUserByStudentID(student);
+		return user == null ? getUserByStudentUsername(student) : user;
+	}
+
+	private User getUserByStudentID(Student student) {
 		try {
-			if ((s = studentRepository.findById(student.getId())) == null) { // TODO: if not tested!
-				s = studentRepository.findByName(student.getUser().getUsername());
-			}
-		} catch (NullPointerException e) {
-			return s;
+			Student s = studentRepository.findByUserId(student.getUser().getId()).get(0);
+			return new User(s.getUser().getId(), s.getUser().getUsername());
+		} catch (NullPointerException | IndexOutOfBoundsException e) {
+			return null;
 		}
-		return s;
+	}
+
+	private User getUserByStudentUsername(Student student) {
+		try {
+			Student s = studentRepository.findByName(student.getUser().getUsername()).get(0);
+			return new User(s.getUser().getId(), s.getUser().getUsername());
+		} catch (NullPointerException | IndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 
 	public List<User> getAllStudents(Course course) {
-		return courseRepository.getAllStudents(course.getId());
+		List<User> users = new ArrayList<>();
+		for (String[] s : courseRepository.getAllStudents(course.getId())) {
+			users.add(new User(Integer.valueOf(s[0]), s[1]));
+		}
+		return users;
 	}
 
-	public User getCourseTeacher(Course course) {
-		return courseRepository.getCourseTeacher(course.getId());
+	public List<User> getCourseTeachers(Course course) {
+		List<User> users = new ArrayList<>();
+		for (String[] s : courseRepository.getCourseTeacher(course.getId())) {
+			users.add(new User(Integer.valueOf(s[0]), s[1]));
+		}
+		return users; 
+	}
+
+	public User getUserByTeacher(Teacher teacher) {
+		User user = getUserByTeacherID(teacher);
+		return user == null ? getUserByTeacherUsername(teacher) : user;
+	}
+
+	private User getUserByTeacherID(Teacher teacher) {
+		try {
+			Teacher t = teacherRepository.findByUserId(teacher.getUser().getId());
+			return new User(t.getUser().getId(), t.getUser().getUsername());
+		} catch (NullPointerException e) {
+			return null;
+		}
+	}
+
+	private User getUserByTeacherUsername(Teacher teacher) {
+		try {
+			Teacher t = teacherRepository.findByName(teacher.getUser().getUsername());
+			return new User(t.getUser().getId(), t.getUser().getUsername());
+		} catch (NullPointerException e) {
+			return null;
+		}
 	}
 
 	public boolean setCourseTeacher(Course course, Teacher teacher) {
 		try {
-			teacherRepository.save(teacher);
-			courseRepository.addUserToCourse(teacher.getId(), course.getId());
+			// check if course is exisiting
+			if (courseRepository.doesCourseExist(course.getId()) == 0) {
+				return false; 
+			}
+			User user = getUserByStudent(new Student(teacher.getId(), teacher.getUser())); 
+			// check if user is already in course
+			if(user != null && courseRepository.isUserInCourse(user.getId(), course.getId()) != 0) {
+				return false; 
+			}
+			// check if user is already student
+			if (user != null && courseRepository.isUserStudent(user.getId(), course.getId()) != 0) {
+				return false;
+			}
+			Teacher t = teacherRepository.save(teacher);
+			courseRepository.addUserToCourse(t.getUser().getId(), course.getId());
 			return true;
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException | NullPointerException e) {
 			return false;
 		}
 	}
@@ -102,11 +164,24 @@ public class CourseService {
 		}
 	}
 
-	// TODO: working with student / teacher table
 	public boolean addStudentToCourse(Course course, Student student) {
 		try {
-			studentRepository.save(student);
-			courseRepository.addUserToCourse(student.getUser().getId(), course.getId());
+			// check if course is existing
+			if (courseRepository.doesCourseExist(course.getId()) == 0) {
+				return false; 
+			}
+			// check if student is already in course
+			User user = getUserByStudent(student);
+			if(user != null && courseRepository.isUserInCourse(user.getId(), course.getId()) != 0) {
+				return false; 
+			}
+			// check if user is already teacher
+			user = getUserByTeacher(new Teacher(student.getId(), student.getUser()));
+			if (user != null && courseRepository.isUserTeacher(user.getId(), course.getId()) != 0) {
+				return false;
+			}
+			Student s = studentRepository.save(student);
+			courseRepository.addUserToCourse(s.getUser().getId(), course.getId());
 			return true;
 		} catch (IllegalArgumentException e) {
 			return false;
@@ -167,9 +242,9 @@ public class CourseService {
 	public boolean deleteExercise(Exercise exercise) {
 		try {
 			exerciseRepository.delete(exercise);
-			return true; 
+			return true;
 		} catch (IllegalArgumentException e) {
-			return false; 
+			return false;
 		}
 	}
 
@@ -195,9 +270,9 @@ public class CourseService {
 	public boolean deleteSolution(Solution solution) {
 		try {
 			solutionRepository.delete(solution);
-			return true; 
+			return true;
 		} catch (IllegalArgumentException e) {
-			return false; 
+			return false;
 		}
 	}
 

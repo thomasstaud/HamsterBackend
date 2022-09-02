@@ -19,6 +19,7 @@ import io.github.Hattinger04.course.model.CourseService;
 import io.github.Hattinger04.course.model.course.Course;
 import io.github.Hattinger04.course.model.exercise.Exercise;
 import io.github.Hattinger04.course.model.student.Student;
+import io.github.Hattinger04.course.model.teacher.Teacher;
 import io.github.Hattinger04.user.model.User;
 
 @RestController
@@ -33,18 +34,18 @@ public class CourseController {
 	
 	/**
 	 * Get student by id in Course from database
-	 * Needs course object 
+	 * Needs course and student object 
 	 * 
 	 * @param json
 	 * @return
 	 */
 	@PreAuthorize("hasAuthority('TEACHER')")
-	@PostMapping("/getStudentByID")
+	@PostMapping("/getStudent")
 	@ResponseBody
-	public ResponseEntity<?> getStudentByID(@RequestBody String json) {
-		Object[] objects = restServices.deserializeMany(new Class[] {Course.class, Student.class}, json); 
-		Student student; 
-		if((student = courseService.getStudent((Course)objects[0], (Student)objects[1])) == null) {
+	public ResponseEntity<?> getStudent(@RequestBody String json) {
+		Student s = (Student) restServices.deserialize(Student.class, json); 
+		User student; 
+		if((student = courseService.getUserByStudent(s)) == null) {
 			return new ResponseEntity<>("Student not exisiting!", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(student, HttpStatus.OK); 
@@ -68,9 +69,9 @@ public class CourseController {
 		}
 		return new ResponseEntity<>(students, HttpStatus.OK); 
 	}
-	
+		
 	/**
-	 * Get all students in Course from database
+	 * get teacher from course from database
 	 * Needs course object 
 	 * 
 	 * @param json
@@ -81,16 +82,16 @@ public class CourseController {
 	@ResponseBody
 	public ResponseEntity<?> getCourseTeacher(@RequestBody String json) {
 		Course course = (Course) restServices.deserialize(Course.class, json);
-		User teacher; 
-		if((teacher = courseService.getCourseTeacher(course)) == null) {
-			return new ResponseEntity<>("Teacher is not in course!", HttpStatus.NOT_FOUND);
+		List<User> teachers; 
+		if((teachers = courseService.getCourseTeachers(course)) == null) {
+			return new ResponseEntity<>("There is no teacher in this course - contact an admin!", HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(teacher, HttpStatus.OK); 
+		return new ResponseEntity<>(teachers, HttpStatus.OK); 
 	}
 	
 	/**
 	 * Create a new Course
-	 * Needs course object
+	 * Needs course and teacher object
 	 * 
 	 * @param json
 	 * @return
@@ -99,8 +100,16 @@ public class CourseController {
 	@PutMapping("/createCourse")
 	@ResponseBody
 	public ResponseEntity<?> createCourse(@RequestBody String json) {
-		return courseService.createCourse((Course) restServices.deserialize(Course.class, json)) != null ? 
-				new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>("Could not create course!", HttpStatus.NOT_IMPLEMENTED);
+		Object[] objects; 
+		Course course;
+		if((objects = restServices.deserializeMany(new Class[] {Course.class, Teacher.class}, json)) != null) {
+			if((course = courseService.createCourse((Course) objects[0])) != null) {
+				courseService.setCourseTeacher(course, (Teacher) objects[1]); 
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
+			return new ResponseEntity<>("Could not create course!", HttpStatus.NOT_IMPLEMENTED);
+		}
+		return new ResponseEntity<>("Wrong JSON format!", HttpStatus.NOT_IMPLEMENTED);
 	}
 	
 	/**

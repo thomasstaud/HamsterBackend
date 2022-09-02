@@ -38,6 +38,11 @@ public class User {
 	public User(String username) {
 		this.username = username; 
 	}
+	public User(int id, String username) {
+		this.id = id; 
+		this.username = username; 
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")

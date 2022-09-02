@@ -31,6 +31,10 @@ import lombok.ToString;
 @JsonTypeName("teacher") 
 public class Teacher {
 	
+	public Teacher(User user) {
+		this.user = user; 
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "teacher_id")
