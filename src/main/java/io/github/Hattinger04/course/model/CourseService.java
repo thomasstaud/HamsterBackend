@@ -22,9 +22,6 @@ import io.github.Hattinger04.user.model.User;
 @Service
 public class CourseService {
 
-	// TODO: Nothing(!) tested yet
-	// TODO: making void - boolean
-
 	private CourseRepository courseRepository;
 	private ExerciseRepository exerciseRepository;
 	private SolutionRepository solutionRepository;
@@ -48,9 +45,20 @@ public class CourseService {
 
 	public boolean deleteCourse(Course course) {
 		try {
+			List<User> students = getAllStudents(course);
+			Student s;
+			for(User user : students) {
+				if ((s = studentRepository.findByUserId(user.getId()).get(0)) != null) {
+					removeStudentFromCourse(course, s);
+				}
+			}
+			User teacher = getCourseTeachers(course).get(0); 
+			if(teacher != null) {
+				deleteCourseTeacher(course, teacherRepository.findByUserId(teacher.getId())); 
+			}
 			courseRepository.delete(course);
 			return true;
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException | IndexOutOfBoundsException e) {
 			return false;
 		}
 	}
@@ -130,7 +138,6 @@ public class CourseService {
 			return null;
 		}
 	}
-
 	public boolean setCourseTeacher(Course course, Teacher teacher) {
 		try {
 			// check if course is exisiting
