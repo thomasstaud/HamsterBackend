@@ -44,8 +44,8 @@ public class Exercise {
 	@Column(name = "name", unique = true, nullable = false)
 	private String name;
 	
-	@Column(name = "text", unique = false, nullable = true)
-	private String text; 
+	@Column(name = "hamster", unique = false, nullable = false)
+	private String hamster; 
 	
 	@ManyToOne
 	@JoinColumn(name="course_id", nullable = false)

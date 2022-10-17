@@ -31,17 +31,17 @@ import lombok.ToString;
 @JsonTypeName("solution") 
 public class Solution {
 
-	public Solution(Exercise exercise, String text) {
+	public Solution(Exercise exercise, String hamster) {
 		this.exercise = exercise; 
-		this.text = text; 
+		this.hamster = hamster; 
 	}
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "solution_id")
 	private Integer id;
 	
-	@Column(name = "text", unique = false, nullable = true)	
-	private String text; 
+	@Column(name = "hamster", unique = false, nullable = false)	
+	private String hamster; 
 	
 	@ManyToOne
 	@JoinColumn(name="exercise_id", nullable = false)
