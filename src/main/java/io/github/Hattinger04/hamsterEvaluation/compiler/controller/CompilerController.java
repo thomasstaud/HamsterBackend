@@ -75,12 +75,7 @@ public class CompilerController {
 					System.out.println("Ensuring Compiled...");
 					return this.compilerModel.compile(file); // dibo 15.11.2010
 				} catch (IOException e) { // dibo 25.10.2011
-					String msg = Utils.getResource("compiler.msg.rights1")
-							+ Utils.HOME
-							+ Utils.getResource("compiler.msg.rights2");
-					String title = Utils.getResource("compiler.msg.title");
-					System.out.println(title);
-					System.out.println(msg);
+					System.out.println("Compiling error! " + e.getMessage());
 				}
 			} 
 		return true;

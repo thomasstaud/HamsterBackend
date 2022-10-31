@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import com.sun.tools.javac.Main;
 
 import io.github.Hattinger04.hamsterEvaluation.model.HamsterFile;
@@ -30,7 +32,7 @@ public class JavaCompiler {
 	 * In diese Temporaere Datei werden die javac-Fehlermeldungen geschrieben,
 	 * bevor sie dann wieder eingelesen werden.
 	 */
-	public static final String TEMP_FILE = "compiler.tmp";
+	public static final String TEMP_FILE = "compiler.tmp"; // TODO: very ugly programming by myself -> make better someday
 
 	/**
 	 * Der Classpath waehrend der Compilierung
@@ -95,7 +97,7 @@ public class JavaCompiler {
 
 		FileInputStream input = null;
 		try {
-			input = new FileInputStream(Utils.HOME + Utils.FSEP + TEMP_FILE);
+			input = new FileInputStream(Utils.HOME + Utils.FSEP + SecurityContextHolder.getContext().getAuthentication().getName() + Utils.FSEP + TEMP_FILE);
 			buffer = new byte[input.available()];
 			input.read(buffer);
 		} finally {
@@ -128,7 +130,7 @@ public class JavaCompiler {
 		PrintWriter writer = null;
 		FileWriter fwriter = null;
 		try {
-			fwriter = new FileWriter(Utils.HOME + Utils.FSEP + TEMP_FILE);
+			fwriter = new FileWriter(Utils.HOME +  Utils.FSEP + SecurityContextHolder.getContext().getAuthentication().getName() + Utils.FSEP + TEMP_FILE); 
 
 			writer = new PrintWriter(fwriter);
 			Main.compile(args, writer);

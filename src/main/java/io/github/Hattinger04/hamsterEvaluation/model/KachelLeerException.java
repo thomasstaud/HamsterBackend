@@ -30,6 +30,6 @@ public class KachelLeerException extends HamsterException
 	}
 	
 	public String toString() {
-		return Utils.getResource("hamster.KachelLeerException") + " (" + reihe + ", " + spalte + ")";
+		return "hamster.KachelLeerException" + " (" + reihe + ", " + spalte + ")";
 	}
 }

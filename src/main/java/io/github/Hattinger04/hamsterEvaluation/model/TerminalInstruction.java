@@ -36,13 +36,13 @@ public class TerminalInstruction extends HamsterInstruction implements
 
 	public String toString() {
 		if (getType() == WRITE) {
-			return Utils.getResource("hamster.schreib") + "(\"" + message
+			return "hamster.schreib" + "(\"" + message
 					+ "\")";
 		} else if (getType() == READ_INT) {
-			return Utils.getResource("hamster.liesZahl") + "(\"" + message
+			return "hamster.liesZahl" + "(\"" + message
 					+ "\")";
 		} else if (getType() == READ_STRING) {
-			return Utils.getResource("hamster.liesZeichenkette") + "(\""
+			return "hamster.liesZeichenkette" + "(\""
 					+ message + "\")";
 		}
 		return super.toString();

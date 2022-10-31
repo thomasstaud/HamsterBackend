@@ -15,6 +15,6 @@ public class MaulLeerException extends HamsterException implements Serializable 
 	}
 
 	public String toString() {
-		return Utils.getResource("hamster.MaulLeerException");
+		return "hamster.MaulLeerException";
 	}
 }

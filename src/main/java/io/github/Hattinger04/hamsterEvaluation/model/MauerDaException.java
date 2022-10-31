@@ -29,6 +29,6 @@ public class MauerDaException extends HamsterException implements Serializable {
 	}
 
 	public String toString() {
-		return Utils.getResource("hamster.MauerDaException") + " (" + reihe + ", " + spalte + ")";
+		return "hamster.MauerDaException" + " (" + reihe + ", " + spalte + ")";
 	}
 }

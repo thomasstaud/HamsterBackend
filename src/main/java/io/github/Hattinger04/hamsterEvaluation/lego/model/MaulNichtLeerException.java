@@ -20,7 +20,7 @@ public class MaulNichtLeerException extends HamsterException implements Serializ
         }
         
         public String toString() {
-                return Utils.getResource("hamster.MaulNichtLeerException");
+                return "hamster.MaulNichtLeerException";
         }
         
         

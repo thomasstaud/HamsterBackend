@@ -1,8 +1,0 @@
-/*imperative program*/void main() {
-    if(vornFrei()) {
-    	vor();
-    	linksUm(); 
-    }
-    vor();      
-    nimm(); 
-}

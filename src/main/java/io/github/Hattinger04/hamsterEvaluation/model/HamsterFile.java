@@ -114,10 +114,10 @@ public class HamsterFile implements Comparable {
 		changeSupport = new PropertyChangeSupport(this);
 		this.type = type;
 		file = new File(Utils.HOME + Utils.FSEP
-				+ Utils.getResource("model.neuerhamster") + count++);
+				+ "model.neuerhamster" + count++);
 		while (file.exists())
 			file = new File(Utils.HOME + Utils.FSEP
-					+ Utils.getResource("model.neuerhamster") + count++);
+					+ "model.neuerhamster" + count++);
 	}
 
 	public HamsterFile(String code, char type) {
@@ -407,7 +407,7 @@ public class HamsterFile implements Comparable {
 			} else if (type == OBJECT) {
 				return "void main() {\n    \n}\n";
 			} else if (type == HAMSTERCLASS) {
-				return "class " + Utils.getResource("model.meinhamster")
+				return "class " + "model.meinhamster"
 						+ " extends Hamster {\n    \n}\n";
 			} else if (type == SCHEMEPROGRAM) { // Martin
 				return "(define (start Territorium)\n()\n)";

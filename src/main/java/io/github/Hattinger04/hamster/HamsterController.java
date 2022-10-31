@@ -38,7 +38,7 @@ public class HamsterController {
 	private File createNewFile(String path) {
 		try {
 			File file = new File(path); 
-			file.getParentFile().mkdir(); 
+			new File(path.substring(0, path.lastIndexOf("/"))).mkdirs();
 			file.createNewFile();
 			return file; 
 		} catch (IOException e) {

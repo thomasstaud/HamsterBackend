@@ -52,27 +52,27 @@ public class HamsterInstruction extends Instruction implements Serializable {
 	public String toString() {
 		switch (getType()) {
 		case FORWARD:
-			return Utils.getResource("hamster.vor") + "()";
+			return "hamster.vor" + "()";
 		case TURN_LEFT:
-			return Utils.getResource("hamster.linksUm") + "()";
+			return "hamster.linksUm" + "()";
 		case LAY_DOWN:
-			return Utils.getResource("hamster.gib") + "()";
+			return "hamster.gib" + "()";
 		case PICK_UP:
-			return Utils.getResource("hamster.nimm") + "()";
+			return "hamster.nimm" + "()";
 		case FREE:
-			return Utils.getResource("hamster.vornFrei") + "()";
+			return "hamster.vornFrei" + "()";
 		case CORN_AVAILABLE:
-			return Utils.getResource("hamster.kornDa") + "()";
+			return "hamster.kornDa" + "()";
 		case MOUTH_EMPTY:
-			return Utils.getResource("hamster.maulLeer") + "()";
+			return "hamster.maulLeer" + "()";
 		case GET_ROW:
-			return Utils.getResource("hamster.getReihe") + "()";
+			return "hamster.getReihe" + "()";
 		case GET_COL:
-			return Utils.getResource("hamster.getSpalte") + "()";
+			return "hamster.getSpalte" + "()";
 		case GET_DIR:
-			return Utils.getResource("hamster.getBlickrichtung") + "()";
+			return "hamster.getBlickrichtung" + "()";
 		case GET_MOUTH:
-			return Utils.getResource("hamster.getAnzahlKoerner") + "()";
+			return "hamster.getAnzahlKoerner" + "()";
 
 		case GET_DATA:
 			return "";

@@ -16,6 +16,6 @@ public class HamsterNichtInitialisiertException extends HamsterException
 	}
 
 	public String toString() {
-		return Utils.getResource("hamster.HamsterNichtInitialisiertException");
+		return "hamster.HamsterNichtInitialisiertException";
 	}
 }

@@ -49,16 +49,16 @@ public class TerrainCellInstruction extends TerrainInstruction implements
 	public String toString() {
 		switch (getType()) {
 		case IS_WALL:
-			return Utils.getResource("hamster.mauerDa") + "(" + row + ", "
+			return "hamster.mauerDa" + "(" + row + ", "
 					+ col + ")";
 		case COUNT_CORN:
-			return Utils.getResource("hamster.getAnzahlKoerner") + "(" + row
+			return "hamster.getAnzahlKoerner" + "(" + row
 					+ ", " + col + ")";
 		case COUNT_HAMSTER:
-			return Utils.getResource("hamster.getAnzahlHamster") + "(" + row
+			return "hamster.getAnzahlHamster" + "(" + row
 					+ ", " + col + ")";
 		case GET_HAMSTER:
-			return Utils.getResource("hamster.getHamster") + "(" + row + ", "
+			return "hamster.getHamster" + "(" + row + ", "
 					+ col + ")";
 		}
 		return super.toString();

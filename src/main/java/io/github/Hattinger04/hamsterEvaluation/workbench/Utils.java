@@ -13,7 +13,6 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 /**
  * Diese Klasse enthaelt Hilfsmethoden und Konstanten, die im Hamster-Simulator
@@ -34,7 +33,7 @@ public class Utils {
 	public static final String LSEP = System.getProperty("line.separator");
 
 	// TODO: Umlegen von HOME ins aktuelle Verzeichnis
-	public static String HOME = System.getProperty("user.dir") + FSEP + "src/main/resources/hamster/testuser"; 
+	public static String HOME = System.getProperty("user.dir") + FSEP + "src/main/resources/hamster"; 
 	
 	public static String LOGFOLDER = "";
 
@@ -51,7 +50,6 @@ public class Utils {
 	/**
 	 * Das geladene ResourceBundle, passend zur aktuellen Locale
 	 */
-	private static ResourceBundle resources;
 
 	/**
 	 * Mit dieser Methode kann das ResourceBundle erfragt werden. Ist es noch
@@ -59,29 +57,8 @@ public class Utils {
 	 * 
 	 * @return Das ResourceBundle
 	 */
-	public static ResourceBundle getResources() {
-		if (resources == null)
-			if (Utils.language.equals("en")) {
-				resources = ResourceBundle.getBundle("resources.hamster",
-						Locale.UK);
-			} else {
-				resources = ResourceBundle.getBundle("resources.hamster");
-			}
-		return resources;
-	}
 
-	public static String getResource(String key) {
-		String res = getResources().getString(key);
-		if (res != null) {
-			return res;
-		} else {
-			return "";
-		}
-	}
 
-	public static String getResource(String key, String param) {
-		return MessageFormat.format(getResource(key), new Object[] { param });
-	}
 
 
 	// --- added by C. Noeske: very simple replacement of environment variables used in hamster.properties

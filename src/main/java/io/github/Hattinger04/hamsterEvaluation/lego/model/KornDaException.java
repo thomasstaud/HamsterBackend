@@ -31,7 +31,7 @@ public class KornDaException extends HamsterException implements Serializable {
         }
         
         public String toString() {
-                return Utils.getResource("hamster.KornDaException") + " (" + reihe + ", " + spalte + ")";
+                return "hamster.KornDaException" + " (" + reihe + ", " + spalte + ")";
         }
         
         

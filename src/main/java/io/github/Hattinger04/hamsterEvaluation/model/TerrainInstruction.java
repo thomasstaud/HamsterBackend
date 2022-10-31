@@ -28,15 +28,15 @@ public class TerrainInstruction extends Instruction implements Serializable {
 	public String toString() {
 		switch (getType()) {
 		case COUNT_ROWS:
-			return Utils.getResource("hamster.getAnzahlReihen") + "()";
+			return "hamster.getAnzahlReihen" + "()";
 		case COUNT_COLS:
-			return Utils.getResource("hamster.getAnzahlSpalten") + "()";
+			return "hamster.getAnzahlSpalten" + "()";
 		case COUNT_CORN:
-			return Utils.getResource("hamster.getAnzahlKoerner") + "()";
+			return "hamster.getAnzahlKoerner" + "()";
 		case COUNT_HAMSTER:
-			return Utils.getResource("hamster.getAnzahlHamster") + "()";
+			return "hamster.getAnzahlHamster" + "()";
 		case GET_HAMSTER:
-			return Utils.getResource("hamster.getHamster") + "()";
+			return "hamster.getHamster" + "()";
 		}
 		return super.toString();
 	}

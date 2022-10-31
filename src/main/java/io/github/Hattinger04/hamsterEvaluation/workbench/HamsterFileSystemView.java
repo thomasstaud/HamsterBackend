@@ -17,10 +17,10 @@ public class HamsterFileSystemView  {
 
 	public File createNewFolder(File containingDir) throws IOException {
 		File f = new File(containingDir.getAbsolutePath() + File.separatorChar
-				+ Utils.getResource("workbench.neuerordner"));
+				+ ("workbench.neuerordner"));
 		for (int i = 2; f.exists(); i++) {
 			f = new File(containingDir.getAbsolutePath() + File.separatorChar
-					+ Utils.getResource("workbench.neuerordner") + " " + i);
+					+ "workbench.neuerordner" + " " + i);
 
 		}
 		f.mkdir();
