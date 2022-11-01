@@ -91,7 +91,7 @@ public class Workbench {
 	@Getter @Setter
 	public class TerrainForm {
 		
-		private int leange, breite, x, y;
+		private int laenge, breite, x, y;
 		private int[] cornAnzahl; 
 		private int[][] corn, wall;  
 		
@@ -107,7 +107,7 @@ public class Workbench {
 		 * @param y
 		 */
 		public TerrainForm(int laenge, int breite, int[][] corn, int[] cornAnzahl, int[][] wall, int x, int y) {
-			this.leange = laenge; 
+			this.laenge = laenge; 
 			this.breite = breite; 
 			this.corn = corn; 
 			this.cornAnzahl = cornAnzahl; 
@@ -185,7 +185,7 @@ public class Workbench {
 	}
 	
 	public Terrain createTerrain(TerrainForm form) {
-		Terrain terrain = new Terrain(form.getLeange(), form.getBreite()); 
+		Terrain terrain = new Terrain(form.getLaenge(), form.getBreite()); 
 		int save = 0; 
 		for(int i = 0; i < form.getCorn().length; i++) {
 			for(int j = 0; j < form.getCorn()[i].length; j++) {

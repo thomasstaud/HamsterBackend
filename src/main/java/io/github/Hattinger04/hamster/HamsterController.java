@@ -79,7 +79,6 @@ public class HamsterController {
 		String hamsterPath = String.format("src/main/resources/hamster/%s/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getProgramName());
 		String terrainPath = String.format("src/main/resources/hamster/%s/%s/%s.ter", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getTerrainName());
 		createNewFile(hamsterPath); 
-		createNewFile(terrainPath); // not sure if needed
 		writeTextToFile(new File(hamsterPath), hamster.getProgram());
 		wb.getJsonObject().clear(); 
 		return new ResponseEntity<>(wb.startProgram(hamsterPath, terrainPath), HttpStatus.OK);  
@@ -94,10 +93,9 @@ public class HamsterController {
 		String hamsterPath = String.format("src/main/resources/hamster/%s/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getProgramName());
 		String terrainPath = String.format("src/main/resources/hamster/%s/%s/%s.ter", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getTerrainName());
 		createNewFile(hamsterPath); 
-		createNewFile(terrainPath); 
 		writeTextToFile(new File(hamsterPath), hamster.getProgram());
 		wb.getJsonObject().clear(); 
 		return new ResponseEntity<>(wb.startProgram(hamsterPath, terrainPath, 
-				wb.new TerrainForm(hamster.getLeange(), hamster.getBreite(), hamster.getCorn(), hamster.getCornAnzahl(), hamster.getWall(), hamster.getX(), hamster.getY())), HttpStatus.OK);  
+				wb.new TerrainForm(hamster.getLaenge(), hamster.getBreite(), hamster.getCorn(), hamster.getCornAnzahl(), hamster.getWall(), hamster.getX(), hamster.getY())), HttpStatus.OK);  
 	}
 }

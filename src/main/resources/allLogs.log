@@ -388,3 +388,5 @@ Okt. 31, 2022 7:05:21 PM io.github.Hattinger04.aop.LogAspect loginLog
 FEIN: User(id=null, username=admin, password=admin, active=null, roles=null) - [logged in]
 Okt. 31, 2022 7:45:42 PM io.github.Hattinger04.aop.LogAspect loginLog
 FEIN: User(id=null, username=admin, password=admin, active=null, roles=null) - [logged in]
+Nov. 01, 2022 8:14:49 PM io.github.Hattinger04.aop.LogAspect loginLog
+FEIN: User(id=null, username=admin, password=admin, active=null, roles=null) - [logged in]

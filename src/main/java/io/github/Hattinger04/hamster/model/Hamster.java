@@ -32,7 +32,7 @@ public class Hamster {
 	private String programName; 
 	private String terrainName;
 	private String program; 
-	private int leange, breite, x, y;
+	private int laenge, breite, x, y;
 	private int[] cornAnzahl; 
 	private int[][] corn, wall; 
 }
