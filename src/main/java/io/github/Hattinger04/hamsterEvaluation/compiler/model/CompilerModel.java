@@ -62,7 +62,7 @@ public class CompilerModel extends Observable {
 			return true;
 		}
 		for(Object o : compilerErrors) {
-			System.out.println("Compiler Error: " + o.toString());
+//			System.out.println("Compiler Error: " + o.toString());
 		}
 		return false;
 	}

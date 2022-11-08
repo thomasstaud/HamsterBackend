@@ -28,7 +28,6 @@ public class HamsterController {
 	
 	private Workbench wb = Workbench.getWorkbench(); 
 
-	// TODO: Unterordner / nicht nur eine Datei! 
 	/**
 	 * Creates new File and will create a parent folder if not existing
 	 * It also writes the given program into the file
@@ -96,6 +95,6 @@ public class HamsterController {
 		writeTextToFile(new File(hamsterPath), hamster.getProgram());
 		wb.getJsonObject().clear(); 
 		return new ResponseEntity<>(wb.startProgram(hamsterPath, terrainPath, 
-				wb.new TerrainForm(hamster.getLaenge(), hamster.getBreite(), hamster.getCorn(), hamster.getCornAnzahl(), hamster.getWall(), hamster.getX(), hamster.getY())), HttpStatus.OK);  
+				wb.new TerrainForm(hamster.getLaenge(), hamster.getBreite(), hamster.getCorn(), hamster.getCornAnzahl(), hamster.getWall(), hamster.getX(), hamster.getY(), hamster.getBlickrichtung())), HttpStatus.OK);  
 	}
 }

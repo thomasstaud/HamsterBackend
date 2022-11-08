@@ -85,13 +85,13 @@ public class Workbench {
 		compiler = new CompilerController(model.getCompilerModel(), this);
 		debugger = new DebuggerController(model.getDebuggerModel(), this);
 //		Example of how a program could start: 
-//		startProgram("Programme/data.ham", "Programme/test.ter", new TerrainForm(10,10,new int[][] {{1,2}, {2,3}}, new int[] {1,1}, new int[][] {{0,0}, {1,0}}, 0, 1));
+//		startProgram("Programme/data.ham", "Programme/test.ter", new TerrainForm(10,10,new int[][] {{1,2}, {2,3}}, new int[] {1,1}, new int[][] {{0,0}, {1,0}, 1}, 0, 1));
 	}
 		
 	@Getter @Setter
 	public class TerrainForm {
 		
-		private int laenge, breite, x, y;
+		private int laenge, breite, x, y, blickrichtung;
 		private int[] cornAnzahl; 
 		private int[][] corn, wall;  
 		
@@ -106,7 +106,7 @@ public class Workbench {
 		 * @param x
 		 * @param y
 		 */
-		public TerrainForm(int laenge, int breite, int[][] corn, int[] cornAnzahl, int[][] wall, int x, int y) {
+		public TerrainForm(int laenge, int breite, int[][] corn, int[] cornAnzahl, int[][] wall, int x, int y, int blickrichtung) {
 			this.laenge = laenge; 
 			this.breite = breite; 
 			this.corn = corn; 
@@ -114,6 +114,7 @@ public class Workbench {
 			this.wall = wall; 
 			this.x = x;
 			this.y = y;
+			this.blickrichtung = blickrichtung; 
 		}
 	}
 	
@@ -192,7 +193,6 @@ public class Workbench {
 				if(j % 2 == 0) {
 					save = form.getCorn()[i][j]; 
 				} else {
-					System.out.println(save + " " + form.getCorn()[i][j] + " " + form.getCornAnzahl()[i]);
 					terrain.setCornCount(save, form.getCorn()[i][j], form.getCornAnzahl()[i]);
 				}
 			}
@@ -203,13 +203,13 @@ public class Workbench {
 				if(j % 2 == 0) {
 					save = form.getWall()[i][j]; 
 				} else {
-					System.out.println(save + " " + form.getWall()[i][j]);
 					terrain.setWall(save, form.getWall()[i][j], true);
 				}
 				
 			}
 		}
 		terrain.getDefaultHamster().setXY(form.getX(), form.getY());
+		terrain.getDefaultHamster().setDir(form.getBlickrichtung());
 		return terrain; 
 	}
 	

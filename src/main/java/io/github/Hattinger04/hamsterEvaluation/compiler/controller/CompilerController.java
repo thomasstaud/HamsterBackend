@@ -72,10 +72,8 @@ public class CompilerController {
 		if (!classFile.exists()
 				|| file.lastModified() > classFile.lastModified()) {
 				try {
-					System.out.println("Ensuring Compiled...");
 					return this.compilerModel.compile(file); // dibo 15.11.2010
 				} catch (IOException e) { // dibo 25.10.2011
-					System.out.println("Compiling error! " + e.getMessage());
 				}
 			} 
 		return true;

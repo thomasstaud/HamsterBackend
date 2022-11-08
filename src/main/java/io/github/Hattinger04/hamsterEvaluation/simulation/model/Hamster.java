@@ -57,8 +57,6 @@ public class Hamster {
 	}
 
 	public void setXY(int x, int y) {
-		int oldX = this.x;
-		int oldY = this.y;
 		this.x = x;
 		this.y = y;
 	}
