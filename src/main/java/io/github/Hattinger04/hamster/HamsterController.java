@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.github.Hattinger04.RestServices;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.github.Hattinger04.course.model.student.Student;
 import io.github.Hattinger04.hamster.model.Hamster;
 import io.github.Hattinger04.hamsterEvaluation.workbench.Workbench;
 
@@ -23,9 +26,10 @@ import io.github.Hattinger04.hamsterEvaluation.workbench.Workbench;
 @RequestMapping("/hamster")
 public class HamsterController {
 
-	@Autowired
-	private RestServices restServices; 
 	
+	@Autowired
+	private ObjectMapper mapper;
+
 	private Workbench wb = Workbench.getWorkbench(); 
 
 	/**
@@ -60,8 +64,8 @@ public class HamsterController {
 	@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("/defaultTerrain")
 	@ResponseBody
-	public ResponseEntity<?> defaultTerrain(@RequestBody String json) {
-		Hamster hamster = (Hamster) restServices.deserialize(Hamster.class, json);
+	public ResponseEntity<?> defaultTerrain(@RequestBody JsonNode node) {
+		Hamster hamster = mapper.convertValue(node.get("hamster"), Hamster.class);
 		String path = String.format("src/main/resources/hamster/%s/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getProgramName());
 		createNewFile(path); 
 		writeTextToFile(new File(path), hamster.getProgram());
@@ -73,8 +77,8 @@ public class HamsterController {
 	@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("/existingTerrain")
 	@ResponseBody
-	public ResponseEntity<?> exisitingTerrain(@RequestBody String json) {
-		Hamster hamster = (Hamster) restServices.deserialize(Hamster.class, json);
+	public ResponseEntity<?> exisitingTerrain(@RequestBody JsonNode node) {
+		Hamster hamster = mapper.convertValue(node.get("hamster"), Hamster.class);
 		String hamsterPath = String.format("src/main/resources/hamster/%s/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getProgramName());
 		String terrainPath = String.format("src/main/resources/hamster/%s/%s/%s.ter", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getTerrainName());
 		createNewFile(hamsterPath); 
@@ -87,8 +91,8 @@ public class HamsterController {
 	@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("/newTerrain")
 	@ResponseBody
-	public ResponseEntity<?> newTerrain(@RequestBody String json) {
-		Hamster hamster = (Hamster) restServices.deserialize(Hamster.class, json);
+	public ResponseEntity<?> newTerrain(@RequestBody JsonNode node) {
+		Hamster hamster = mapper.convertValue(node.get("hamster"), Hamster.class);
 		String hamsterPath = String.format("src/main/resources/hamster/%s/%s/%s.ham", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getProgramName());
 		String terrainPath = String.format("src/main/resources/hamster/%s/%s/%s.ter", SecurityContextHolder.getContext().getAuthentication().getName(), hamster.getProgramName(), hamster.getTerrainName());
 		createNewFile(hamsterPath); 

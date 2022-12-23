@@ -9,9 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 
 import io.github.Hattinger04.course.model.exercise.Exercise;
 import lombok.AllArgsConstructor;
@@ -27,7 +25,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@JsonTypeInfo(include=As.WRAPPER_OBJECT, use=com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, property="type")
 @JsonTypeName("solution") 
 public class Solution {
 

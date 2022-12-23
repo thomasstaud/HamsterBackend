@@ -16,6 +16,8 @@ import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import io.github.Hattinger04.role.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +32,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "users")
 @ToString
+@JsonTypeName("user") 
 public class User {
 
 	public User(int id) {

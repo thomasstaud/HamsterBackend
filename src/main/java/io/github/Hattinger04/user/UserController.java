@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.github.Hattinger04.RestServices;
-import io.github.Hattinger04.UserRole;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.github.Hattinger04.role.Role;
 import io.github.Hattinger04.user.model.User;
 import io.github.Hattinger04.user.model.UserService;
 
@@ -28,8 +31,9 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+	
 	@Autowired
-	private RestServices restServices; 
+	private ObjectMapper mapper; 
 	
 	/**
 	 * Get all user from database
@@ -52,8 +56,8 @@ public class UserController {
 	@PreAuthorize("hasAuthority('DEV')")
 	@PostMapping("/createUser")
 	@ResponseBody
-	public ResponseEntity<?> createUser(@RequestBody String json) {
-		User user = (User) restServices.deserialize(User.class, json); 
+	public ResponseEntity<?> createUser(@RequestBody JsonNode node) {
+		User user = mapper.convertValue(node.get("user"), User.class); 
 		if(user == null) {
 			return new ResponseEntity<>("Could not save user -> wrong data", HttpStatus.BAD_REQUEST);
 		}
@@ -71,26 +75,27 @@ public class UserController {
 	 */
 	@PostMapping("/updateUser")
 	@PreAuthorize("hasAuthority('DEV')")
-	public ResponseEntity<?> updateUser(@RequestBody String json) {
-		User user = (User) restServices.deserialize(User.class, json); 
+	public ResponseEntity<?> updateUser(@RequestBody JsonNode node) {
+		User user = mapper.convertValue(node.get("user"), User.class); 
 		if(userService.updateUser(user)) {
 			return new ResponseEntity<>("Could not update user!", HttpStatus.NOT_FOUND); 
 		}
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
-	
+
+
 	/**
 	 * Deleting user
-	 * Needs as RequestBody id
+	 * Needs as RequestBody user object
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@PostMapping("/deleteUser")
+	@DeleteMapping("/deleteUser")
 	@PreAuthorize("hasAuthority('DEV')")
-	public ResponseEntity<?> deleteUser(@RequestBody String json) {
-		UserRole user = (UserRole) restServices.deserialize(UserRole.class, json); 
-		if(!userService.deleteUser(user.getUser_id())) {
+	public ResponseEntity<?> deleteUserByID(@RequestBody JsonNode node) {
+		User user = mapper.convertValue(node.get("user"), User.class); 
+		if(!userService.deleteUser(user.getId())) {
 			return new ResponseEntity<>("Could not delete user!", HttpStatus.NOT_FOUND); 
 		}
 		return new ResponseEntity<>(HttpStatus.OK); 
@@ -106,9 +111,10 @@ public class UserController {
 	 */
 	@PostMapping("/addRole")
 	@PreAuthorize("hasAuthority('DEV')")
-	public ResponseEntity<?> addRole(@RequestBody String json) {
-		UserRole userRole = (UserRole) restServices.deserialize(UserRole.class, json);
-		if(!userService.insertUserRole(userRole.getUser_id(), userRole.getRole_id())) {
+	public ResponseEntity<?> addRole(@RequestBody JsonNode node) {
+		User user = mapper.convertValue(node.get("user"), User.class); 
+		Role role = mapper.convertValue(node.get("role"), Role.class); 
+		if(!userService.insertUserRole(user.getId(), role.getId())) {
 			return new ResponseEntity<>("Could not insert new Role!", HttpStatus.NOT_FOUND); 
 		}
 		return new ResponseEntity<>(HttpStatus.OK); 
@@ -123,9 +129,10 @@ public class UserController {
 	 */
 	@PostMapping("/removeRole")
 	@PreAuthorize("hasAuthority('DEV')")
-	public ResponseEntity<?> removeRole(@RequestBody String json) {
-		UserRole userRole = (UserRole) restServices.deserialize(UserRole.class, json);
-		if(!userService.removeUserRole(userRole.getUser_id(), userRole.getRole_id())) {
+	public ResponseEntity<?> removeRole(@RequestBody JsonNode node) {
+		User user = mapper.convertValue(node.get("user"), User.class); 
+		Role role = mapper.convertValue(node.get("role"), Role.class); 
+		if(!userService.removeUserRole(user.getId(), role.getId())) {
 			return new ResponseEntity<>("Could not remove Role!", HttpStatus.NOT_FOUND); 
 		}
 		return new ResponseEntity<>(HttpStatus.OK); 
@@ -141,12 +148,13 @@ public class UserController {
 	 */
 	@PostMapping("/getUser")
 	@PreAuthorize("hasAuthority('DEV')")
-	public ResponseEntity<?> getUser(@RequestBody String json) {
-		User user = userService.findUserByUsername(((User) (restServices.deserialize(User.class, json))).getUsername());
-		if(user == null) {
-			return new ResponseEntity<>("Couldn't find user!", HttpStatus.NOT_FOUND); 
+	public ResponseEntity<?> getUser(@RequestBody JsonNode node) {
+		User user = mapper.convertValue(node.get("user"), User.class); 
+		User userFound = userService.findUserByUsername(user.getUsername());
+		if(userFound == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
 		}
-		return new ResponseEntity<>(user, HttpStatus.OK); 
+		return new ResponseEntity<>(userFound, HttpStatus.OK); 
 	}
 	
 	// TODO: Delete if not needed anymore
