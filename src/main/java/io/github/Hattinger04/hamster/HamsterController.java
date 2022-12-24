@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.github.Hattinger04.course.model.student.Student;
 import io.github.Hattinger04.hamster.model.Hamster;
 import io.github.Hattinger04.hamsterEvaluation.workbench.Workbench;
 

@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import io.github.Hattinger04.configuration.CustomPasswordEncoder;
 import io.github.Hattinger04.role.Role;
 import io.github.Hattinger04.role.RoleRepository;
 
@@ -16,14 +16,14 @@ public class UserService {
 
 	private UserRepository userRepository;
 	private RoleRepository roleRepository;
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	private CustomPasswordEncoder customPasswordEncoder;
 
 	@Autowired
 	public UserService(UserRepository userRepository, RoleRepository roleRepository,
-			BCryptPasswordEncoder bCryptPasswordEncoder) {
+			CustomPasswordEncoder customPasswordEncoder) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
-		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+		this.customPasswordEncoder = customPasswordEncoder;
 	}
 
 	public User findUserByID(int id) {
@@ -36,7 +36,7 @@ public class UserService {
 
 	public boolean saveUser(User user) {
 		try {
-			user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+			user.setPassword(customPasswordEncoder.encode(user.getPassword()));
 			user.setActive(true);
 			Role userRole = roleRepository.findByRole("USER");
 			user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));

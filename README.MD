@@ -2,15 +2,14 @@
 
 This is the API Background where our frontend framework (= VueJS) sends request to.
 
-## Installation guide for developer (not using docker)
+## Installation guide for developer (not using docker) to edit program
 
 - git clone https://github.com/xJHamster/BackendSpring
 - open maven spring project in your IDE 
 - create mysql database called "springserver"
 - run ProjectWebsiteApplication 
-- go to application.properties and change spring.sql.init.mode=never to spring.sql.init.mode=always 
-- restart program
-- then undo changes in application.properties and restart again 
+
+You can apply some changes in settings.properties, but be careful! You might need to reinstall your database!
 
 ## The commands 
 

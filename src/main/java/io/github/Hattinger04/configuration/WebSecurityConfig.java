@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import io.github.Hattinger04.user.model.MyUserDetailsService;
 
@@ -21,14 +20,14 @@ import io.github.Hattinger04.user.model.MyUserDetailsService;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	private CustomPasswordEncoder encoder;
 
 	@Autowired
 	private MyUserDetailsService userDetailsService;
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+		auth.userDetailsService(userDetailsService).passwordEncoder(encoder);
 	}
 
     @Bean
