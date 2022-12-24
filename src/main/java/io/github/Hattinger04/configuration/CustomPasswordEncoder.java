@@ -28,7 +28,7 @@ public class CustomPasswordEncoder implements PasswordEncoder {
 
 	@Override
 	public boolean matches(CharSequence rawPassword, String encodedPassword) {
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(rounds);
 		String saltedPassword = pepper + rawPassword + pepper;
 		return encoder.matches(saltedPassword, encodedPassword);
 	}
