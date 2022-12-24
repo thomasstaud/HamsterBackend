@@ -18,7 +18,7 @@ import io.github.Hattinger04.user.model.UserRepository;
 
 @Component
 @PropertySource("classpath:settings.properties")
-public class AdminUserCreator implements CommandLineRunner {
+public class OnStartCreate implements CommandLineRunner {
 
 	private final UserRepository userRepository;
 	private final RoleRepository roleRepository;
@@ -33,7 +33,7 @@ public class AdminUserCreator implements CommandLineRunner {
 	private String database; 
 	
 	@Autowired
-	public AdminUserCreator(UserRepository userRepository, CustomPasswordEncoder passwordEncoder,
+	public OnStartCreate(UserRepository userRepository, CustomPasswordEncoder passwordEncoder,
 			RoleRepository roleRepository, EntityManager entityManager) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
