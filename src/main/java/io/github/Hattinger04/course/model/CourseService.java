@@ -39,22 +39,26 @@ public class CourseService {
 		this.studentRepository = studentRepository;
 	}
 
+	public List<Course> getAllCourses() {
+		return courseRepository.findAll(); 
+	}
+	
 	public Course createCourse(Course course) {
 		return courseRepository.save(course);
 	}
 
 	public boolean deleteCourse(Course course) {
 		try {
-			List<User> students = getAllStudents(course);
+			List<User> students = getAllStudentsInCourse(course);
 			Student s;
-			for(User user : students) {
+			for (User user : students) {
 				if ((s = studentRepository.findByUserId(user.getId()).get(0)) != null) {
 					removeStudentFromCourse(course, s);
 				}
 			}
-			User teacher = getCourseTeachers(course).get(0); 
-			if(teacher != null) {
-				deleteCourseTeacher(course, teacherRepository.findByUserId(teacher.getId())); 
+			User teacher = getCourseTeachers(course).get(0);
+			if (teacher != null) {
+				deleteCourseTeacher(course, teacherRepository.findByUserId(teacher.getId()));
 			}
 			courseRepository.delete(course);
 			return true;
@@ -100,7 +104,15 @@ public class CourseService {
 		}
 	}
 
-	public List<User> getAllStudents(Course course) {
+	public List<User> getAllStudents() {
+		List<User> users = new ArrayList<>();
+		for (Student s : studentRepository.findAll()) {
+			users.add(getUserByStudent(s));
+		}
+		return users;
+	}
+	
+	public List<User> getAllStudentsInCourse(Course course) {
 		List<User> users = new ArrayList<>();
 		for (String[] s : courseRepository.getAllStudents(course.getId())) {
 			users.add(new User(Integer.valueOf(s[0]), s[1]));
@@ -113,7 +125,7 @@ public class CourseService {
 		for (String[] s : courseRepository.getCourseTeacher(course.getId())) {
 			users.add(new User(Integer.valueOf(s[0]), s[1]));
 		}
-		return users; 
+		return users;
 	}
 
 	public User getUserByTeacher(Teacher teacher) {
@@ -138,16 +150,17 @@ public class CourseService {
 			return null;
 		}
 	}
+
 	public boolean setCourseTeacher(Course course, Teacher teacher) {
 		try {
 			// check if course is exisiting
 			if (courseRepository.doesCourseExist(course.getId()) == 0) {
-				return false; 
+				return false;
 			}
-			User user = getUserByStudent(new Student(teacher.getId(), teacher.getUser())); 
+			User user = getUserByStudent(new Student(teacher.getId(), teacher.getUser()));
 			// check if user is already in course
-			if(user != null && courseRepository.isUserInCourse(user.getId(), course.getId()) != 0) {
-				return false; 
+			if (user != null && courseRepository.isUserInCourse(user.getId(), course.getId()) != 0) {
+				return false;
 			}
 			// check if user is already student
 			if (user != null && courseRepository.isUserStudent(user.getId(), course.getId()) != 0) {
@@ -175,12 +188,12 @@ public class CourseService {
 		try {
 			// check if course is existing
 			if (courseRepository.doesCourseExist(course.getId()) == 0) {
-				return false; 
+				return false;
 			}
 			// check if student is already in course
 			User user = getUserByStudent(student);
-			if(user != null && courseRepository.isUserInCourse(user.getId(), course.getId()) != 0) {
-				return false; 
+			if (user != null && courseRepository.isUserInCourse(user.getId(), course.getId()) != 0) {
+				return false;
 			}
 			// check if user is already teacher
 			user = getUserByTeacher(new Teacher(student.getId(), student.getUser()));
@@ -193,6 +206,10 @@ public class CourseService {
 		} catch (IllegalArgumentException e) {
 			return false;
 		}
+	}
+
+	public Student getStudentByID(int id) {
+		return studentRepository.getById((long) id); 
 	}
 
 	public boolean addStudentsToCourse(Course course, Set<Student> students) {
