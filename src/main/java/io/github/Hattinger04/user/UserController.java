@@ -66,7 +66,7 @@ public class UserController {
 	 */
 	@GetMapping("/users/{id}")
 	@PreAuthorize("hasAuthority('DEV')")
-	public ResponseEntity<?> getUserById(@PathVariable int id) {
+	public ResponseEntity<?> getUserById(@PathVariable long id) {
 		User userFound = userService.findUserByID(id);
 		if (userFound == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);

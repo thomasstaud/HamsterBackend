@@ -36,4 +36,10 @@ public class Student {
 	@ManyToOne
 	@JoinColumn(name="user_id", nullable = false)
 	private User user;
+	
+	
+	public Student(int student_id, int user_id) {
+		this.id = student_id; 
+		this.user = new User(user_id); 
+	}
 }

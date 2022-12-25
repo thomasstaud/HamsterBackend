@@ -1,6 +1,7 @@
 package io.github.Hattinger04.course;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,8 +60,8 @@ public class CourseController {
 	 */
 	@GetMapping("/students/{id}")
 	@PreAuthorize("hasAuthority('DEV')")
-	public ResponseEntity<?> getStudentByID(@PathVariable int id) {
-		Student student = courseService.getStudentByID(id); 
+	public ResponseEntity<?> getStudentByID(@PathVariable long id) {
+		Student student = courseService.getStudentByID((int)id); 
 		if (student == null || courseService.getUserByStudent(student) == null) {
 			return new ResponseEntity<>("Student not exisiting!", HttpStatus.NOT_FOUND);
 		}
@@ -75,16 +76,17 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/course/{courseid}/students/{studentsid}")
+	@GetMapping("/course/{courseid}/students/{studentid}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getStudentInCourseByCourseID(@PathVariable int courseid, @PathVariable int studentid) {
-		Student student = courseService.getStudentByID(studentid); 
-		Course course = courseService.getCourseByID(studentid); 
+	public ResponseEntity<?> getStudentInCourseByCourseID(@PathVariable long courseid, @PathVariable long studentid) {
+		Student student = courseService.getStudentByID((int) studentid); 
+		Course course = courseService.getCourseByID((int) studentid); 
 		User user = courseService.getUserByStudent(student); 
-		if (student == null || user == null || courseService.getUserByStudent(student) == null || courseService.isUserInCourse(course, user)) {
+		if (student == null || user == null || !courseService.isUserInCourse(course, user)) {
 			return new ResponseEntity<>("Student not exisiting!", HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(user, HttpStatus.OK);
+		student.getUser().setPassword(""); 
+		return new ResponseEntity<>(student, HttpStatus.OK);
 	}
 
 	
@@ -96,12 +98,16 @@ public class CourseController {
 	 */
 	@GetMapping("/course/{id}/students")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getAllStudentsByCourseID(@PathVariable int id) {
-		Course course = courseService.getCourseByID(id); 
-		List<User> students;
+	public ResponseEntity<?> getAllStudentsByCourseID(@PathVariable long id) {
+		Course course = courseService.getCourseByID((int) id); 
+		List<Student> students;
 		if ((students = courseService.getAllStudentsInCourse(course)) == null) {
 			return new ResponseEntity<>("Course not existing or no users in course!", HttpStatus.NOT_FOUND);
 		}
+		students.stream().map(user -> {
+	        user.getUser().setPassword("");
+	        return user;
+	    }).collect(Collectors.toList());
 		return new ResponseEntity<>(students, HttpStatus.OK);
 	}
 	
@@ -115,10 +121,14 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> getAllStudentsByCourseName(@RequestParam(name = "coursename", required = false) String coursename) {
 		Course course = courseService.getCourseByName(coursename); 
-		List<User> students;
+		List<Student> students;
 		if ((students = courseService.getAllStudentsInCourse(course)) == null) {
 			return new ResponseEntity<>("Course not existing or no users in course!", HttpStatus.NOT_FOUND);
 		}
+		students.stream().map(user -> {
+	        user.getUser().setPassword("");
+	        return user;
+	    }).collect(Collectors.toList());
 		return new ResponseEntity<>(students, HttpStatus.OK);
 	}
 
@@ -160,8 +170,8 @@ public class CourseController {
 	 */
 	@GetMapping("/course/{id}/teachers")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getCourseTeacherByCourseID(@PathVariable int id) {
-		Course course = courseService.getCourseByID(id); 
+	public ResponseEntity<?> getCourseTeacherByCourseID(@PathVariable long id) {
+		Course course = courseService.getCourseByID((int) id); 
 		List<User> teachers;
 		if ((teachers = courseService.getCourseTeachers(course)) == null) {
 			return new ResponseEntity<>("There is no teacher in this course - contact an admin!", HttpStatus.NOT_FOUND);
@@ -195,8 +205,8 @@ public class CourseController {
 	 */
 	@GetMapping("/course/{id}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getCourseByID(@PathVariable int id) {
-		Course course = courseService.getCourseByID(id); 
+	public ResponseEntity<?> getCourseByID(@PathVariable long id) {
+		Course course = courseService.getCourseByID((int) id); 
 		if (course == null) {
 			return new ResponseEntity<>("There is no course with this name!", HttpStatus.NOT_FOUND);
 		}

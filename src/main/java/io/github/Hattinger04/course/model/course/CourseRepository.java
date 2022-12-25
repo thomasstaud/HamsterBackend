@@ -19,7 +19,7 @@ public interface CourseRepository extends JpaRepository<Course, Long>{
 	@Query(value = "SELECT user_id, username FROM USERS u JOIN TEACHER t using(user_id) JOIN user_course c using(user_id) where c.course_id=:course_id", nativeQuery = true)
 	List<String[]> getCourseTeacher(int course_id); 
 	
-	@Query(value = "SELECT user_id, username FROM USERS u JOIN STUDENT s using(user_id) JOIN user_course c using(user_id) where c.course_id=:course_id", nativeQuery = true)
+	@Query(value = "SELECT student_id, user_id FROM STUDENT s JOIN USERS u using(user_id) JOIN user_course c using(user_id) where c.course_id=:course_id", nativeQuery = true)
 	List<String[]> getAllStudents(int course_id); 
 	
 	@Query(value = "SELECT EXISTS(SELECT user_id FROM USERS u JOIN STUDENT s using(user_id) JOIN user_course c using(user_id) where user_id=:user_id and c.course_id=:course_id)", nativeQuery = true)

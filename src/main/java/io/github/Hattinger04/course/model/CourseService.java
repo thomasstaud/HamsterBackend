@@ -3,6 +3,7 @@ package io.github.Hattinger04.course.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,16 +41,25 @@ public class CourseService {
 	}
 
 	public List<Course> getAllCourses() {
-		return courseRepository.findAll(); 
+		try {
+			return courseRepository.findAll();
+		} catch (Exception e) {
+			return null;
+		}
 	}
-	
+
 	public Course createCourse(Course course) {
-		return courseRepository.save(course);
+		try {
+			return courseRepository.save(course);
+		} catch (Exception e) {
+			return null;
+		}
+
 	}
 
 	public boolean deleteCourse(Course course) {
 		try {
-			List<User> students = getAllStudentsInCourse(course);
+			List<User> students = getAllUsersInCourse(course);
 			Student s;
 			for (User user : students) {
 				if ((s = studentRepository.findByUserId(user.getId()).get(0)) != null) {
@@ -111,13 +121,23 @@ public class CourseService {
 		}
 		return users;
 	}
+
 	
-	public List<User> getAllStudentsInCourse(Course course) {
-		List<User> users = new ArrayList<>();
-		for (String[] s : courseRepository.getAllStudents(course.getId())) {
-			users.add(new User(Integer.valueOf(s[0]), s[1]));
+	public List<Student> getAllStudentsInCourse(Course course) {
+		try {
+			List<String[]> studentsString = courseRepository.getAllStudents(course.getId());
+			return studentsString.stream().map(x -> new Student(Integer.parseInt(x[0]), Integer.parseInt(x[0]))).collect(Collectors.toList());
+		} catch (Exception e) {
+			return null; 
 		}
-		return users;
+	}
+
+	public List<User> getAllUsersInCourse(Course course) {
+		List<Student> students = getAllStudentsInCourse(course); 
+		if(students == null) {
+			return null;
+		}
+		return students.stream().map(x -> getUserByStudent(x)).collect(Collectors.toList());
 	}
 
 	public List<User> getCourseTeachers(Course course) {
@@ -209,7 +229,7 @@ public class CourseService {
 	}
 
 	public Student getStudentByID(int id) {
-		return studentRepository.getById((long) id); 
+		return studentRepository.findById(id);
 	}
 
 	public boolean addStudentsToCourse(Course course, Set<Student> students) {
@@ -272,7 +292,7 @@ public class CourseService {
 		}
 	}
 
-	public Exercise getExerciseByID(int id) {
+	public Exercise getExerciseByID(int id) { 
 		return exerciseRepository.findById(id);
 	}
 

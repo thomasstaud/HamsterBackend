@@ -26,8 +26,8 @@ public class UserService {
 		this.customPasswordEncoder = customPasswordEncoder;
 	}
 
-	public User findUserByID(int id) {
-		return userRepository.findById(id);
+	public User findUserByID(long id) {
+		return userRepository.findById((int)id);
 	}
 
 	public User findUserByUsername(String username) {
@@ -63,7 +63,7 @@ public class UserService {
 		return userRepository.getNextSeriesId().get(1);
 	}
 
-	public boolean deleteUser(int id) {
+	public boolean deleteUser(long id) {
 		userRepository.delete(findUserByID(id));
 		return true;
 	}
@@ -76,7 +76,7 @@ public class UserService {
 		return userRepository.count();
 	}
 	
-	public boolean insertUserRole(int user_id, int role_id) {
+	public boolean insertUserRole(long user_id, long role_id) {
 		try {
 			userRepository.insertUserRole(user_id, role_id); 
 			return true; 
@@ -85,7 +85,7 @@ public class UserService {
 		}
 	}
 	
-	public boolean removeUserRole(int user_id, int role_id) {
+	public boolean removeUserRole(long user_id, long role_id) {
 		try {
 			userRepository.removeUserRole(user_id, role_id); 
 			return true; 
