@@ -56,14 +56,10 @@ Should be changed when publishing it!
 All Services starts with /api!
 
 1. /user services - available from DEV
-This are all Services which involves user data beginning with /user (links in brackets not made yet)
-- /getAllUsers (GET)
+This are all Services which involves user data beginning with /user (services in brackets are coming soon!)
+- /users (GET, POST, PUT, DELETE)
 - /logout (GET)
-- /getUser (POST - byUsername)
-- /createUser (PUT)
-- /updateUser (POST)
-- /addRole (PUT)
-- /removeRole (DELETE)
+- /roles (POST, DELETE)
 2. /hamster services - for all registered user available: 
 All services which handles requests containing hamstercode beginning with /hamster
 - /defaultTerrain (POST)
@@ -71,20 +67,16 @@ All services which handles requests containing hamstercode beginning with /hamst
 - /newTerrain (POST)  
 3. Teacher services - available from TEACHER
 Services which are available for teachers to take control over their students begin with /teacher
-- /getAllStudents (GET)
-- /createClass (PUT)
-- /deleteClass (DELETE)
-- /addStudentClass (POST)
-- /removeStudentClass (DELETE)
-
+- /students (GET)
+- /course (GET, POST, DELETE)
+- /course/students (GET, POST, DELETE)
+- /course/teachers (GET)
+- /exercises (GET, DELETE, POST, PUT)
+- (/rateExercises)
 3. /login service  
 The login service; request sent as json => {"username": "username", "password": "password"}
 4. /register service  
 The register service; request sent as json => {"username": "username", "password": "password", "email": "email"}  
 
-## Enable HTTPS for Spring (maybe better not to do)
-source: https://www.tutorialspoint.com/spring_boot/spring_boot_enabling_https.htm
-
-1. keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650
-2. configure application.properties
-=> maybe better using the same ssl certificate as in nginx 
+### Test
+To check if you installed everything correctly, I provided you with JUnit tests, which you can find in src/test/java/io/github/Hattinger04/
