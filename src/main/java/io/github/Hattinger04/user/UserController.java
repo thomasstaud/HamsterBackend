@@ -86,10 +86,10 @@ public class UserController {
 	public ResponseEntity<?> createUser(@RequestBody JsonNode node) {
 		User user = mapper.convertValue(node.get("user"), User.class);
 		if (user == null) {
-			return new ResponseEntity<>("Could not save user -> wrong data", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Could not save user -> wrong data "+ node.toPrettyString(), HttpStatus.BAD_REQUEST);
 		}
 		if (!userService.saveUser(user)) {
-			return new ResponseEntity<>("Could not save user -> error in database", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Could not save user -> error in database " + node.toPrettyString(), HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -104,7 +104,7 @@ public class UserController {
 	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> updateUser(@RequestBody JsonNode node) {
 		User user = mapper.convertValue(node.get("user"), User.class);
-		if (userService.updateUser(user)) {
+		if (!userService.updateUser(user)) {
 			return new ResponseEntity<>("Could not update user!", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
@@ -118,7 +118,7 @@ public class UserController {
 	 */
 	@DeleteMapping("/users")
 	@PreAuthorize("hasAuthority('DEV')")
-	public ResponseEntity<?> deleteUserByID(@RequestBody JsonNode node) {
+	public ResponseEntity<?> deleteUser(@RequestBody JsonNode node) {
 		User user = mapper.convertValue(node.get("user"), User.class);
 		if (!userService.deleteUser(user.getId())) {
 			return new ResponseEntity<>("Could not delete user!", HttpStatus.NOT_FOUND);
