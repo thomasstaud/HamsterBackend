@@ -14,21 +14,21 @@ public class CustomPasswordEncoder implements PasswordEncoder {
 	private String pepper;
 
 	@Value("${password.rounds}")
-	private int rounds;
+	private String rounds;
 
 	
 	public CustomPasswordEncoder() {}
 	
 	@Override
 	public String encode(CharSequence rawPassword) {
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(rounds);
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(Integer.valueOf(rounds));
 		String saltedPassword = pepper + rawPassword + pepper;
 		return encoder.encode(saltedPassword);
 	}
 
 	@Override
 	public boolean matches(CharSequence rawPassword, String encodedPassword) {
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(rounds);
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(Integer.valueOf(rounds));
 		String saltedPassword = pepper + rawPassword + pepper;
 		return encoder.matches(saltedPassword, encodedPassword);
 	}
