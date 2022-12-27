@@ -303,7 +303,7 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@DeleteMapping("/deleteExercise")
+	@DeleteMapping("/exercises")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> deleteExercise(@RequestBody JsonNode node) {
 		Exercise exercise = mapper.convertValue(node.get("exercise"), Exercise.class);
