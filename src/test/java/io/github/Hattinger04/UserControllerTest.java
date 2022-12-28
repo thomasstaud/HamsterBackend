@@ -40,7 +40,6 @@ import io.github.Hattinger04.user.model.User;
 @EnableJpaRepositories(basePackages = "io.github.Hattinger04.*")
 @AutoConfigureMockMvc
 @EnableAutoConfiguration
-
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = { UserController.class })
 class UserControllerTest {
 
@@ -117,7 +116,7 @@ class UserControllerTest {
 	@WithMockUser(authorities = "ADMIN")
 	public void testUpdateUser() throws Exception {
 		  User user = new User();
-		  user.setId(3);
+		  user.setId(2);
 		  user.setUsername("new_user_updated");
 		  user.setPassword("new_password_updated");
 
@@ -139,7 +138,7 @@ class UserControllerTest {
 	@WithMockUser(authorities = "ADMIN")
 	public void testDeleteUserByID() throws Exception {
 		  User user = new User();
-		  user.setId(3);
+		  user.setId(2);
 		  
 		  JsonNode node = objectMapper.valueToTree(user); 
 		  ObjectNode objectNode = objectMapper.createObjectNode();
