@@ -72,7 +72,6 @@ public class HamsterController {
 		return new ResponseEntity<>(wb.startProgram(path), HttpStatus.OK);  
 	}
 	
-	// not tested!
 	@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("/existingTerrain")
 	@ResponseBody
@@ -86,7 +85,6 @@ public class HamsterController {
 		return new ResponseEntity<>(wb.startProgram(hamsterPath, terrainPath), HttpStatus.OK);  
 	}
 	
-	// not tested!
 	@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("/newTerrain")
 	@ResponseBody
@@ -98,6 +96,6 @@ public class HamsterController {
 		writeTextToFile(new File(hamsterPath), hamster.getProgram());
 		wb.getJsonObject().clear(); 
 		return new ResponseEntity<>(wb.startProgram(hamsterPath, terrainPath, 
-				wb.new TerrainForm(hamster.getLaenge(), hamster.getBreite(), hamster.getCorn(), hamster.getCornAnzahl(), hamster.getWall(), hamster.getX(), hamster.getY(), hamster.getBlickrichtung())), HttpStatus.OK);  
+				wb.new TerrainForm(hamster.getLaenge(), hamster.getBreite(), hamster.getX(), hamster.getY(), hamster.getBlickrichtung(), hamster.getCornAnzahl(), hamster.getCorn(), hamster.getWall())), HttpStatus.OK);  
 	}
 }

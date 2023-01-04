@@ -1,14 +1,10 @@
 package io.github.Hattinger04.hamsterEvaluation.compiler.controller;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
 import io.github.Hattinger04.hamsterEvaluation.compiler.model.CompilerModel;
-import io.github.Hattinger04.hamsterEvaluation.compiler.model.JavaError;
 import io.github.Hattinger04.hamsterEvaluation.model.HamsterFile;
-import io.github.Hattinger04.hamsterEvaluation.workbench.Utils;
 import io.github.Hattinger04.hamsterEvaluation.workbench.Workbench;
 
 /**

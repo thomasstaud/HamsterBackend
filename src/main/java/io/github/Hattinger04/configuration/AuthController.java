@@ -24,7 +24,7 @@ public class AuthController {
 
 	
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody User user) throws Exception {	
+	public ResponseEntity<?> login(@RequestBody User user) throws Exception {
 		try {
 			SecurityContextHolder.getContext().setAuthentication(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())));
 		} catch (BadCredentialsException e) {
@@ -35,7 +35,7 @@ public class AuthController {
 	
 	// TODO: is checking data with constraints working?
 	@PostMapping("/register")
-	public ResponseEntity<?> register(@RequestBody User user) throws Exception {	
+	public ResponseEntity<?> register(@RequestBody User user) throws Exception {
 		User userExists = userService.findUserByUsername(user.getUsername());
 		if (userExists != null) {
 			return new ResponseEntity<>("Es gibt bereits einen User mit diesem Namen",HttpStatus.BAD_REQUEST); 

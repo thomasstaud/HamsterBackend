@@ -16,6 +16,7 @@ import io.github.Hattinger04.hamsterEvaluation.model.HamsterFile;
 import io.github.Hattinger04.hamsterEvaluation.simulation.controller.SimulationController;
 import io.github.Hattinger04.hamsterEvaluation.simulation.model.SimulationModel;
 import io.github.Hattinger04.hamsterEvaluation.simulation.model.Terrain;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -88,34 +89,13 @@ public class Workbench {
 //		startProgram("Programme/data.ham", "Programme/test.ter", new TerrainForm(10,10,new int[][] {{1,2}, {2,3}}, new int[] {1,1}, new int[][] {{0,0}, {1,0}, 1}, 0, 1));
 	}
 		
-	@Getter @Setter
+	@Getter @Setter @AllArgsConstructor
 	public class TerrainForm {
 		
 		private int laenge, breite, x, y, blickrichtung;
 		private int[] cornAnzahl; 
 		private int[][] corn, wall;  
 		
-		/**
-		 * Create a terrain: 
-		 * 
-		 * @param laenge
-		 * @param breite
-		 * @param corn
-		 * @param cornAnzahl
-		 * @param wall
-		 * @param x
-		 * @param y
-		 */
-		public TerrainForm(int laenge, int breite, int[][] corn, int[] cornAnzahl, int[][] wall, int x, int y, int blickrichtung) {
-			this.laenge = laenge; 
-			this.breite = breite; 
-			this.corn = corn; 
-			this.cornAnzahl = cornAnzahl; 
-			this.wall = wall; 
-			this.x = x;
-			this.y = y;
-			this.blickrichtung = blickrichtung; 
-		}
 	}
 	
 	/**
