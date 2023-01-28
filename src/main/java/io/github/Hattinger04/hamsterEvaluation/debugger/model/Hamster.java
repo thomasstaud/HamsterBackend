@@ -11,7 +11,6 @@ import io.github.Hattinger04.hamsterEvaluation.model.KachelLeerException;
 import io.github.Hattinger04.hamsterEvaluation.model.MauerDaException;
 import io.github.Hattinger04.hamsterEvaluation.model.MaulLeerException;
 import io.github.Hattinger04.hamsterEvaluation.model.MouthEmptyException;
-import io.github.Hattinger04.hamsterEvaluation.model.TerminalInstruction;
 import io.github.Hattinger04.hamsterEvaluation.model.WallInFrontException;
 import io.github.Hattinger04.hamsterEvaluation.model.TileEmptyException;
 

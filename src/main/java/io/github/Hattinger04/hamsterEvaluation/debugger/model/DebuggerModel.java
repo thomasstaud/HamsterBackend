@@ -157,7 +157,6 @@ public class DebuggerModel extends Observable implements Runnable {
 			}
 		} else {
 			this.className = this.currentFile.getName();
-
 			LaunchingConnector connector = Bootstrap.virtualMachineManager().defaultConnector();
 			Map args = connector.defaultArguments();
 			Connector.Argument main = (Connector.Argument) args.get("main");

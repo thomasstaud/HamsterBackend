@@ -1,7 +1,5 @@
 package io.github.Hattinger04.hamsterEvaluation.debugger.controller;
 
-import com.sun.jdi.StackFrame;
-
 import io.github.Hattinger04.hamsterEvaluation.debugger.model.DebuggerModel;
 import io.github.Hattinger04.hamsterEvaluation.model.HamsterFile;
 import io.github.Hattinger04.hamsterEvaluation.workbench.Workbench;
