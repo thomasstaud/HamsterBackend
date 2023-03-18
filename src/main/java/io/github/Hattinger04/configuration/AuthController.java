@@ -42,7 +42,7 @@ public class AuthController {
 	}
 	
 	// TODO: is checking data with constraints working?
-	@PostMapping("/register")
+	@PostMapping("/registration")
 	public ResponseEntity<?> register(@RequestBody User user) throws Exception {
 		User userExists = userService.findUserByUsername(user.getUsername());
 		if (userExists != null) {

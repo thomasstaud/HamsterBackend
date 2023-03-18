@@ -36,7 +36,7 @@ public class SecurityConfiguration implements WebMvcConfigurer {
 	@Bean
 	public RoleHierarchy roleHierarchy() {
 	    RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-	    String hierarchy = "ADMIN > DEV \n DEV > TEACHER \n DEV > USER";
+	    String hierarchy = "ADMIN > DEV \n DEV > TEACHER \n TEACHER > USER";
 	    roleHierarchy.setHierarchy(hierarchy);
 	    return roleHierarchy;
 	}

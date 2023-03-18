@@ -1,1 +1,5 @@
-void main() {int i = 0; vor(); i+=2;}
+void main(){
+	linksUm(); 
+  linksUm(); 
+  vor(); 
+}
