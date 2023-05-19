@@ -1,4 +1,0 @@
-hamster.MauerDaException (3, 5)
-	at io.github.Hattinger04.hamsterEvaluation.debugger.model.IHamster.vor(IHamster.java:94)
-	at test.main(test.java:4)
-	at io.github.Hattinger04.hamsterEvaluation.debugger.model.RemoteRunner.main(RemoteRunner.java:124)
