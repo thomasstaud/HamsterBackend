@@ -13,7 +13,7 @@
 	<artifactId>JavaHamster</artifactId>
 	<version>1.0.First Release</version>
 	<name>Java Hamster Cloud - Backend</name>
-	<description>This is the Backend of the cloud version of the learning tool Java Hamster</description>
+	<description>This is the Backend of the cloud version of the learning tool Java Hamster https://www.java-hamster-modell.de/</description>
 	<properties>
 		<java.version>11</java.version>
 		<jackson.version>2.15.1</jackson.version>
