@@ -22,6 +22,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -41,6 +42,7 @@ import io.github.Hattinger04.user.model.User;
 @AutoConfigureMockMvc
 @EnableAutoConfiguration
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = { UserController.class })
+@Sql({"/testdata/user_controller_testdata.sql", "/testdata/user_controller_testdata.sql"})
 class UserControllerTest {
 
 	@LocalServerPort
