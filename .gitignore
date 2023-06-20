@@ -6,9 +6,9 @@ target/
 
 ### STS ### 
 .apt_generated
-.classpath
+#.classpath
 .factorypath
-.project
+#.project
 .settings
 .springBeans
 .sts4-cache
@@ -34,3 +34,4 @@ build/
 src/main/resources/application.properties
 syserr.txt
 .gitignore
+/.apt_generated_tests/
