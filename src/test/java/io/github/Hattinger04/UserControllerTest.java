@@ -42,7 +42,7 @@ import io.github.Hattinger04.user.model.User;
 @AutoConfigureMockMvc
 @EnableAutoConfiguration
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = { UserController.class })
-@Sql({"/testdata/user_controller_testdata.sql", "/testdata/user_controller_testdata.sql"})
+@Sql({"/testdata/user_controller_testdata.sql"})
 class UserControllerTest {
 
 	@LocalServerPort
@@ -67,6 +67,8 @@ class UserControllerTest {
 		}
 	}
 
+	
+	
 	@Test
 	@WithMockUser(authorities = "ADMIN")
 	public void testGetUsers() throws Exception {
@@ -92,7 +94,7 @@ class UserControllerTest {
 		output(result.getResponse().getStatus()); 
 	}
 	
-	@Disabled // Activate when you want to try it out - currently deactivated!
+	@Disabled
 	@Test
 	@WithMockUser(authorities = "ADMIN")
 	public void testCreateUser() throws Exception {
@@ -113,12 +115,12 @@ class UserControllerTest {
 		                            .andReturn();
 		  output(result.getResponse().getStatus()); 
 	}
-	// Set correct id for user you want to change!
+	
 	@Test
 	@WithMockUser(authorities = "ADMIN")
 	public void testUpdateUser() throws Exception {
 		  User user = new User();
-		  user.setId(2);
+		  user.setId(4);
 		  user.setUsername("new_user_updated");
 		  user.setPassword("new_password_updated");
 
@@ -135,7 +137,6 @@ class UserControllerTest {
 		  output(result.getResponse().getStatus()); 
 	}
 	
-//	@Disabled // Activate when you want to try it out - currently deactivated!
 	@Test
 	@WithMockUser(authorities = "ADMIN")
 	public void testDeleteUserByID() throws Exception {
