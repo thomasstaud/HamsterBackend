@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.github.Hattinger04.course.model.course.Course;
@@ -29,7 +28,6 @@ public class CourseService {
 	private TeacherRepository teacherRepository;
 	private StudentRepository studentRepository;
 
-	@Autowired
 	public CourseService(CourseRepository courseRepository, ExerciseRepository exerciseRepository,
 			SolutionRepository solutionRepository, TeacherRepository teacherRepository,
 			StudentRepository studentRepository) {
@@ -61,9 +59,11 @@ public class CourseService {
 		try {
 			List<User> students = getAllUsersInCourse(course);
 			Student s;
-			for (User user : students) {
-				if ((s = studentRepository.findByUserId(user.getId()).get(0)) != null) {
-					removeStudentFromCourse(course, s);
+			if (students != null) {
+				for (User user : students) {
+					if ((s = studentRepository.findByUserId(user.getId()).get(0)) != null) {
+						removeStudentFromCourse(course, s);
+					}
 				}
 			}
 			User teacher = getCourseTeachers(course).get(0);
@@ -206,7 +206,7 @@ public class CourseService {
 
 	public boolean addStudentToCourse(Course course, Student student) {
 		try {
-			// check if course is existing
+			// check if course exists
 			if (courseRepository.doesCourseExist(course.getId()) == 0) {
 				return false;
 			}
