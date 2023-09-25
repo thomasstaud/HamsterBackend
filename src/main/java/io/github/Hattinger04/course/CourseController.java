@@ -280,8 +280,23 @@ public class CourseController {
 	}
 
 	
-	// TODO: GetMapping for exercises
 	
+	/**
+	 * Get all exercises for a course
+	 * Needs as @RequestParam course_id
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@GetMapping("/exercises")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<?> getAllExercisesByCourseId(@RequestParam(name = "course_id", required = true) int course_id) {
+		List<Exercise> exercises = courseService.getAllExercisesInCourse(course_id);
+		if (exercises == null) {
+			return new ResponseEntity<>("Course is empty or does not exist!", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(exercises, HttpStatus.OK);
+	}
 
 	/**
 	 * Creates a new exercise in a existing Course

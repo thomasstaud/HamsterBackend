@@ -173,7 +173,7 @@ public class CourseService {
 
 	public boolean setCourseTeacher(Course course, Teacher teacher) {
 		try {
-			// check if course is exisiting
+			// check if course exists
 			if (courseRepository.doesCourseExist(course.getId()) == 0) {
 				return false;
 			}
@@ -297,14 +297,13 @@ public class CourseService {
 	}
 
 	/**
-	 * Get exercise by course_id and course name
+	 * Get exercise by course_id
 	 * 
 	 * @param course_id
-	 * @param name
 	 * @return
 	 */
-	public Exercise getExerciseByCourse(int course_id, String name) {
-		return exerciseRepository.findByCourse(course_id, name);
+	public List<Exercise> getAllExercisesInCourse(int course_id) {
+		return exerciseRepository.findByCourseId(course_id);
 	}
 
 	public Solution createSolution(Solution solution) {
