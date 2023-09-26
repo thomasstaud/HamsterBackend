@@ -37,6 +37,7 @@ public class CourseController {
 	private ObjectMapper mapper;
 	
 	// TODO: check if teacher is in course when making rest request!
+	// TODO: rewrite to require IDs instead of objects wherever possible
 	
 	/**
 	 * Get all students from database
@@ -293,7 +294,7 @@ public class CourseController {
 	public ResponseEntity<?> getAllExercisesByCourseId(@RequestParam(name = "course_id", required = true) int course_id) {
 		List<Exercise> exercises = courseService.getAllExercisesInCourse(course_id);
 		if (exercises == null) {
-			return new ResponseEntity<>("Course is empty or does not exist!", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Course is empty or does not exist!", HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>(exercises, HttpStatus.OK);
 	}
@@ -342,7 +343,7 @@ public class CourseController {
 	public ResponseEntity<?> deleteExercise(@RequestBody JsonNode node) {
 		Exercise exercise = mapper.convertValue(node.get("exercise"), Exercise.class);
 		return courseService.deleteExercise(exercise) ? new ResponseEntity<>(HttpStatus.OK)
-				: new ResponseEntity<>("Could not delete exercise!", HttpStatus.NOT_MODIFIED);
+				: new ResponseEntity<>("Could not delete exercise!", HttpStatus.BAD_REQUEST);
 	}
 	
 	// TODO: this doesn't make any sense
@@ -363,7 +364,7 @@ public class CourseController {
 	}
 
 	// TODO: change url
-	// TODO: do we need this function? if yes, HTTP return codes shouldn't be used to return information
+	// TODO: do we need this function?
 	/**
 	 * Service for checking if logged in user is in course
 	 * Needs course object
@@ -371,7 +372,7 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PostMapping("/isUserInCourse")
+	@GetMapping("/isUserInCourse")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> isUserInCourse(@RequestBody JsonNode node) {
 		Course course = mapper.convertValue(node.get("course"), Course.class); 
@@ -380,9 +381,9 @@ public class CourseController {
 		}
 		User user = mapper.convertValue(node.get("user"), User.class); 
 		if(courseService.isUserInCourse(course, user)) {
-			return new ResponseEntity<>(HttpStatus.OK); 
+			return new ResponseEntity<>("true", HttpStatus.OK);
 		}
-		return new ResponseEntity<>("User not in course!", HttpStatus.NO_CONTENT); 
+		return new ResponseEntity<>("false", HttpStatus.OK); 
 	}
 
 }
