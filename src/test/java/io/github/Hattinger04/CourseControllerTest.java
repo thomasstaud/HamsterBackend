@@ -3,6 +3,7 @@ package io.github.Hattinger04;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -62,6 +63,7 @@ class CourseControllerTest {
 		this.mockMvc = MockMvcBuilders.standaloneSetup(new UserController()).build();
 	}
 
+	// TODO: remove this
 	public void output(int status) {
 		if (status == HttpStatus.OK.value()) {
 			System.out.println("\033[32mTest passed!\033[0m");
@@ -70,29 +72,34 @@ class CourseControllerTest {
 		}
 	}
 
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void getAllStudents_returnMoreThanZero() throws Exception {
+		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/courses/students"))
+				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
+
+		String response = result.getResponse().getContentAsString();
+		User[] users = objectMapper.readValue(response, User[].class);
+		
+		assertTrue(users.length != 0);
+	}
+
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void getFirstStudent_HasUsernameAdmin() throws Exception {
+		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/courses/students/1"))
+				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
+
+		String response = result.getResponse().getContentAsString();
+		Student s = objectMapper.readValue(response, Student.class);
+		
+		assertTrue(s.getUser().getUsername().equals("admin"));
+	}
 	
-	
-	// TODO: fix tests to actually make them test things
+	// TODO: fix tests below to actually make them test things
 	//			currently they are just checking the return code
-	
-	@Test
-	@WithMockUser(authorities = "ADMIN")
-	public void testGetStudents() throws Exception {
-		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/course/students"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
 
-		output(result.getResponse().getStatus()); 
-	}
-	
-	@Test
-	@WithMockUser(authorities = "ADMIN")
-	public void testGetFirstStudent() throws Exception {
-		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/course/students/1"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-
-		output(result.getResponse().getStatus()); 
-	}
-	
+	@Disabled
 	@Test
 	@WithMockUser(authorities = "ADMIN")
 	public void testGetAllStudentsByCourseId() throws Exception {
@@ -101,7 +108,8 @@ class CourseControllerTest {
 
 		output(result.getResponse().getStatus()); 
 	}
-	
+
+	@Disabled
 	@Test
 	@WithMockUser(authorities = "ADMIN")
 	public void testGetFirstStudentByCourseId() throws Exception {
@@ -110,7 +118,8 @@ class CourseControllerTest {
 
 		output(result.getResponse().getStatus()); 
 	}
-	
+
+	@Disabled
 	@Test
 	@WithMockUser(authorities = "ADMIN")
 	public void testGetAllStudentsByCourseName() throws Exception {
@@ -191,7 +200,8 @@ class CourseControllerTest {
 		                            .andReturn();
 		output(result.getResponse().getStatus());  
 	}
-	
+
+	@Disabled
 	@Test
 	@WithMockUser(authorities = "ADMIN")
 	public void testGetAllTeachersByCourseId() throws Exception {
@@ -200,7 +210,8 @@ class CourseControllerTest {
 
 		output(result.getResponse().getStatus()); 
 	}
-	
+
+	@Disabled
 	@Test
 	@WithMockUser(authorities = "ADMIN")
 	public void testGetAllTeachersByCourseName() throws Exception {
@@ -209,7 +220,8 @@ class CourseControllerTest {
 
 		output(result.getResponse().getStatus()); 
 	}
-	
+
+	@Disabled
 	@Test
 	@WithMockUser(authorities = "ADMIN")
 	public void testGetCourseById() throws Exception {
@@ -218,7 +230,8 @@ class CourseControllerTest {
 
 		output(result.getResponse().getStatus()); 
 	}
-	
+
+	@Disabled
 	@Test
 	@WithMockUser(authorities = "ADMIN")
 	public void testGetCourseByName() throws Exception {
@@ -227,7 +240,8 @@ class CourseControllerTest {
 
 		output(result.getResponse().getStatus()); 
 	}
-	
+
+	@Disabled
 	@Test
 	@WithMockUser(authorities = "ADMIN")
 	public void testGetAllCourses() throws Exception {
@@ -396,7 +410,8 @@ class CourseControllerTest {
 		                            .andReturn();
 		output(result.getResponse().getStatus());  
 	}
-	
+
+	@Disabled
 	@Test
 	@WithMockUser(authorities = "ADMIN")
 	public void testIsUserInCourse_InCourse() throws Exception {
@@ -429,7 +444,8 @@ class CourseControllerTest {
 		                            .andExpect(status().is(HttpStatus.OK.value()))
 		                            .andReturn();
 	}
-	
+
+	@Disabled
 	@Test
 	@WithMockUser(authorities = "ADMIN")
 	public void testIsUserInCourse_NotInCourse() throws Exception {

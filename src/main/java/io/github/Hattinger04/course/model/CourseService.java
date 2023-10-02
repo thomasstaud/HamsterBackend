@@ -55,21 +55,22 @@ public class CourseService {
 
 	}
 
-	public boolean deleteCourse(Course course) {
+	public boolean deleteCourse(int course_id) {
 		try {
-			List<User> students = getAllUsersInCourse(course);
+			List<User> students = getAllUsersInCourse(course_id);
 			Student s;
 			if (students != null) {
 				for (User user : students) {
 					if ((s = studentRepository.findByUserId(user.getId()).get(0)) != null) {
-						removeStudentFromCourse(course, s);
+						removeStudentFromCourse(course_id, s.getId());
 					}
 				}
 			}
-			User teacher = getCourseTeachers(course).get(0);
+			User teacher = getCourseTeachers(course_id).get(0);
 			if (teacher != null) {
-				deleteCourseTeacher(course, teacherRepository.findByUserId(teacher.getId()));
+				removeTeacherFromCourse(course_id, teacher.getId());
 			}
+			Course course = getCourseByID(course_id);
 			courseRepository.delete(course);
 			return true;
 		} catch (IllegalArgumentException | IndexOutOfBoundsException e) {
@@ -83,6 +84,10 @@ public class CourseService {
 
 	public Course getCourseByName(String name) {
 		return courseRepository.findByName(name);
+	}
+	
+	public List<Course> getCoursesByStudentId(int student_id) {
+		return courseRepository.findCourseByStudentId(student_id);
 	}
 
 	/**
@@ -123,26 +128,26 @@ public class CourseService {
 	}
 
 	
-	public List<Student> getAllStudentsInCourse(Course course) {
+	public List<Student> getAllStudentsInCourse(int course_id) {
 		try {
-			List<String[]> studentsString = courseRepository.getAllStudents(course.getId());
+			List<String[]> studentsString = courseRepository.getAllStudents(course_id);
 			return studentsString.stream().map(x -> new Student(Integer.parseInt(x[0]), Integer.parseInt(x[0]))).collect(Collectors.toList());
 		} catch (Exception e) {
 			return null; 
 		}
 	}
 
-	public List<User> getAllUsersInCourse(Course course) {
-		List<Student> students = getAllStudentsInCourse(course); 
+	public List<User> getAllUsersInCourse(int course_id) {
+		List<Student> students = getAllStudentsInCourse(course_id); 
 		if(students == null) {
 			return null;
 		}
 		return students.stream().map(x -> getUserByStudent(x)).collect(Collectors.toList());
 	}
 
-	public List<User> getCourseTeachers(Course course) {
+	public List<User> getCourseTeachers(int course_id) {
 		List<User> users = new ArrayList<>();
-		for (String[] s : courseRepository.getCourseTeacher(course.getId())) {
+		for (String[] s : courseRepository.getCourseTeacher(course_id)) {
 			users.add(new User(Integer.valueOf(s[0]), s[1]));
 		}
 		return users;
@@ -194,34 +199,33 @@ public class CourseService {
 		}
 	}
 
-	public boolean deleteCourseTeacher(Course course, Teacher teacher) {
+	public boolean removeTeacherFromCourse(int course_id, int teacher_id) {
 		try {
-			teacherRepository.delete(teacher);
-			courseRepository.removeUserFromCourse(teacher.getId(), course.getId());
+			courseRepository.removeUserFromCourse(teacher_id, course_id);
 			return true;
 		} catch (IllegalArgumentException e) {
 			return false;
 		}
 	}
 
-	public boolean addStudentToCourse(Course course, Student student) {
+	public boolean addStudentToCourse(int course_id, Student student) {
 		try {
 			// check if course exists
-			if (courseRepository.doesCourseExist(course.getId()) == 0) {
+			if (courseRepository.doesCourseExist(course_id) == 0) {
 				return false;
 			}
 			// check if student is already in course
 			User user = getUserByStudent(student);
-			if (user != null && courseRepository.isUserInCourse(user.getId(), course.getId()) != 0) {
+			if (user != null && courseRepository.isUserInCourse(user.getId(), course_id) != 0) {
 				return false;
 			}
 			// check if user is already teacher
 			user = getUserByTeacher(new Teacher(student.getId(), student.getUser()));
-			if (user != null && courseRepository.isUserTeacher(user.getId(), course.getId()) != 0) {
+			if (user != null && courseRepository.isUserTeacher(user.getId(), course_id) != 0) {
 				return false;
 			}
 			Student s = studentRepository.save(student);
-			courseRepository.addUserToCourse(s.getUser().getId(), course.getId());
+			courseRepository.addUserToCourse(s.getUser().getId(), course_id);
 			return true;
 		} catch (IllegalArgumentException e) {
 			return false;
@@ -244,10 +248,9 @@ public class CourseService {
 		}
 	}
 
-	public boolean removeStudentFromCourse(Course course, Student student) {
+	public boolean removeStudentFromCourse(int course_id, int student_id) {
 		try {
-			studentRepository.delete(student);
-			courseRepository.removeUserFromCourse(student.getId(), student.getId());
+			courseRepository.removeUserFromCourse(student_id, course_id);
 			return true;
 		} catch (IllegalArgumentException e) {
 			return false;
@@ -283,8 +286,9 @@ public class CourseService {
 		return exerciseRepository.save(exercise);
 	}
 
-	public boolean deleteExercise(Exercise exercise) {
+	public boolean deleteExercise(int exercise_id) {
 		try {
+			Exercise exercise = getExerciseByID(exercise_id);
 			exerciseRepository.delete(exercise);
 			return true;
 		} catch (IllegalArgumentException e) {

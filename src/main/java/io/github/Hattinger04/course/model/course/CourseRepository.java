@@ -66,5 +66,8 @@ public interface CourseRepository extends JpaRepository<Course, Long>{
 	 * @return
 	 */
 	@Query(value = "SELECT EXISTS(SELECT course_id FROM COURSE c where c.course_id=:course_id)", nativeQuery = true)
-	public int doesCourseExist(@Param("course_id") int course_id); 
+	public int doesCourseExist(@Param("course_id") int course_id);
+	
+	@Query(value = "SELECT c.* FROM course c JOIN user_course uc USING(course_id) WHERE uc.user_id=:student_id", nativeQuery = true)
+	public List<Course> findCourseByStudentId(@Param("student_id") int student_id);
 }

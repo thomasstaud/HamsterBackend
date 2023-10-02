@@ -28,7 +28,7 @@ import io.github.Hattinger04.course.model.teacher.Teacher;
 import io.github.Hattinger04.user.model.User;
 
 @RestController
-@RequestMapping("/course")
+@RequestMapping("/courses")
 public class CourseController {
 
 	@Autowired
@@ -37,53 +37,58 @@ public class CourseController {
 	private ObjectMapper mapper;
 	
 	// TODO: check if teacher is in course when making rest request!
+	// TODO: check/update authorization
 	// TODO: rewrite to require IDs instead of objects wherever possible
+	// TODO: proper parameter and return documentation
+
+	/**************************************************************
+	*
+	*	STUDENT MAPPINGS
+	*
+	**************************************************************/
 	
 	/**
-	 * Get all students from database
+	 * GET all students
 	 * 
 	 * @param json
 	 * @return
 	 */
 	@GetMapping("/students")
 	@PreAuthorize("hasAuthority('DEV')")
-	public ResponseEntity<?> getStudents() {
+	public ResponseEntity<?> getAllStudents() {
 		List<User> students = courseService.getAllStudents(); 
 		return new ResponseEntity<>(students, HttpStatus.OK);
 	}
-		
 	
 	/**
-	 * Get student by id from database
-	 * Needs as @PathVariable student_id
+	 * GET student by id
+	 * requires @PathVariable student_id
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/students/{id}")
+	@GetMapping("/students/{student_id}")
 	@PreAuthorize("hasAuthority('DEV')")
-	public ResponseEntity<?> getStudentByID(@PathVariable long id) {
-		Student student = courseService.getStudentByID((int)id); 
+	public ResponseEntity<?> getStudentByID(@PathVariable int student_id) {
+		Student student = courseService.getStudentByID(student_id); 
 		if (student == null || courseService.getUserByStudent(student) == null) {
 			return new ResponseEntity<>("Student does not exist!", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(student, HttpStatus.OK);
 	}
-
 	
 	/**
-	 * Get all students in Course from database
-	 * Needs as @PathVariable course_id
+	 * GET all students by course id
+	 * requires @PathVariable course_id
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/courses/{course_id}/students")
+	@GetMapping("/{course_id}/students")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getAllStudentsByCourseID(@PathVariable long course_id) {
-		Course course = courseService.getCourseByID((int) course_id); 
+	public ResponseEntity<?> getAllStudentsByCourseID(@PathVariable int course_id) {
 		List<Student> students;
-		if ((students = courseService.getAllStudentsInCourse(course)) == null) {
+		if ((students = courseService.getAllStudentsInCourse(course_id)) == null) {
 			return new ResponseEntity<>("Course is empty or does not exist!", HttpStatus.NOT_FOUND);
 		}
 		students.stream().map(user -> {
@@ -92,20 +97,19 @@ public class CourseController {
 	    }).collect(Collectors.toList());
 		return new ResponseEntity<>(students, HttpStatus.OK);
 	}
-		
-
+	
 	/**
-	 * Get student from course by id from database 
-	 * Needs as @PathVariable student_id and course_id
+	 * GET student by student id from specified course
+	 * requires @PathVariable student_id and course_id
 	 * 
 	 * @param json
 	 * @return
 	 */
 	@GetMapping("/courses/{course_id}/students/{student_id}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getStudentInCourseByCourseID(@PathVariable long course_id, @PathVariable long student_id) {
-		Student student = courseService.getStudentByID((int) student_id); 
-		Course course = courseService.getCourseByID((int) course_id); 
+	public ResponseEntity<?> getStudentInCourseByCourseID(@PathVariable int course_id, @PathVariable int student_id) {
+		Student student = courseService.getStudentByID(student_id); 
+		Course course = courseService.getCourseByID(course_id); 
 		User user = courseService.getUserByStudent(student); 
 		if (course == null) {
 			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
@@ -118,123 +122,114 @@ public class CourseController {
 	}
 	
 	/**
-	 * Get all students in Course from database
-	 * Needs as @RequestParam course_name
+	 * POST existing student to existing course
+	 * requires @PathVariable course_id and student_id
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/courses/students")
+	@PostMapping("/{course_id}/students")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getAllStudentsByCourseName(@RequestParam(name = "course_name", required = false) String course_name) {
-		Course course = courseService.getCourseByName(course_name); 
-		List<Student> students;
-		if ((students = courseService.getAllStudentsInCourse(course)) == null) {
-			return new ResponseEntity<>("Course is empty or does not exist!", HttpStatus.NOT_FOUND);
-		}
-		students.stream().map(user -> {
-	        user.getUser().setPassword("");
-	        return user;
-	    }).collect(Collectors.toList());
-		return new ResponseEntity<>(students, HttpStatus.OK);
-	}
-
-	/**
-	 * Adds student to existing Course
-	 * Needs course object + student object
-	 * 
-	 * @param json
-	 * @return
-	 */
-	@PostMapping("/courses/students")
-	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> addStudentCourse(@RequestBody JsonNode node) {
-		Course course = mapper.convertValue(node.get("course"), Course.class); 
+	public ResponseEntity<?> addStudentToCourse(@PathVariable int course_id, @RequestBody JsonNode node) {
 		Student student = mapper.convertValue(node.get("student"), Student.class);
-		return courseService.addStudentToCourse(course, student) ? new ResponseEntity<>(HttpStatus.OK)
+		return courseService.addStudentToCourse(course_id, student) ? new ResponseEntity<>(HttpStatus.OK)
 				: new ResponseEntity<>("Could not add student to course!", HttpStatus.BAD_REQUEST);
 	}
 
 	/**
-	 * Removes student from Course
-	 * Needs course object + student object
+	 * DELETE student from course
+	 * requires @PathVariable student_id and course_id
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@DeleteMapping("/courses/students")
+	@DeleteMapping("/{course_id}/students/{student_id}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> removeStudentCourse(@RequestBody JsonNode node) {
-		Course course = mapper.convertValue(node.get("course"), Course.class); 
-		Student student = mapper.convertValue(node.get("student"), Student.class);
-		return courseService.removeStudentFromCourse(course, student) ? new ResponseEntity<>(HttpStatus.OK)
-				: new ResponseEntity<>("Could not remove student from course!", HttpStatus.NOT_MODIFIED);
+	public ResponseEntity<?> removeStudentFromCourse(@PathVariable int course_id, @PathVariable int student_id) {
+		return courseService.removeStudentFromCourse(course_id, student_id) ? new ResponseEntity<>(HttpStatus.OK)
+				: new ResponseEntity<>("Could not remove student from course!", HttpStatus.BAD_REQUEST);
 	}
+
+	/**************************************************************
+	*
+	*	TEACHER MAPPINGS
+	*
+	**************************************************************/
 	
 	/**
-	 * Get teacher from course from database
-	 * Needs as @PathVariable course_id
+	 * GET teacher by course id
+	 * requires @PathVariable course_id
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/courses/{course_id}/teachers")
+	@GetMapping("/{course_id}/teacher")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getCourseTeacherByCourseID(@PathVariable long course_id) {
-		Course course = courseService.getCourseByID((int) course_id); 
-		List<User> teachers;
-		if ((teachers = courseService.getCourseTeachers(course)) == null) {
-			return new ResponseEntity<>("There is no teacher in this course - contact an admin!", HttpStatus.NOT_FOUND);
+	public ResponseEntity<?> getCourseTeacherByCourseID(@PathVariable int course_id) {
+		List<User> teachers = courseService.getCourseTeachers(course_id);
+		if (teachers == null || teachers.size() == 0) {
+			return new ResponseEntity<>("There is no teacher in this course - contact an admin!", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return new ResponseEntity<>(teachers, HttpStatus.OK);
+		if (teachers.size() > 1) {
+			return new ResponseEntity<>("This course has multiple teachers - contact an admin!", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<>(teachers.get(0), HttpStatus.OK);
 	}
 
 	
 	/**
-	 * get teacher from course from database
-	 * Needs as @RequestParam course_name
+	 * GET teacher by course name
+	 * requires @RequestParam course_name
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/courses/teachers")
+	@GetMapping("/teacher")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getCourseTeacherByCourseName(@RequestParam(name = "course_name", required = false) String course_name) {
+	public ResponseEntity<?> getCourseTeacherByCourseName(@RequestParam(name = "course_name", required = true) String course_name) {
 		Course course = courseService.getCourseByName(course_name); 
-		List<User> teachers;
-		if ((teachers = courseService.getCourseTeachers(course)) == null) {
-			return new ResponseEntity<>("There is no teacher in this course - contact an admin!", HttpStatus.NOT_FOUND);
+		List<User> teachers = courseService.getCourseTeachers(course.getId());
+		if (teachers == null || teachers.size() == 0) {
+			return new ResponseEntity<>("There is no teacher in this course - contact an admin!", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		if (teachers.size() > 1) {
+			return new ResponseEntity<>("This course has multiple teachers - contact an admin!", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return new ResponseEntity<>(teachers, HttpStatus.OK);
 	}
 
+	/**************************************************************
+	*
+	*	COURSE MAPPINGS
+	*
+	**************************************************************/
+	
 	/**
-	 * Get course from database
-	 * Needs as @PathVariable course_id
+	 * GET course by id
+	 * requires @PathVariable course_id
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/courses/{course_id}")
-	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getCourseByID(@PathVariable long course_id) {
-		Course course = courseService.getCourseByID((int) course_id); 
+	@GetMapping("/{course_id}")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<?> getCourseByID(@PathVariable int course_id) {
+		Course course = courseService.getCourseByID(course_id); 
 		if (course == null) {
-			return new ResponseEntity<>("There is no course with this name!", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(course, HttpStatus.OK);
 	}
-
 	
 	/**
-	 * Returns all or one course
-	 * Needs as @RequestParam course_name
+	 * GET all courses or one course by course name
+	 * optional @RequestParam course_name
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/courses")
-	@PreAuthorize("hasAuthority('TEACHER')")
+	@GetMapping("")
+	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> getCourseByCoursename(@RequestParam(name = "course_name", required = false) String course_name) {
 		if(course_name == null) {
 			return new ResponseEntity<>(courseService.getAllCourses(), HttpStatus.OK);
@@ -247,13 +242,30 @@ public class CourseController {
 	}
 	
 	/**
-	 * Create a new Course
-	 * Needs course and teacher object
+	 * GET all courses for a student
+	 * requires @PathVariable student_id
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@PostMapping("/courses")
+	@GetMapping("/students/{student_id}/courses")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<?> getCoursesByStudentId(@PathVariable int student_id) {
+		List<Course> courses = courseService.getCoursesByStudentId(student_id); 
+		if(courses == null) {
+			return new ResponseEntity<>("No courses available", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(courses, HttpStatus.OK);
+	}
+	
+	/**
+	 * POST course
+	 * requires in @RequestBody course and teacher objects
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@PostMapping("")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> createCourse(@RequestBody JsonNode node) {
 		Course course = mapper.convertValue(node.get("course"), Course.class); 
@@ -266,85 +278,144 @@ public class CourseController {
 	}
 
 	/**
-	 * Deletes an existing Course
-	 * Needs course object
+	 * DELETE course
+	 * requires @PathVariable course_id
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@DeleteMapping("/courses")
+	@DeleteMapping("/{course_id}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> deleteCourse(@RequestBody JsonNode node) {
-		Course course = mapper.convertValue(node.get("course"), Course.class); 
-		return courseService.deleteCourse(course) ? new ResponseEntity<>(HttpStatus.OK)
-				: new ResponseEntity<>("Could not delete course!", HttpStatus.NOT_MODIFIED);
+	public ResponseEntity<?> deleteCourse(@PathVariable int course_id) {
+		return courseService.deleteCourse(course_id) ? new ResponseEntity<>(HttpStatus.OK)
+				: new ResponseEntity<>("Could not delete course!", HttpStatus.BAD_REQUEST);
 	}
 
-	
+	/**************************************************************
+	*
+	*	EXERCISE MAPPINGS
+	*
+	**************************************************************/
 	
 	/**
-	 * Get all exercises for a course
-	 * Needs as @RequestParam course_id
+	 * GET all exercises for a course
+	 * requires @PathVariable course_id
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/exercises")
+	@GetMapping("/{course_id}/exercises")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> getAllExercisesByCourseId(@RequestParam(name = "course_id", required = true) int course_id) {
+	public ResponseEntity<?> getAllExercisesByCourseId(@PathVariable int course_id) {
 		List<Exercise> exercises = courseService.getAllExercisesInCourse(course_id);
 		if (exercises == null) {
 			return new ResponseEntity<>("Course is empty or does not exist!", HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>(exercises, HttpStatus.OK);
 	}
-
+	
+	// TODO: how are exercises created?
+	// course_id is currently not used
 	/**
-	 * Creates a new exercise in a existing Course
-	 * Needs course object + exercise
-	 * object
+	 * POST exercise for existing course
+	 * requires @PathVariable course_id and in @RequestBody object
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@PostMapping("/exercises")
+	@PostMapping("/{course_id}/exercises")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> createExercise(@RequestBody JsonNode node) {
+	public ResponseEntity<?> createExercise(@PathVariable int course_id, @RequestBody JsonNode node) {
 		Exercise exercise = mapper.convertValue(node.get("exercise"), Exercise.class);
 		return courseService.createExercise(exercise) != null ? new ResponseEntity<>(HttpStatus.OK)
 				: new ResponseEntity<>("Could not create exercise!", HttpStatus.BAD_REQUEST);
 	}
 	
 	// TODO: actually update instead of creating a new exercise
+	// course_id is currently not used
 	/**
-	 * Changes already existing (and published) exercises
-	 * Needs exercise object
+	 * PUT exercise
+	 * requires @PathVariable course_id and exercise_id and in @RequestBody object
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@PutMapping("/exercises")
+	@PutMapping("/{course_id}/exercises/{exercise_id}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> updateExercise(@RequestBody JsonNode node) {
+	public ResponseEntity<?> updateExercise(@PathVariable int course_id, @PathVariable int exercise_id, @RequestBody JsonNode node) {
 		Exercise exercise = mapper.convertValue(node.get("exercise"), Exercise.class);
 		return courseService.createExercise(exercise) != null ? new ResponseEntity<>(HttpStatus.OK)
 				: new ResponseEntity<>("Could not update exercise!", HttpStatus.BAD_REQUEST);
 	}
 
 	/**
-	 * Deletes existing exercise
-	 * Needs exercise object
+	 * DELETE existing exercise
+	 * requires @PathVariable course_id and exercise_id
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@DeleteMapping("/exercises")
+	@DeleteMapping("/exercises/{exercise_id}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> deleteExercise(@RequestBody JsonNode node) {
-		Exercise exercise = mapper.convertValue(node.get("exercise"), Exercise.class);
-		return courseService.deleteExercise(exercise) ? new ResponseEntity<>(HttpStatus.OK)
+	public ResponseEntity<?> deleteExercise(@PathVariable int course_id, @PathVariable int exercise_id) {
+		return courseService.deleteExercise(exercise_id) ? new ResponseEntity<>(HttpStatus.OK)
 				: new ResponseEntity<>("Could not delete exercise!", HttpStatus.BAD_REQUEST);
 	}
+
+	/**************************************************************
+	*
+	*	SOLUTION MAPPINGS
+	*
+	**************************************************************/
+	
+	/**
+	 * GET all solutions for an exercise
+	 * requires @PathVariable exercise_id
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@GetMapping("/exercises/{exercise_id}/solutions")
+	@PreAuthorize("hasAuthority('TEACHER')")
+	public ResponseEntity<?> getAllSolutionsByExerciseId(@PathVariable int exercise_id) {
+		// TODO: implement
+		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+	}
+	
+	/**
+	 * GET all solutions from a student
+	 * requires @PathVariable student_id
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@GetMapping("/students/{student_id}/solutions")
+	@PreAuthorize("hasAuthority('TEACHER')")
+	public ResponseEntity<?> getAllSolutionsByStudentId(@PathVariable int student_id) {
+		// TODO: implement
+		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+	}
+	
+	/**
+	 * POST solution for an exercise
+	 * requires @PathVariable exercise_id and in @RequestBody solution object
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@PostMapping("/exercises/{exercise_id}/solutions")
+	@PreAuthorize("hasAuthority('TEACHER')")
+	public ResponseEntity<?> addSolutionToExercise(@PathVariable int exercise_id, @RequestBody JsonNode node) {
+		// TODO: implement
+		// Solution solution = mapper.convertValue(node.get("solution"), Solution.class);
+		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+	}
+
+	/**************************************************************
+	*
+	*	OTHER MAPPINGS
+	*
+	**************************************************************/
 	
 	// TODO: this doesn't make any sense
 	//			there is no parameter for the evaluation itself
@@ -359,7 +430,7 @@ public class CourseController {
 	@PostMapping("/exercises/evaluate")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> evaluateExercise(@RequestBody JsonNode node) {
-		// TODO: evaluate exercise from student
+		// TODO: implement
 		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
@@ -367,23 +438,25 @@ public class CourseController {
 	// TODO: do we need this function?
 	/**
 	 * Service for checking if logged in user is in course
-	 * Needs course object
+	 * requires @PathVariable course_id
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/isUserInCourse")
-	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> isUserInCourse(@RequestBody JsonNode node) {
-		Course course = mapper.convertValue(node.get("course"), Course.class); 
+	@GetMapping("/{course_id}/")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<?> isUserInCourse(@PathVariable int course_id) {
+		Course course = courseService.getCourseByID(course_id); 
 		if(course == null) {
 			return new ResponseEntity<>("Course not found!", HttpStatus.BAD_REQUEST); 
 		}
-		User user = mapper.convertValue(node.get("user"), User.class); 
-		if(courseService.isUserInCourse(course, user)) {
-			return new ResponseEntity<>("true", HttpStatus.OK);
-		}
-		return new ResponseEntity<>("false", HttpStatus.OK); 
-	}
+		// get logged in user here
+		
+//		return new ResponseEntity<>(
+//			courseService.isUserInCourse(course, user),
+//			HttpStatus.OK
+//		); 
 
+		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+	}
 }
