@@ -4,7 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import io.github.Hattinger04.configuration.CustomPasswordEncoder;
@@ -18,7 +19,6 @@ public class UserService {
 	private RoleRepository roleRepository;
 	private CustomPasswordEncoder customPasswordEncoder;
 
-	@Autowired
 	public UserService(UserRepository userRepository, RoleRepository roleRepository,
 			CustomPasswordEncoder customPasswordEncoder) {
 		this.userRepository = userRepository;
@@ -93,5 +93,17 @@ public class UserService {
 			return false; 
 		}
 	}
-
+	
+	public User getCurrentUser() {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		String username;
+		if (principal instanceof UserDetails) {
+		  username = ((UserDetails)principal).getUsername();
+		} else {
+		  username = principal.toString();
+		}
+		
+		return findUserByUsername(username);
+	}
 }

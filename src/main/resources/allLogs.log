@@ -452,3 +452,13 @@ Sep. 20, 2023 8:57:16 PM io.github.Hattinger04.aop.LogAspect loginLog
 FEIN: User(id=null, username=admin, password=admin, active=null, roles=null) - [logged in]
 Okt. 02, 2023 4:28:32 PM io.github.Hattinger04.aop.LogAspect loginLog
 FEIN: User(id=null, username=admin, password=admin, active=null, roles=null) - [logged in]
+Okt. 02, 2023 4:58:56 PM io.github.Hattinger04.aop.LogAspect loginLog
+FEIN: User(id=null, username=testuser, password=, active=null, roles=null) - [logged in]
+Okt. 02, 2023 4:59:43 PM io.github.Hattinger04.aop.LogAspect loginLog
+FEIN: User(id=null, username=testuser, password=admin, active=null, roles=null) - [logged in]
+Okt. 02, 2023 4:59:50 PM io.github.Hattinger04.aop.LogAspect loginLog
+FEIN: User(id=null, username=new_user, password=admin, active=null, roles=null) - [logged in]
+Okt. 02, 2023 4:59:58 PM io.github.Hattinger04.aop.LogAspect loginLog
+FEIN: User(id=null, username=new_user_updated, password=admin, active=null, roles=null) - [logged in]
+Okt. 02, 2023 5:01:43 PM io.github.Hattinger04.aop.LogAspect loginLog
+FEIN: User(id=null, username=hans_peter_knusprig, password=hansi1234, active=null, roles=null) - [logged in]

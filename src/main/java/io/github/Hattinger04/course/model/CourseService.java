@@ -232,8 +232,12 @@ public class CourseService {
 		}
 	}
 
-	public Student getStudentByID(int id) {
-		return studentRepository.findById(id);
+	public Student getStudentByStudentId(int student_id) {
+		return studentRepository.findById(student_id);
+	}
+
+	public Student getStudentByUserId(int user_id) {
+		return studentRepository.findByUserId(user_id).get(0);
 	}
 
 	public boolean addStudentsToCourse(Course course, Set<Student> students) {

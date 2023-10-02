@@ -26,6 +26,7 @@ import io.github.Hattinger04.course.model.exercise.Exercise;
 import io.github.Hattinger04.course.model.student.Student;
 import io.github.Hattinger04.course.model.teacher.Teacher;
 import io.github.Hattinger04.user.model.User;
+import io.github.Hattinger04.user.model.UserService;
 
 @RestController
 @RequestMapping("/courses")
@@ -33,6 +34,8 @@ public class CourseController {
 
 	@Autowired
 	private CourseService courseService;
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private ObjectMapper mapper;
 	
@@ -70,7 +73,7 @@ public class CourseController {
 	@GetMapping("/students/{student_id}")
 	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> getStudentByID(@PathVariable int student_id) {
-		Student student = courseService.getStudentByID(student_id); 
+		Student student = courseService.getStudentByStudentId(student_id); 
 		if (student == null || courseService.getUserByStudent(student) == null) {
 			return new ResponseEntity<>("Student does not exist!", HttpStatus.NOT_FOUND);
 		}
@@ -108,7 +111,7 @@ public class CourseController {
 	@GetMapping("/courses/{course_id}/students/{student_id}")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> getStudentInCourseByCourseID(@PathVariable int course_id, @PathVariable int student_id) {
-		Student student = courseService.getStudentByID(student_id); 
+		Student student = courseService.getStudentByStudentId(student_id); 
 		Course course = courseService.getCourseByID(course_id); 
 		User user = courseService.getUserByStudent(student); 
 		if (course == null) {
@@ -251,6 +254,25 @@ public class CourseController {
 	@GetMapping("/students/{student_id}/courses")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> getCoursesByStudentId(@PathVariable int student_id) {
+		List<Course> courses = courseService.getCoursesByStudentId(student_id); 
+		if(courses == null) {
+			return new ResponseEntity<>("No courses available", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(courses, HttpStatus.OK);
+	}
+	
+	/**
+	 * GET all courses for logged in student
+	 *
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@GetMapping("/students/my-courses")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<?> getCoursesForLoggedInStudent() {
+		User user = userService.getCurrentUser();
+		int student_id = courseService.getStudentByUserId(user.getId()).getId();
 		List<Course> courses = courseService.getCoursesByStudentId(student_id); 
 		if(courses == null) {
 			return new ResponseEntity<>("No courses available", HttpStatus.NOT_FOUND);
@@ -450,13 +472,11 @@ public class CourseController {
 		if(course == null) {
 			return new ResponseEntity<>("Course not found!", HttpStatus.BAD_REQUEST); 
 		}
-		// get logged in user here
+		User user = userService.getCurrentUser();
 		
-//		return new ResponseEntity<>(
-//			courseService.isUserInCourse(course, user),
-//			HttpStatus.OK
-//		); 
-
-		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+		return new ResponseEntity<>(
+			courseService.isUserInCourse(course, user),
+			HttpStatus.OK
+		);
 	}
 }
