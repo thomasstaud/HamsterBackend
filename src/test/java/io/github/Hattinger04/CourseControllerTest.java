@@ -74,19 +74,19 @@ class CourseControllerTest {
 
 	@Test
 	@WithMockUser(authorities = "ADMIN")
-	public void getAllStudents_returnMoreThanZero() throws Exception {
+	public void getAllStudents_moreThanZeroResults() throws Exception {
 		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/courses/students"))
 				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
 
 		String response = result.getResponse().getContentAsString();
 		User[] users = objectMapper.readValue(response, User[].class);
 		
-		assertTrue(users.length != 0);
+		assertTrue(users.length > 0);
 	}
 
 	@Test
 	@WithMockUser(authorities = "ADMIN")
-	public void getFirstStudent_HasUsernameAdmin() throws Exception {
+	public void getFirstStudent_hasUsernameAdmin() throws Exception {
 		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/courses/students/1"))
 				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
 
@@ -95,41 +95,123 @@ class CourseControllerTest {
 		
 		assertTrue(s.getUser().getUsername().equals("admin"));
 	}
+
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void getThousandthStudent_return404() throws Exception {
+		mockMvc.perform(get("https://localhost:" + port + "/courses/students/1000"))
+				.andExpect(status().is(HttpStatus.NOT_FOUND.value()));
+	}
+
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void getAllStudentsFromFirstCourse_moreThanZeroResults() throws Exception {
+		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/courses/1/students"))
+				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
+
+		String response = result.getResponse().getContentAsString();
+		Student[] students = objectMapper.readValue(response, Student[].class);
+		
+		assertTrue(students.length > 0);
+	}
+
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void getAllStudentsFromThousandthCourse_zeroResults() throws Exception {
+		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/courses/1000/students"))
+				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
+
+		String response = result.getResponse().getContentAsString();
+		Student[] students = objectMapper.readValue(response, Student[].class);
+		
+		assertTrue(students.length == 0);
+	}
+	
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void getFirstStudentFromFirstCourse_returns200() throws Exception {
+		mockMvc.perform(get("https://localhost:" + port + "/courses/1/students/1"))
+				.andExpect(status().is(HttpStatus.OK.value()));
+	}
+	
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void getThousandthStudentFromFirstCourse_returns404() throws Exception {
+		mockMvc.perform(get("https://localhost:" + port + "/courses/1/students/1000"))
+				.andExpect(status().is(HttpStatus.NOT_FOUND.value()));
+	}
+	
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void getFirstStudentFromThousandthCourse_returns404() throws Exception {
+		mockMvc.perform(get("https://localhost:" + port + "/courses/1000/students/1"))
+				.andExpect(status().is(HttpStatus.NOT_FOUND.value()));
+	}
+	
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void getTeacherFromFirstCourse_return200() throws Exception {
+		mockMvc.perform(get("https://localhost:" + port + "/courses/1/teacher"))
+				.andExpect(status().is(HttpStatus.OK.value()));
+	}
+	
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void getTeacherFromThousandthCourse_return500() throws Exception {
+		mockMvc.perform(get("https://localhost:" + port + "/courses/1000/teacher"))
+				.andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+	}
+	
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void getFirstCourse_returns200() throws Exception {
+		mockMvc.perform(get("https://localhost:" + port + "/courses/1"))
+				.andExpect(status().is(HttpStatus.OK.value()));
+	}
+	
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void getThousandthCourse_returns404() throws Exception {
+		mockMvc.perform(get("https://localhost:" + port + "/courses/1000"))
+				.andExpect(status().is(HttpStatus.NOT_FOUND.value()));
+	}
+
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void testGetCourseByExistantName_returns200() throws Exception {
+		mockMvc.perform(get("https://localhost:" + port + "/courses?course_name=Hamster-Basics"))
+				.andExpect(status().is(HttpStatus.OK.value()));
+	}
+
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void testGetCourseByNonexistantName_returns404() throws Exception {
+		mockMvc.perform(get("https://localhost:" + port + "/courses?course_name=Nonexistant-Course"))
+				.andExpect(status().is(HttpStatus.NOT_FOUND.value()));
+	}
+
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void getAllCourses_moreThanZeroResults() throws Exception {
+		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/courses"))
+				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
+
+		String response = result.getResponse().getContentAsString();
+		Course[] courses = objectMapper.readValue(response, Course[].class);
+		
+		assertTrue(courses.length > 0);
+	}
+	
+	
+	
 	
 	// TODO: fix tests below to actually make them test things
 	//			currently they are just checking the return code
-
-	@Disabled
-	@Test
-	@WithMockUser(authorities = "ADMIN")
-	public void testGetAllStudentsByCourseId() throws Exception {
-		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/course/courses/1/students"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-
-		output(result.getResponse().getStatus()); 
-	}
-
-	@Disabled
-	@Test
-	@WithMockUser(authorities = "ADMIN")
-	public void testGetFirstStudentByCourseId() throws Exception {
-		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/course/courses/1/students/1"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-
-		output(result.getResponse().getStatus()); 
-	}
-
-	@Disabled
-	@Test
-	@WithMockUser(authorities = "ADMIN")
-	public void testGetAllStudentsByCourseName() throws Exception {
-		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/course/courses/students?course_name=Hamster-Basics"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-
-		output(result.getResponse().getStatus()); 
-	}
 	
-	// currently adds student to database -> probably wrong
+	
+	
+	
+	// currently adds student to database -> i am probably going to change this
 	@Disabled
 	@Test
 	@WithMockUser(authorities = "ADMIN")
@@ -165,7 +247,7 @@ class CourseControllerTest {
 		output(result.getResponse().getStatus());  
 	}
 
-	// currently removes student from database but doesn't remove user from course -> probably wrong
+	// currently removes student from database but doesn't remove user from course
 	@Disabled
 	@Test
 	@WithMockUser(authorities = "ADMIN")
@@ -199,56 +281,6 @@ class CourseControllerTest {
 		                            .andExpect(status().is(HttpStatus.OK.value()))
 		                            .andReturn();
 		output(result.getResponse().getStatus());  
-	}
-
-	@Disabled
-	@Test
-	@WithMockUser(authorities = "ADMIN")
-	public void testGetAllTeachersByCourseId() throws Exception {
-		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/course/courses/1/teachers"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-
-		output(result.getResponse().getStatus()); 
-	}
-
-	@Disabled
-	@Test
-	@WithMockUser(authorities = "ADMIN")
-	public void testGetAllTeachersByCourseName() throws Exception {
-		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/course/courses/teachers?course_name=Hamster-Basics"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-
-		output(result.getResponse().getStatus()); 
-	}
-
-	@Disabled
-	@Test
-	@WithMockUser(authorities = "ADMIN")
-	public void testGetCourseById() throws Exception {
-		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/course/courses/1"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-
-		output(result.getResponse().getStatus()); 
-	}
-
-	@Disabled
-	@Test
-	@WithMockUser(authorities = "ADMIN")
-	public void testGetCourseByName() throws Exception {
-		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/course/courses?course_name=Hamster-Basics"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-
-		output(result.getResponse().getStatus()); 
-	}
-
-	@Disabled
-	@Test
-	@WithMockUser(authorities = "ADMIN")
-	public void testGetAllCourses() throws Exception {
-		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/course/courses"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-
-		output(result.getResponse().getStatus()); 
 	}
 	
 	// TODO: error, repair this
@@ -409,73 +441,5 @@ class CourseControllerTest {
 		                            .andExpect(status().is(HttpStatus.OK.value()))
 		                            .andReturn();
 		output(result.getResponse().getStatus());  
-	}
-
-	@Disabled
-	@Test
-	@WithMockUser(authorities = "ADMIN")
-	public void testIsUserInCourse_InCourse() throws Exception {
-		MvcResult result;
-		String response;
-		
-		// get first course from DB
-		result = mockMvc.perform(get("https://localhost:" + port + "/course/courses/1"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-		response = result.getResponse().getContentAsString();
-		Course course = objectMapper.readValue(response, Course.class);
-		
-		// get first user from DB (in first course)
-		result = mockMvc.perform(get("https://localhost:" + port + "/user/users/1"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-		response = result.getResponse().getContentAsString();
-		User user = objectMapper.readValue(response, User.class);
-		
-		JsonNode courseNode = objectMapper.valueToTree(course);
-		JsonNode userNode = objectMapper.valueToTree(user);
-		ObjectNode objectNode = objectMapper.createObjectNode();
-		objectNode.set("course", courseNode);
-		objectNode.set("user", userNode);
-		
-		String json = objectMapper.writeValueAsString(objectNode);
-		  
-		result = mockMvc.perform(post("https://localhost:" + port + "/course/isUserInCourse", 1)
-		                                       .content(json)
-		                                       .contentType(MediaType.APPLICATION_JSON))
-		                            .andExpect(status().is(HttpStatus.OK.value()))
-		                            .andReturn();
-	}
-
-	@Disabled
-	@Test
-	@WithMockUser(authorities = "ADMIN")
-	public void testIsUserInCourse_NotInCourse() throws Exception {
-		MvcResult result;
-		String response;
-		
-		// get first course from DB
-		result = mockMvc.perform(get("https://localhost:" + port + "/course/courses/1"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-		response = result.getResponse().getContentAsString();
-		Course course = objectMapper.readValue(response, Course.class);
-		
-		// get second user from DB (not in first course)
-		result = mockMvc.perform(get("https://localhost:" + port + "/user/users/2"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-		response = result.getResponse().getContentAsString();
-		User user = objectMapper.readValue(response, User.class);
-		
-		JsonNode courseNode = objectMapper.valueToTree(course);
-		JsonNode userNode = objectMapper.valueToTree(user);
-		ObjectNode objectNode = objectMapper.createObjectNode();
-		objectNode.set("course", courseNode);
-		objectNode.set("user", userNode);
-		
-		String json = objectMapper.writeValueAsString(objectNode);
-		  
-		result = mockMvc.perform(post("https://localhost:" + port + "/course/isUserInCourse", 1)
-		                                       .content(json)
-		                                       .contentType(MediaType.APPLICATION_JSON))
-		                            .andExpect(status().is(HttpStatus.NO_CONTENT.value()))
-		                            .andReturn();
 	}
 }

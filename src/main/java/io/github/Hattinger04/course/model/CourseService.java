@@ -331,15 +331,14 @@ public class CourseService {
 		return solutionRepository.findById(id);
 	}
 
-	/**
-	 * Get solution by exercise_id and exercise name
-	 * 
-	 * @param exercise_id
-	 * @param name
-	 * @return
-	 */
-	public Solution getSolutionByExercise(int exercise_id, String name) {
-		return solutionRepository.findByExercise(exercise_id, name);
+	// get all solutions for one exercise
+	public List<Solution> getSolutionsByExerciseId(int exercise_id) {
+		return solutionRepository.findByExerciseId(exercise_id);
+	}
+
+	// get all solutions for one student in a specific course
+	public List<Solution> getSolutionsByStudentId(int student_id, int course_id) {
+		return solutionRepository.findByStudentIdInSpecifiedCourse(student_id, course_id);
 	}
 
 	// TODO: teacher correcting students work

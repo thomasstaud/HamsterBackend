@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.Hattinger04.course.model.CourseService;
 import io.github.Hattinger04.course.model.course.Course;
 import io.github.Hattinger04.course.model.exercise.Exercise;
+import io.github.Hattinger04.course.model.solution.Solution;
 import io.github.Hattinger04.course.model.student.Student;
 import io.github.Hattinger04.course.model.teacher.Teacher;
 import io.github.Hattinger04.user.model.User;
@@ -40,9 +41,8 @@ public class CourseController {
 	private ObjectMapper mapper;
 	
 	// TODO: check if teacher is in course when making rest request!
-	// TODO: check/update authorization
-	// TODO: rewrite to require IDs instead of objects wherever possible
 	// TODO: proper parameter and return documentation
+	// TODO: remove private information (user password) from returned data
 
 	/**************************************************************
 	*
@@ -108,7 +108,7 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/courses/{course_id}/students/{student_id}")
+	@GetMapping("/{course_id}/students/{student_id}")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> getStudentInCourseByCourseID(@PathVariable int course_id, @PathVariable int student_id) {
 		Student student = courseService.getStudentByStudentId(student_id); 
@@ -179,28 +179,6 @@ public class CourseController {
 		return new ResponseEntity<>(teachers.get(0), HttpStatus.OK);
 	}
 
-	
-	/**
-	 * GET teacher by course name
-	 * requires @RequestParam course_name
-	 * 
-	 * @param json
-	 * @return
-	 */
-	@GetMapping("/teacher")
-	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getCourseTeacherByCourseName(@RequestParam(name = "course_name", required = true) String course_name) {
-		Course course = courseService.getCourseByName(course_name); 
-		List<User> teachers = courseService.getCourseTeachers(course.getId());
-		if (teachers == null || teachers.size() == 0) {
-			return new ResponseEntity<>("There is no teacher in this course - contact an admin!", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		if (teachers.size() > 1) {
-			return new ResponseEntity<>("This course has multiple teachers - contact an admin!", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<>(teachers, HttpStatus.OK);
-	}
-
 	/**************************************************************
 	*
 	*	COURSE MAPPINGS
@@ -260,7 +238,8 @@ public class CourseController {
 		}
 		return new ResponseEntity<>(courses, HttpStatus.OK);
 	}
-	
+
+	// TODO: remove private information (user password) from returned data
 	/**
 	 * GET all courses for logged in student
 	 *
@@ -331,7 +310,9 @@ public class CourseController {
 	public ResponseEntity<?> getAllExercisesByCourseId(@PathVariable int course_id) {
 		List<Exercise> exercises = courseService.getAllExercisesInCourse(course_id);
 		if (exercises == null) {
-			return new ResponseEntity<>("Course is empty or does not exist!", HttpStatus.BAD_REQUEST);
+			if (courseService.getCourseByID(course_id) == null)
+				return new ResponseEntity<>("Course does not exist!", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Something went wrong!", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return new ResponseEntity<>(exercises, HttpStatus.OK);
 	}
@@ -390,6 +371,7 @@ public class CourseController {
 	*
 	**************************************************************/
 	
+	// TODO: remove private information (user password) from returned data
 	/**
 	 * GET all solutions for an exercise
 	 * requires @PathVariable exercise_id
@@ -400,37 +382,51 @@ public class CourseController {
 	@GetMapping("/exercises/{exercise_id}/solutions")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> getAllSolutionsByExerciseId(@PathVariable int exercise_id) {
-		// TODO: implement
-		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+		List<Solution> solutions = courseService.getSolutionsByExerciseId(exercise_id);
+		if (solutions == null) {
+			if (courseService.getExerciseByID(exercise_id) == null)
+				return new ResponseEntity<>("Exercise does not exist!", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Something went wrong!", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<>(solutions, HttpStatus.OK);
 	}
-	
+
+	// TODO: remove private information (user password) from returned data
 	/**
-	 * GET all solutions from a student
-	 * requires @PathVariable student_id
+	 * GET all solutions from a student for a specified course
+	 * requires @PathVariable student_id, course_id
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/students/{student_id}/solutions")
+	@GetMapping("/{course_id}/students/{student_id}/solutions")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getAllSolutionsByStudentId(@PathVariable int student_id) {
-		// TODO: implement
-		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+	public ResponseEntity<?> getAllSolutionsByStudentId(@PathVariable int course_id, @PathVariable int student_id) {
+		List<Solution> solutions = courseService.getSolutionsByStudentId(student_id, course_id);
+		if (solutions == null) {
+			if (courseService.getCourseByID(course_id) == null)
+				return new ResponseEntity<>("Course does not exist!", HttpStatus.BAD_REQUEST);
+			if (courseService.getStudentByStudentId(student_id) == null)
+				return new ResponseEntity<>("Student does not exist!", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Something went wrong!", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<>(solutions, HttpStatus.OK);
 	}
 	
 	/**
 	 * POST solution for an exercise
-	 * requires @PathVariable exercise_id and in @RequestBody solution object
+	 * requires in @RequestBody solution object
 	 * 
 	 * @param json
 	 * @return
 	 */
 	@PostMapping("/exercises/{exercise_id}/solutions")
-	@PreAuthorize("hasAuthority('TEACHER')")
+	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> addSolutionToExercise(@PathVariable int exercise_id, @RequestBody JsonNode node) {
-		// TODO: implement
-		// Solution solution = mapper.convertValue(node.get("solution"), Solution.class);
-		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+		Solution solution = mapper.convertValue(node.get("solution"), Solution.class);
+		courseService.createSolution(solution);
+		return courseService.createSolution(solution) != null ? new ResponseEntity<>(HttpStatus.OK)
+				: new ResponseEntity<>("Could not create solution!", HttpStatus.BAD_REQUEST);
 	}
 
 	/**************************************************************
@@ -465,7 +461,7 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/{course_id}/")
+	@GetMapping("/{course_id}/logged-in")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> isUserInCourse(@PathVariable int course_id) {
 		Course course = courseService.getCourseByID(course_id); 
