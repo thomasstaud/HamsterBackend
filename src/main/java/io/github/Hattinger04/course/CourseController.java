@@ -1,5 +1,6 @@
 package io.github.Hattinger04.course;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.github.Hattinger04.course.model.CourseService;
 import io.github.Hattinger04.course.model.course.Course;
+import io.github.Hattinger04.course.model.dto.StudentViewDTO;
 import io.github.Hattinger04.course.model.exercise.Exercise;
 import io.github.Hattinger04.course.model.solution.Solution;
 import io.github.Hattinger04.course.model.student.Student;
@@ -239,9 +241,10 @@ public class CourseController {
 		return new ResponseEntity<>(courses, HttpStatus.OK);
 	}
 
+	// TODO: check if user is student
 	// TODO: remove private information (user password) from returned data
 	/**
-	 * GET all courses for logged in student
+	 * GET all courses for active user (must be student)
 	 *
 	 * 
 	 * @param json
@@ -431,9 +434,40 @@ public class CourseController {
 
 	/**************************************************************
 	*
-	*	OTHER MAPPINGS
+	*	VARIOUS MAPPINGS
 	*
 	**************************************************************/
+	
+	// TODO: check if user is student
+	/**
+	 * GET all courses and exercises for active user (must be student)
+	 *
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@GetMapping("/students/my-view")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<?> getViewForLoggedInStudent() {
+		// get user
+		User user = userService.getCurrentUser();
+		int student_id = courseService.getStudentByUserId(user.getId()).getId();
+		
+		// get courses
+		List<Course> courses = courseService.getCoursesByStudentId(student_id); 
+		if(courses == null) {
+			return new ResponseEntity<>("No courses available", HttpStatus.NOT_FOUND);
+		}
+		
+		List<StudentViewDTO> studentViews = new ArrayList<StudentViewDTO>();
+		// get exercises for each course
+		for (Course course : courses) {
+			List<Exercise> exercises = courseService.getAllExercisesInCourse(course.getId());
+			studentViews.add(new StudentViewDTO(course, exercises));
+		}
+			
+		return new ResponseEntity<>(studentViews, HttpStatus.OK);
+	}
 	
 	// TODO: this doesn't make any sense
 	//			there is no parameter for the evaluation itself
