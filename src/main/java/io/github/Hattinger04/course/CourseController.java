@@ -26,8 +26,6 @@ import io.github.Hattinger04.course.model.course.Course;
 import io.github.Hattinger04.course.model.dto.StudentViewDTO;
 import io.github.Hattinger04.course.model.exercise.Exercise;
 import io.github.Hattinger04.course.model.solution.Solution;
-import io.github.Hattinger04.course.model.student.Student;
-import io.github.Hattinger04.course.model.teacher.Teacher;
 import io.github.Hattinger04.user.model.User;
 import io.github.Hattinger04.user.model.UserService;
 
@@ -45,42 +43,13 @@ public class CourseController {
 	// TODO: check if teacher is in course when making rest request!
 	// TODO: proper parameter and return documentation
 	// TODO: remove private information (user password) from returned data
+	// TODO: use DTOs to only transfer important information
 
 	/**************************************************************
 	*
 	*	STUDENT MAPPINGS
 	*
 	**************************************************************/
-	
-	/**
-	 * GET all students
-	 * 
-	 * @param json
-	 * @return
-	 */
-	@GetMapping("/students")
-	@PreAuthorize("hasAuthority('DEV')")
-	public ResponseEntity<?> getAllStudents() {
-		List<User> students = courseService.getAllStudents(); 
-		return new ResponseEntity<>(students, HttpStatus.OK);
-	}
-	
-	/**
-	 * GET student by id
-	 * requires @PathVariable student_id
-	 * 
-	 * @param json
-	 * @return
-	 */
-	@GetMapping("/students/{student_id}")
-	@PreAuthorize("hasAuthority('DEV')")
-	public ResponseEntity<?> getStudentByID(@PathVariable int student_id) {
-		Student student = courseService.getStudentByStudentId(student_id); 
-		if (student == null || courseService.getUserByStudent(student) == null) {
-			return new ResponseEntity<>("Student does not exist!", HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<>(student, HttpStatus.OK);
-	}
 	
 	/**
 	 * GET all students by course id
@@ -91,13 +60,14 @@ public class CourseController {
 	 */
 	@GetMapping("/{course_id}/students")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getAllStudentsByCourseID(@PathVariable int course_id) {
-		List<Student> students;
-		if ((students = courseService.getAllStudentsInCourse(course_id)) == null) {
-			return new ResponseEntity<>("Course is empty or does not exist!", HttpStatus.NOT_FOUND);
+	public ResponseEntity<?> getAllStudentsByCourseId(@PathVariable int course_id) {
+		List<User> students;
+		if (courseService.getCourseById(course_id) == null) {
+			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
 		}
+		students = courseService.getAllStudentsInCourse(course_id);
 		students.stream().map(user -> {
-	        user.getUser().setPassword("");
+	        user.setPassword("");
 	        return user;
 	    }).collect(Collectors.toList());
 		return new ResponseEntity<>(students, HttpStatus.OK);
@@ -112,17 +82,17 @@ public class CourseController {
 	 */
 	@GetMapping("/{course_id}/students/{student_id}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getStudentInCourseByCourseID(@PathVariable int course_id, @PathVariable int student_id) {
-		Student student = courseService.getStudentByStudentId(student_id); 
-		Course course = courseService.getCourseByID(course_id); 
-		User user = courseService.getUserByStudent(student); 
-		if (course == null) {
+	public ResponseEntity<?> getStudentInCourseByCourseId(@PathVariable int course_id, @PathVariable int student_id) {
+		User student = userService.findUserByID(student_id);
+		// check if course exists
+		if (courseService.getCourseById(course_id) == null) {
 			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
 		}
-		if (student == null || user == null || !courseService.isUserInCourse(course, user)) {
+		// check if user exists and is in course
+		if (student == null || !courseService.isUserStudent(student_id, course_id)) {
 			return new ResponseEntity<>("Student does not exist!", HttpStatus.NOT_FOUND);
 		}
-		student.getUser().setPassword(""); 
+		student.setPassword(""); 
 		return new ResponseEntity<>(student, HttpStatus.OK);
 	}
 	
@@ -133,11 +103,10 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PostMapping("/{course_id}/students")
+	@PostMapping("/{course_id}/students/{student_id}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> addStudentToCourse(@PathVariable int course_id, @RequestBody JsonNode node) {
-		Student student = mapper.convertValue(node.get("student"), Student.class);
-		return courseService.addStudentToCourse(course_id, student) ? new ResponseEntity<>(HttpStatus.OK)
+	public ResponseEntity<?> addStudentToCourse(@PathVariable int course_id, @PathVariable int student_id) {
+		return courseService.addStudentToCourse(course_id, student_id) ? new ResponseEntity<>(HttpStatus.OK)
 				: new ResponseEntity<>("Could not add student to course!", HttpStatus.BAD_REQUEST);
 	}
 
@@ -171,14 +140,11 @@ public class CourseController {
 	@GetMapping("/{course_id}/teacher")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> getCourseTeacherByCourseID(@PathVariable int course_id) {
-		List<User> teachers = courseService.getCourseTeachers(course_id);
-		if (teachers == null || teachers.size() == 0) {
-			return new ResponseEntity<>("There is no teacher in this course - contact an admin!", HttpStatus.INTERNAL_SERVER_ERROR);
+		User teacher = courseService.getCourseTeacher(course_id);
+		if (teacher == null) {
+			return new ResponseEntity<>("This course has invalid teachers - contact an admin!", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		if (teachers.size() > 1) {
-			return new ResponseEntity<>("This course has multiple teachers - contact an admin!", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<>(teachers.get(0), HttpStatus.OK);
+		return new ResponseEntity<>(teacher, HttpStatus.OK);
 	}
 
 	/**************************************************************
@@ -197,7 +163,7 @@ public class CourseController {
 	@GetMapping("/{course_id}")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> getCourseByID(@PathVariable int course_id) {
-		Course course = courseService.getCourseByID(course_id); 
+		Course course = courseService.getCourseById(course_id); 
 		if (course == null) {
 			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
 		}
@@ -253,8 +219,7 @@ public class CourseController {
 	@GetMapping("/students/my-courses")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> getCoursesForLoggedInStudent() {
-		User user = userService.getCurrentUser();
-		int student_id = courseService.getStudentByUserId(user.getId()).getId();
+		int student_id = userService.getCurrentUser().getId();
 		List<Course> courses = courseService.getCoursesByStudentId(student_id); 
 		if(courses == null) {
 			return new ResponseEntity<>("No courses available", HttpStatus.NOT_FOUND);
@@ -272,10 +237,8 @@ public class CourseController {
 	@PostMapping("")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> createCourse(@RequestBody JsonNode node) {
-		Course course = mapper.convertValue(node.get("course"), Course.class); 
-		Teacher teacher = mapper.convertValue(node.get("teacher"), Teacher.class);
+		Course course = mapper.convertValue(node.get("course"), Course.class);
 		if (courseService.createCourse(course) != null) {
-			courseService.setCourseTeacher(course, teacher);
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>("Could not create course!", HttpStatus.BAD_REQUEST);
@@ -313,7 +276,7 @@ public class CourseController {
 	public ResponseEntity<?> getAllExercisesByCourseId(@PathVariable int course_id) {
 		List<Exercise> exercises = courseService.getAllExercisesInCourse(course_id);
 		if (exercises == null) {
-			if (courseService.getCourseByID(course_id) == null)
+			if (courseService.getCourseById(course_id) == null)
 				return new ResponseEntity<>("Course does not exist!", HttpStatus.BAD_REQUEST);
 			return new ResponseEntity<>("Something went wrong!", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -387,7 +350,7 @@ public class CourseController {
 	public ResponseEntity<?> getAllSolutionsByExerciseId(@PathVariable int exercise_id) {
 		List<Solution> solutions = courseService.getSolutionsByExerciseId(exercise_id);
 		if (solutions == null) {
-			if (courseService.getExerciseByID(exercise_id) == null)
+			if (courseService.getExerciseById(exercise_id) == null)
 				return new ResponseEntity<>("Exercise does not exist!", HttpStatus.BAD_REQUEST);
 			return new ResponseEntity<>("Something went wrong!", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -407,10 +370,10 @@ public class CourseController {
 	public ResponseEntity<?> getAllSolutionsByStudentId(@PathVariable int course_id, @PathVariable int student_id) {
 		List<Solution> solutions = courseService.getSolutionsByStudentId(student_id, course_id);
 		if (solutions == null) {
-			if (courseService.getCourseByID(course_id) == null)
+			if (courseService.getCourseById(course_id) == null)
 				return new ResponseEntity<>("Course does not exist!", HttpStatus.BAD_REQUEST);
-			if (courseService.getStudentByStudentId(student_id) == null)
-				return new ResponseEntity<>("Student does not exist!", HttpStatus.BAD_REQUEST);
+			if (!courseService.isUserStudent(student_id, course_id))
+				return new ResponseEntity<>("Student does not exist or is not in course!", HttpStatus.BAD_REQUEST);
 			return new ResponseEntity<>("Something went wrong!", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return new ResponseEntity<>(solutions, HttpStatus.OK);
@@ -449,9 +412,7 @@ public class CourseController {
 	@GetMapping("/students/my-view")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> getViewForLoggedInStudent() {
-		// get user
-		User user = userService.getCurrentUser();
-		int student_id = courseService.getStudentByUserId(user.getId()).getId();
+		int student_id = userService.getCurrentUser().getId();
 		
 		// get courses
 		List<Course> courses = courseService.getCoursesByStudentId(student_id); 
@@ -498,14 +459,14 @@ public class CourseController {
 	@GetMapping("/{course_id}/logged-in")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> isUserInCourse(@PathVariable int course_id) {
-		Course course = courseService.getCourseByID(course_id); 
+		Course course = courseService.getCourseById(course_id); 
 		if(course == null) {
 			return new ResponseEntity<>("Course not found!", HttpStatus.BAD_REQUEST); 
 		}
-		User user = userService.getCurrentUser();
+		int user_id = userService.getCurrentUser().getId();
 		
 		return new ResponseEntity<>(
-			courseService.isUserInCourse(course, user),
+			courseService.isUserInCourse(user_id, course_id),
 			HttpStatus.OK
 		);
 	}

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -32,8 +33,9 @@ import lombok.ToString;
 @JsonTypeName("course") 
 public class Course {
 
-	public Course(String name) {
+	public Course(String name, User teacher) {
 		this.name = name; 
+		this.teacher = teacher;
 	}
 	
 	@Id
@@ -42,6 +44,10 @@ public class Course {
 	private Integer id;
 	@Column(name = "name", unique = true, nullable = false)
 	private String name;
+	
+	@OneToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name="teacher_id", nullable = false)
+	private User teacher;
 		
 	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "user_course", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))

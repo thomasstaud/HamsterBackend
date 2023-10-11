@@ -14,10 +14,10 @@ public interface CourseRepository extends JpaRepository<Course, Long>{
 	Course findByName(String name);
 	// TODO: SQL not tested yet!
 	
-	@Query(value = "SELECT user_id, username FROM USERS u JOIN TEACHER t using(user_id) JOIN user_course c using(user_id) where c.course_id=:course_id", nativeQuery = true)
+	@Query(value = "SELECT user_id, username FROM USERS u JOIN course c ON u.user_id=c.teacher_id where c.course_id=:course_id", nativeQuery = true)
 	List<String[]> getCourseTeacher(int course_id); 
 	
-	@Query(value = "SELECT student_id, user_id FROM STUDENT s JOIN USERS u using(user_id) JOIN user_course c using(user_id) where c.course_id=:course_id", nativeQuery = true)
+	@Query(value = "SELECT user_id, username FROM USER_COURSE uc JOIN USERS u USING(user_id) WHERE uc.course_id=:course_id", nativeQuery = true)
 	List<String[]> getAllStudents(int course_id); 
 	
 	@Query(value = "SELECT EXISTS(SELECT user_id FROM USERS u JOIN STUDENT s using(user_id) JOIN user_course c using(user_id) where user_id=:user_id and c.course_id=:course_id)", nativeQuery = true)
@@ -33,7 +33,7 @@ public interface CourseRepository extends JpaRepository<Course, Long>{
 	@Transactional
 	public void removeUserFromCourse(@Param("user_id") int user_id, @Param("course_id") int course_id);
 	
-	@Query(value = "SELECT count(*) FROM STUDENT s JOIN USER u using(user_id) user_course c using(user_id) where c.course_id=:course_id", nativeQuery = true)
+	@Query(value = "SELECT count(*) FROM user_course where course_id=:course_id", nativeQuery = true)
 	public int countStudents(@Param("course_id") int course_id); 
 
 	/**
@@ -43,11 +43,8 @@ public interface CourseRepository extends JpaRepository<Course, Long>{
 	 * @param course_id
 	 * @return
 	 */
-	@Query(value = "SELECT EXISTS(SELECT student_id FROM STUDENT s JOIN USERS u using(user_id) JOIN user_course c using(user_id) where c.course_id=:course_id and s.user_id=:user_id)", nativeQuery = true)
-	public int isUserStudent(@Param("user_id") int user_id, @Param("course_id") int course_id); 
-	
-	@Query(value = "SELECT count(*) FROM TEACHER t JOIN USERS u using(user_id) JOIN user_course c using(user_id) where c.course_id=:course_id", nativeQuery = true)
-	public int countTeacher(@Param("course_id") int course_id); 
+	@Query(value = "SELECT EXISTS(SELECT * FROM user_course where course_id=:course_id and user_id=:user_id)", nativeQuery = true)
+	public int isUserStudent(@Param("user_id") int user_id, @Param("course_id") int course_id);
 	
 	/**
 	 * If return value equals 0 => no teacher with this user_id exists
@@ -56,7 +53,7 @@ public interface CourseRepository extends JpaRepository<Course, Long>{
 	 * @param course_id
 	 * @return
 	 */
-	@Query(value = "SELECT EXISTS(SELECT teacher_id FROM TEACHER t JOIN USERS u using(user_id) JOIN user_course c using(user_id) where c.course_id=:course_id and t.user_id=:user_id)", nativeQuery = true)
+	@Query(value = "SELECT EXISTS(SELECT teacher_id FROM course where course_id=:course_id and user_id=:user_id)", nativeQuery = true)
 	public int isUserTeacher(@Param("user_id") int user_id, @Param("course_id") int course_id); 
 	
 	/**

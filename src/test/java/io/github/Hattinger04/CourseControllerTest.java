@@ -3,9 +3,9 @@ package io.github.Hattinger04;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.Before;
 import org.junit.jupiter.api.Disabled;
@@ -37,8 +37,6 @@ import io.github.Hattinger04.user.UserController;
 import io.github.Hattinger04.user.model.User;
 import io.github.Hattinger04.course.model.course.Course;
 import io.github.Hattinger04.course.model.exercise.Exercise;
-import io.github.Hattinger04.course.model.student.Student;
-import io.github.Hattinger04.course.model.teacher.Teacher;
 
 @RunWith(SpringRunner.class)
 @EntityScan("io.github.Hattinger04.*")
@@ -74,57 +72,21 @@ class CourseControllerTest {
 
 	@Test
 	@WithMockUser(authorities = "ADMIN")
-	public void getAllStudents_moreThanZeroResults() throws Exception {
-		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/courses/students"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-
-		String response = result.getResponse().getContentAsString();
-		User[] users = objectMapper.readValue(response, User[].class);
-		
-		assertTrue(users.length > 0);
-	}
-
-	@Test
-	@WithMockUser(authorities = "ADMIN")
-	public void getFirstStudent_hasUsernameAdmin() throws Exception {
-		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/courses/students/1"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-
-		String response = result.getResponse().getContentAsString();
-		Student s = objectMapper.readValue(response, Student.class);
-		
-		assertTrue(s.getUser().getUsername().equals("admin"));
-	}
-
-	@Test
-	@WithMockUser(authorities = "ADMIN")
-	public void getThousandthStudent_return404() throws Exception {
-		mockMvc.perform(get("https://localhost:" + port + "/courses/students/1000"))
-				.andExpect(status().is(HttpStatus.NOT_FOUND.value()));
-	}
-
-	@Test
-	@WithMockUser(authorities = "ADMIN")
 	public void getAllStudentsFromFirstCourse_moreThanZeroResults() throws Exception {
 		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/courses/1/students"))
 				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
 
 		String response = result.getResponse().getContentAsString();
-		Student[] students = objectMapper.readValue(response, Student[].class);
+		User[] students = objectMapper.readValue(response, User[].class);
 		
 		assertTrue(students.length > 0);
 	}
 
 	@Test
 	@WithMockUser(authorities = "ADMIN")
-	public void getAllStudentsFromThousandthCourse_zeroResults() throws Exception {
-		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/courses/1000/students"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-
-		String response = result.getResponse().getContentAsString();
-		Student[] students = objectMapper.readValue(response, Student[].class);
-		
-		assertTrue(students.length == 0);
+	public void getAllStudentsFromThousandthCourse_return404() throws Exception {
+		mockMvc.perform(get("https://localhost:" + port + "/courses/1000/students"))
+				.andExpect(status().is(HttpStatus.NOT_FOUND.value()));
 	}
 	
 	@Test
@@ -223,7 +185,7 @@ class CourseControllerTest {
 		result = mockMvc.perform(get("https://localhost:" + port + "/course/students/2"))
 				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
 		response = result.getResponse().getContentAsString();
-		Student student = objectMapper.readValue(response, Student.class);
+		User student = objectMapper.readValue(response, User.class);
 		
 		// get first course from DB
 		result = mockMvc.perform(get("https://localhost:" + port + "/course/courses/1"))
@@ -259,7 +221,7 @@ class CourseControllerTest {
 		result = mockMvc.perform(get("https://localhost:" + port + "/course/students/2"))
 				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
 		response = result.getResponse().getContentAsString();
-		Student student = objectMapper.readValue(response, Student.class);
+		User student = objectMapper.readValue(response, User.class);
 		
 		// get first course from DB
 		result = mockMvc.perform(get("https://localhost:" + port + "/course/courses/1"))
@@ -295,7 +257,7 @@ class CourseControllerTest {
 		result = mockMvc.perform(get("https://localhost:" + port + "/course/courses/1/teachers"))
 				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
 		response = result.getResponse().getContentAsString();
-		Teacher teacher = objectMapper.readValue(response, Teacher[].class)[0];
+		User teacher = objectMapper.readValue(response, User[].class)[0];
 		
 		Course course = new Course();
 		course.setName("new_course");
