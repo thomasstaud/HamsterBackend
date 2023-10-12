@@ -2,7 +2,6 @@ package io.github.Hattinger04.course;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,11 +21,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.github.Hattinger04.course.model.CourseService;
+import io.github.Hattinger04.course.model.StudentViewDTO;
 import io.github.Hattinger04.course.model.course.Course;
-import io.github.Hattinger04.course.model.dto.StudentViewDTO;
+import io.github.Hattinger04.course.model.course.CourseDTO;
 import io.github.Hattinger04.course.model.exercise.Exercise;
+import io.github.Hattinger04.course.model.exercise.ExerciseDTO;
 import io.github.Hattinger04.course.model.solution.Solution;
+import io.github.Hattinger04.course.model.solution.SolutionDTO;
 import io.github.Hattinger04.user.model.User;
+import io.github.Hattinger04.user.model.UserDTO;
 import io.github.Hattinger04.user.model.UserService;
 
 @RestController
@@ -42,8 +45,6 @@ public class CourseController {
 	
 	// TODO: check if teacher is in course when making rest request!
 	// TODO: proper parameter and return documentation
-	// TODO: remove private information (user password) from returned data
-	// TODO: use DTOs to only transfer important information
 
 	/**************************************************************
 	*
@@ -61,15 +62,17 @@ public class CourseController {
 	@GetMapping("/{course_id}/students")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> getAllStudentsByCourseId(@PathVariable int course_id) {
-		List<User> students;
+		// check if course exists
 		if (courseService.getCourseById(course_id) == null) {
 			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
 		}
-		students = courseService.getAllStudentsInCourse(course_id);
-		students.stream().map(user -> {
-	        user.setPassword("");
-	        return user;
-	    }).collect(Collectors.toList());
+		
+		// get users and convert to DTOs
+		List<UserDTO> students = new ArrayList<UserDTO>();
+		for (User student : courseService.getAllStudentsInCourse(course_id)) {
+			students.add(new UserDTO(student));
+		}
+		
 		return new ResponseEntity<>(students, HttpStatus.OK);
 	}
 	
@@ -84,16 +87,19 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> getStudentInCourseByCourseId(@PathVariable int course_id, @PathVariable int student_id) {
 		User student = userService.findUserByID(student_id);
+		
 		// check if course exists
 		if (courseService.getCourseById(course_id) == null) {
 			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
 		}
-		// check if user exists and is in course
+		
+		// check if student exists and is in course
 		if (student == null || !courseService.isUserStudent(student_id, course_id)) {
 			return new ResponseEntity<>("Student does not exist!", HttpStatus.NOT_FOUND);
 		}
-		student.setPassword(""); 
-		return new ResponseEntity<>(student, HttpStatus.OK);
+		
+		// return student as DTO
+		return new ResponseEntity<>(new UserDTO(student), HttpStatus.OK);
 	}
 	
 	/**
@@ -144,7 +150,7 @@ public class CourseController {
 		if (teacher == null) {
 			return new ResponseEntity<>("This course has invalid teachers - contact an admin!", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return new ResponseEntity<>(teacher, HttpStatus.OK);
+		return new ResponseEntity<>(new UserDTO(teacher), HttpStatus.OK);
 	}
 
 	/**************************************************************
@@ -167,7 +173,7 @@ public class CourseController {
 		if (course == null) {
 			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(course, HttpStatus.OK);
+		return new ResponseEntity<>(new CourseDTO(course), HttpStatus.OK);
 	}
 	
 	/**
@@ -181,13 +187,18 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> getCourseByCoursename(@RequestParam(name = "course_name", required = false) String course_name) {
 		if(course_name == null) {
-			return new ResponseEntity<>(courseService.getAllCourses(), HttpStatus.OK);
+			// get all courses and convert to DTOs
+			List<CourseDTO> courses = new ArrayList<CourseDTO>();
+			for(Course course : courseService.getAllCourses()) {
+				courses.add(new CourseDTO(course));
+			}
+			return new ResponseEntity<>(courses, HttpStatus.OK);
 		}
 		Course course = courseService.getCourseByName(course_name); 
 		if(course == null) {
 			return new ResponseEntity<>("There is no course with this name!", HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(course, HttpStatus.OK);
+		return new ResponseEntity<>(new CourseDTO(course), HttpStatus.OK);
 	}
 	
 	/**
@@ -200,8 +211,13 @@ public class CourseController {
 	@GetMapping("/students/{student_id}/courses")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> getCoursesByStudentId(@PathVariable int student_id) {
-		List<Course> courses = courseService.getCoursesByStudentId(student_id); 
-		if(courses == null) {
+		// get courses and convert to DTOs
+		List<CourseDTO> courses = new ArrayList<CourseDTO>();
+		for(Course course : courseService.getCoursesByStudentId(student_id)) {
+			courses.add(new CourseDTO(course));
+		}
+		
+		if(courses.isEmpty()) {
 			return new ResponseEntity<>("No courses available", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(courses, HttpStatus.OK);
@@ -220,8 +236,14 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> getCoursesForLoggedInStudent() {
 		int student_id = userService.getCurrentUser().getId();
-		List<Course> courses = courseService.getCoursesByStudentId(student_id); 
-		if(courses == null) {
+		
+		// get courses and convert to DTOs
+		List<CourseDTO> courses = new ArrayList<CourseDTO>();
+		for(Course course : courseService.getCoursesByStudentId(student_id)) {
+			courses.add(new CourseDTO(course));
+		}
+		
+		if(courses.isEmpty()) {
 			return new ResponseEntity<>("No courses available", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(courses, HttpStatus.OK);
@@ -274,11 +296,17 @@ public class CourseController {
 	@GetMapping("/{course_id}/exercises")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> getAllExercisesByCourseId(@PathVariable int course_id) {
-		List<Exercise> exercises = courseService.getAllExercisesInCourse(course_id);
-		if (exercises == null) {
-			if (courseService.getCourseById(course_id) == null)
-				return new ResponseEntity<>("Course does not exist!", HttpStatus.BAD_REQUEST);
-			return new ResponseEntity<>("Something went wrong!", HttpStatus.INTERNAL_SERVER_ERROR);
+		if (courseService.getCourseById(course_id) == null)
+			return new ResponseEntity<>("Course does not exist!", HttpStatus.BAD_REQUEST);
+		
+		// get exercises and convert to DTOs
+		List<ExerciseDTO> exercises = new ArrayList<ExerciseDTO>();
+		for(Exercise exercise : courseService.getAllExercisesInCourse(course_id)) {
+			exercises.add(new ExerciseDTO(exercise));
+		}
+		
+		if (exercises.isEmpty()) {
+			return new ResponseEntity<>("Course is empty!", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(exercises, HttpStatus.OK);
 	}
@@ -348,11 +376,17 @@ public class CourseController {
 	@GetMapping("/exercises/{exercise_id}/solutions")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> getAllSolutionsByExerciseId(@PathVariable int exercise_id) {
-		List<Solution> solutions = courseService.getSolutionsByExerciseId(exercise_id);
-		if (solutions == null) {
-			if (courseService.getExerciseById(exercise_id) == null)
-				return new ResponseEntity<>("Exercise does not exist!", HttpStatus.BAD_REQUEST);
-			return new ResponseEntity<>("Something went wrong!", HttpStatus.INTERNAL_SERVER_ERROR);
+		if (courseService.getExerciseById(exercise_id) == null)
+			return new ResponseEntity<>("Exercise does not exist!", HttpStatus.BAD_REQUEST);
+
+		// get solutions and convert to DTOs
+		List<SolutionDTO> solutions = new ArrayList<SolutionDTO>();
+		for (Solution solution : courseService.getSolutionsByExerciseId(exercise_id)) {
+			solutions.add(new SolutionDTO(solution));
+		}
+		
+		if (solutions.isEmpty()) {
+			return new ResponseEntity<>("Exercise has no solutions!", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(solutions, HttpStatus.OK);
 	}
@@ -368,13 +402,19 @@ public class CourseController {
 	@GetMapping("/{course_id}/students/{student_id}/solutions")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> getAllSolutionsByStudentId(@PathVariable int course_id, @PathVariable int student_id) {
-		List<Solution> solutions = courseService.getSolutionsByStudentId(student_id, course_id);
-		if (solutions == null) {
-			if (courseService.getCourseById(course_id) == null)
-				return new ResponseEntity<>("Course does not exist!", HttpStatus.BAD_REQUEST);
-			if (!courseService.isUserStudent(student_id, course_id))
-				return new ResponseEntity<>("Student does not exist or is not in course!", HttpStatus.BAD_REQUEST);
-			return new ResponseEntity<>("Something went wrong!", HttpStatus.INTERNAL_SERVER_ERROR);
+		if (courseService.getCourseById(course_id) == null)
+			return new ResponseEntity<>("Course does not exist!", HttpStatus.BAD_REQUEST);
+		if (!courseService.isUserStudent(student_id, course_id))
+			return new ResponseEntity<>("Student does not exist or is not in course!", HttpStatus.BAD_REQUEST);
+		
+		// get solutions and convert to DTOs
+		List<SolutionDTO> solutions = new ArrayList<SolutionDTO>();
+		for (Solution solution : courseService.getSolutionsByStudentId(student_id, course_id)) {
+			solutions.add(new SolutionDTO(solution));
+		}
+		
+		if (solutions.isEmpty()) {
+			return new ResponseEntity<>("Student has no solutions!", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(solutions, HttpStatus.OK);
 	}
@@ -414,19 +454,16 @@ public class CourseController {
 	public ResponseEntity<?> getViewForLoggedInStudent() {
 		int student_id = userService.getCurrentUser().getId();
 		
-		// get courses
-		List<Course> courses = courseService.getCoursesByStudentId(student_id); 
-		if(courses == null) {
-			return new ResponseEntity<>("No courses available", HttpStatus.NOT_FOUND);
-		}
-		
 		List<StudentViewDTO> studentViews = new ArrayList<StudentViewDTO>();
 		// get exercises for each course
-		for (Course course : courses) {
+		for (Course course : courseService.getCoursesByStudentId(student_id)) {
 			List<Exercise> exercises = courseService.getAllExercisesInCourse(course.getId());
 			studentViews.add(new StudentViewDTO(course, exercises));
 		}
-			
+		
+		if(studentViews.isEmpty()) {
+			return new ResponseEntity<>("Student is not in any course", HttpStatus.NOT_FOUND);
+		}
 		return new ResponseEntity<>(studentViews, HttpStatus.OK);
 	}
 	
