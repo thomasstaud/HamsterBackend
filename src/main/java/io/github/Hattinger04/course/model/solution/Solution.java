@@ -29,10 +29,11 @@ import lombok.ToString;
 @JsonTypeName("solution") 
 public class Solution {
 
-	public Solution(Exercise exercise, User student, String hamster) {
+	public Solution(Exercise exercise, User student, String hamster, String feedback) {
 		this.exercise = exercise;
 		this.student = student;
 		this.hamster = hamster;
+		this.feedback = feedback;
 	}
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,6 +48,9 @@ public class Solution {
 	@JoinColumn(name="student_id", nullable = false)
 	private User student;
 	
-	@Column(name = "hamster", unique = false, nullable = false)	
+	@Column(name = "hamster", nullable = false)	
 	private String hamster;
+	
+	@Column(name = "feedback")	
+	private String feedback;
 }

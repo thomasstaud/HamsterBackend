@@ -28,9 +28,11 @@ import lombok.ToString;
 @JsonTypeName("exercise") 
 public class Exercise {
 
-	public Exercise(Course course, String name) {
+	public Exercise(Course course, String name, String details, String hamster) {
 		this.course = course; 
-		this.name = name; 
+		this.name = name;
+		this.details = details;
+		this.hamster = hamster;
 	}
 	
 	@Id
@@ -38,10 +40,13 @@ public class Exercise {
 	@Column(name = "exercise_id")
 	private Integer id;
 	
-	@Column(name = "name", unique = true, nullable = false)
+	@Column(name = "name", nullable = false)
 	private String name;
 	
-	@Column(name = "hamster", unique = false, nullable = false)
+	@Column(name = "details")
+	private String details;
+	
+	@Column(name = "hamster", nullable = false)
 	private String hamster; 
 	
 	@ManyToOne
