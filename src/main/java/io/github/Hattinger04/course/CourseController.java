@@ -168,7 +168,7 @@ public class CourseController {
 	 */
 	@GetMapping("/{course_id}")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> getCourseByID(@PathVariable int course_id) {
+	public ResponseEntity<?> getCourseById(@PathVariable int course_id) {
 		Course course = courseService.getCourseById(course_id); 
 		if (course == null) {
 			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
@@ -185,7 +185,7 @@ public class CourseController {
 	 */
 	@GetMapping("")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> getCourseByCoursename(@RequestParam(name = "course_name", required = false) String course_name) {
+	public ResponseEntity<?> getCourseByCourseName(@RequestParam(name = "course_name", required = false) String course_name) {
 		if(course_name == null) {
 			// get all courses and convert to DTOs
 			List<CourseDTO> courses = new ArrayList<CourseDTO>();
@@ -224,7 +224,6 @@ public class CourseController {
 	}
 
 	// TODO: check if user is student
-	// TODO: remove private information (user password) from returned data
 	/**
 	 * GET all courses for active user (must be student)
 	 *
@@ -251,7 +250,7 @@ public class CourseController {
 	
 	/**
 	 * POST course
-	 * requires in @RequestBody course and teacher objects
+	 * requires in @RequestBody course object
 	 * 
 	 * @param json
 	 * @return
@@ -260,8 +259,9 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> createCourse(@RequestBody JsonNode node) {
 		Course course = mapper.convertValue(node.get("course"), Course.class);
-		if (courseService.createCourse(course) != null) {
-			return new ResponseEntity<>(HttpStatus.OK);
+		course = courseService.createCourse(course);
+		if (course != null) {
+			return new ResponseEntity<>(course.getId(), HttpStatus.OK);
 		}
 		return new ResponseEntity<>("Could not create course!", HttpStatus.BAD_REQUEST);
 	}
@@ -285,6 +285,23 @@ public class CourseController {
 	*	EXERCISE MAPPINGS
 	*
 	**************************************************************/
+	
+	/**
+	 * GET exercise by id
+	 * requires @PathVariable exercise_id
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@GetMapping("/exercises/{exercise_id}")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<?> getExerciseById(@PathVariable int exercise_id) {
+		Exercise exercise = courseService.getExerciseById(exercise_id); 
+		if (exercise == null) {
+			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(new ExerciseDTO(exercise), HttpStatus.OK);
+	}
 	
 	/**
 	 * GET all exercises for a course
@@ -311,33 +328,34 @@ public class CourseController {
 		return new ResponseEntity<>(exercises, HttpStatus.OK);
 	}
 	
-	// TODO: how are exercises created?
-	// course_id is currently not used
 	/**
 	 * POST exercise for existing course
-	 * requires @PathVariable course_id and in @RequestBody object
+	 * requires in @RequestBody exercise object
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@PostMapping("/{course_id}/exercises")
+	@PostMapping("/exercises")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> createExercise(@PathVariable int course_id, @RequestBody JsonNode node) {
+	public ResponseEntity<?> createExercise(@RequestBody JsonNode node) {
 		Exercise exercise = mapper.convertValue(node.get("exercise"), Exercise.class);
-		return courseService.createExercise(exercise) != null ? new ResponseEntity<>(HttpStatus.OK)
+		exercise = courseService.createExercise(exercise);
+		
+		return exercise != null ? new ResponseEntity<>(exercise.getId(), HttpStatus.OK)
 				: new ResponseEntity<>("Could not create exercise!", HttpStatus.BAD_REQUEST);
 	}
 	
 	// TODO: actually update instead of creating a new exercise
 	// course_id is currently not used
+	// is put or patch better here?
 	/**
 	 * PUT exercise
-	 * requires @PathVariable course_id and exercise_id and in @RequestBody object
+	 * requires @PathVariable exercise_id and in @RequestBody object
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@PutMapping("/{course_id}/exercises/{exercise_id}")
+	@PutMapping("/exercises/{exercise_id}")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> updateExercise(@PathVariable int course_id, @PathVariable int exercise_id, @RequestBody JsonNode node) {
 		Exercise exercise = mapper.convertValue(node.get("exercise"), Exercise.class);
@@ -347,14 +365,14 @@ public class CourseController {
 
 	/**
 	 * DELETE existing exercise
-	 * requires @PathVariable course_id and exercise_id
+	 * requires @PathVariable exercise_id
 	 * 
 	 * @param json
 	 * @return
 	 */
 	@DeleteMapping("/exercises/{exercise_id}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> deleteExercise(@PathVariable int course_id, @PathVariable int exercise_id) {
+	public ResponseEntity<?> deleteExercise(@PathVariable int exercise_id) {
 		return courseService.deleteExercise(exercise_id) ? new ResponseEntity<>(HttpStatus.OK)
 				: new ResponseEntity<>("Could not delete exercise!", HttpStatus.BAD_REQUEST);
 	}
@@ -365,7 +383,23 @@ public class CourseController {
 	*
 	**************************************************************/
 	
-	// TODO: remove private information (user password) from returned data
+	/**
+	 * GET solution by id
+	 * requires @PathVariable solution_id
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@GetMapping("/solutions/{solution_id}")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<?> getSolutionById(@PathVariable int solution_id) {
+		Solution solution = courseService.getSolutionById(solution_id); 
+		if (solution == null) {
+			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(new SolutionDTO(solution), HttpStatus.OK);
+	}
+	
 	/**
 	 * GET all solutions for an exercise
 	 * requires @PathVariable exercise_id
@@ -391,7 +425,6 @@ public class CourseController {
 		return new ResponseEntity<>(solutions, HttpStatus.OK);
 	}
 
-	// TODO: remove private information (user password) from returned data
 	/**
 	 * GET all solutions from a student for a specified course
 	 * requires @PathVariable student_id, course_id
@@ -426,13 +459,27 @@ public class CourseController {
 	 * @param json
 	 * @return
 	 */
-	@PostMapping("/exercises/{exercise_id}/solutions")
+	@PostMapping("/solutions")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> addSolutionToExercise(@PathVariable int exercise_id, @RequestBody JsonNode node) {
+	public ResponseEntity<?> addSolutionToExercise(@RequestBody JsonNode node) {
 		Solution solution = mapper.convertValue(node.get("solution"), Solution.class);
-		courseService.createSolution(solution);
-		return courseService.createSolution(solution) != null ? new ResponseEntity<>(HttpStatus.OK)
+		solution = courseService.createSolution(solution);
+		return solution != null ? new ResponseEntity<>(solution.getId(), HttpStatus.OK)
 				: new ResponseEntity<>("Could not create solution!", HttpStatus.BAD_REQUEST);
+	}
+
+	/**
+	 * DELETE existing solution
+	 * requires @PathVariable solution_id
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@DeleteMapping("/solutions/{solution_id}")
+	@PreAuthorize("hasAuthority('TEACHER')")
+	public ResponseEntity<?> deleteSolution(@PathVariable int solution_id) {
+		return courseService.deleteSolution(solution_id) ? new ResponseEntity<>(HttpStatus.OK)
+				: new ResponseEntity<>("Could not delete exercise!", HttpStatus.BAD_REQUEST);
 	}
 
 	/**************************************************************
