@@ -1,9 +1,11 @@
 package io.github.Hattinger04;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.Before;
@@ -268,7 +270,54 @@ class CourseControllerTest {
 		.andExpect(status().is(HttpStatus.NOT_FOUND.value()));
 	}
 	
-	// TODO: test exercise PUT
+	@Test
+	@WithMockUser(authorities = "ADMIN")
+	public void updateExerciseOne() throws Exception {
+		String updatedDetails = "patched details";
+		String originalDetails = "schwierige aufgabe";
+		
+		// create JSON-String with updated exercise details
+		JsonNode node = objectMapper.valueToTree(updatedDetails);
+		ObjectNode objectNode = objectMapper.createObjectNode();
+		objectNode.set("details", node);
+		
+		String json = objectMapper.writeValueAsString(objectNode);
+		
+		// send patch request
+		mockMvc.perform(patch("https://localhost:" + port + "/courses/exercises/1")
+		                                       .content(json)
+		                                       .contentType(MediaType.APPLICATION_JSON))
+		                            .andExpect(status().is(HttpStatus.OK.value()));
+		
+		// assert that details were saved
+		MvcResult result = mockMvc.perform(get("https://localhost:" + port + "/courses/exercises/1"))
+		.andExpect(status().is(HttpStatus.OK.value())).andReturn();
+		String response = result.getResponse().getContentAsString();
+		Exercise exercise = objectMapper.readValue(response, Exercise.class);
+		assertTrue(exercise.getDetails().equals(updatedDetails));
+		
+		// change details back
+		
+		// create JSON-String with original exercise details
+		node = objectMapper.valueToTree(originalDetails);
+		objectNode = objectMapper.createObjectNode();
+		objectNode.set("details", node);
+		
+		json = objectMapper.writeValueAsString(objectNode);
+		
+		// send patch request
+		mockMvc.perform(patch("https://localhost:" + port + "/courses/exercises/1")
+		                                       .content(json)
+		                                       .contentType(MediaType.APPLICATION_JSON))
+		                            .andExpect(status().is(HttpStatus.OK.value()));
+		
+		// assert that details were saved
+		result = mockMvc.perform(get("https://localhost:" + port + "/courses/exercises/1"))
+		.andExpect(status().is(HttpStatus.OK.value())).andReturn();
+		response = result.getResponse().getContentAsString();
+		exercise = objectMapper.readValue(response, Exercise.class);
+		assertTrue(exercise.getDetails().equals(originalDetails));
+	}
 	
 	@Test
 	@WithMockUser(authorities = "ADMIN")

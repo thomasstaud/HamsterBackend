@@ -111,7 +111,7 @@ public class CourseService {
 		}
 	}
 
-	public Course createCourse(Course course) {
+	public Course saveCourse(Course course) {
 		try {
 			return courseRepository.save(course);
 		} catch (Exception e) {
@@ -151,7 +151,7 @@ public class CourseService {
 	
 	
 	
-	public Exercise createExercise(Exercise exercise) {
+	public Exercise saveExercise(Exercise exercise) {
 		return exerciseRepository.save(exercise);
 	}
 
@@ -175,7 +175,7 @@ public class CourseService {
 
 	
 	
-	public Solution createSolution(Solution solution) {
+	public Solution saveSolution(Solution solution) {
 		return solutionRepository.save(solution);
 	}
 

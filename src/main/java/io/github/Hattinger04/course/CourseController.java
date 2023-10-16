@@ -1,17 +1,20 @@
 package io.github.Hattinger04.course;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -259,7 +262,7 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> createCourse(@RequestBody JsonNode node) {
 		Course course = mapper.convertValue(node.get("course"), Course.class);
-		course = courseService.createCourse(course);
+		course = courseService.saveCourse(course);
 		if (course != null) {
 			return new ResponseEntity<>(course.getId(), HttpStatus.OK);
 		}
@@ -339,28 +342,43 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> createExercise(@RequestBody JsonNode node) {
 		Exercise exercise = mapper.convertValue(node.get("exercise"), Exercise.class);
-		exercise = courseService.createExercise(exercise);
+		exercise = courseService.saveExercise(exercise);
 		
 		return exercise != null ? new ResponseEntity<>(exercise.getId(), HttpStatus.OK)
 				: new ResponseEntity<>("Could not create exercise!", HttpStatus.BAD_REQUEST);
 	}
 	
-	// TODO: actually update instead of creating a new exercise
-	// course_id is currently not used
-	// is put or patch better here?
 	/**
-	 * PUT exercise
+	 * PATCH exercise
 	 * requires @PathVariable exercise_id and in @RequestBody object
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@PutMapping("/exercises/{exercise_id}")
+	@PatchMapping("/exercises/{exerciseId}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> updateExercise(@PathVariable int course_id, @PathVariable int exercise_id, @RequestBody JsonNode node) {
-		Exercise exercise = mapper.convertValue(node.get("exercise"), Exercise.class);
-		return courseService.createExercise(exercise) != null ? new ResponseEntity<>(HttpStatus.OK)
-				: new ResponseEntity<>("Could not update exercise!", HttpStatus.BAD_REQUEST);
+	public ResponseEntity<?> updateExercise(@PathVariable int exerciseId, @RequestBody Map<String, Object> fields) {
+		
+	    // Sanitize and validate the data
+	    if (exerciseId <= 0 || fields == null || fields.isEmpty()){
+	        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	    }
+	    
+	    Exercise exercise = courseService.getExerciseById(exerciseId);
+	    
+	    if (exercise == null) {
+	    	return new ResponseEntity<>("Exercise does not exist!", HttpStatus.NOT_FOUND);
+	    }
+
+	    fields.forEach((k, v) -> {
+		    System.out.println(k);
+	        Field field = ReflectionUtils.findField(Exercise.class, k); // find field in exercise class
+	        field.setAccessible(true); 
+	        ReflectionUtils.setField(field, exercise, v); // set given field for exercise object to value V
+	    });
+
+	    courseService.saveExercise(exercise);
+	    return new ResponseEntity<>(exercise.getId(), HttpStatus.OK);
 	}
 
 	/**
@@ -463,7 +481,7 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> addSolutionToExercise(@RequestBody JsonNode node) {
 		Solution solution = mapper.convertValue(node.get("solution"), Solution.class);
-		solution = courseService.createSolution(solution);
+		solution = courseService.saveSolution(solution);
 		return solution != null ? new ResponseEntity<>(solution.getId(), HttpStatus.OK)
 				: new ResponseEntity<>("Could not create solution!", HttpStatus.BAD_REQUEST);
 	}
@@ -531,7 +549,6 @@ public class CourseController {
 		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
-	// TODO: change url
 	// TODO: do we need this function?
 	/**
 	 * Service for checking if logged in user is in course
