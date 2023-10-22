@@ -3,9 +3,10 @@ package io.github.Hattinger04;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.Before;
@@ -321,11 +322,51 @@ class CourseControllerTest {
 	
 	@Test
 	@WithMockUser(authorities = "ADMIN")
+	public void updateSolution() throws Exception {
+		MvcResult result;
+		String response;
+		
+		// get solution
+		result = mockMvc.perform(get("https://localhost:" + port + "/courses/solutions/6"))
+				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
+		response = result.getResponse().getContentAsString();
+		Solution solution = objectMapper.readValue(response, Solution.class);
+		
+		System.out.println(solution.getExercise());
+		
+		String code = solution.getCode() + " code";
+		solution.setCode(code);
+		
+		JsonNode node = objectMapper.valueToTree(solution);
+		ObjectNode objectNode = objectMapper.createObjectNode();
+		objectNode.set("solution", node);
+		
+		String json = objectMapper.writeValueAsString(objectNode);
+		
+		// send put request
+		result = mockMvc.perform(put("https://localhost:" + port + "/courses/solutions")
+		                                       .content(json)
+		                                       .contentType(MediaType.APPLICATION_JSON))
+		                            .andExpect(status().is(HttpStatus.OK.value())).andReturn();
+		response = result.getResponse().getContentAsString();
+		int solutionId = objectMapper.readValue(response, int.class);
+		
+		// assert that solution was updated
+		result = mockMvc.perform(get("https://localhost:" + port + "/courses/solutions/" + solutionId))
+		.andExpect(status().is(HttpStatus.OK.value())).andReturn();
+		response = result.getResponse().getContentAsString();
+		solution = objectMapper.readValue(response, Solution.class);
+		
+		assertEquals(code, solution.getCode());
+	}
+	
+	@Test
+	@WithMockUser(authorities = "ADMIN")
 	public void createAndDeleteSolution() throws Exception {
 		MvcResult result;
 		String response;
 		
-		// create JSON-String with exercise data
+		// create JSON-String with solution data
 		result = mockMvc.perform(get("https://localhost:" + port + "/user/users/1"))
 				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
 		response = result.getResponse().getContentAsString();
@@ -347,15 +388,15 @@ class CourseControllerTest {
 		
 		String json = objectMapper.writeValueAsString(objectNode);
 		
-		// send post request
-		result = mockMvc.perform(post("https://localhost:" + port + "/courses/solutions")
+		// send put request
+		result = mockMvc.perform(put("https://localhost:" + port + "/courses/solutions")
 		                                       .content(json)
 		                                       .contentType(MediaType.APPLICATION_JSON))
 		                            .andExpect(status().is(HttpStatus.OK.value())).andReturn();
 		response = result.getResponse().getContentAsString();
 		int solutionId = objectMapper.readValue(response, int.class);
 		
-		// assert that exercise with returned ID exists
+		// assert that solution with returned ID exists
 		mockMvc.perform(get("https://localhost:" + port + "/courses/solutions/" + solutionId))
 		.andExpect(status().is(HttpStatus.OK.value()));
 		
@@ -363,7 +404,7 @@ class CourseControllerTest {
 		mockMvc.perform(delete("https://localhost:" + port + "/courses/solutions/" + solutionId))
 		.andExpect(status().is(HttpStatus.OK.value())); 
 		
-		// assert that exercise does not exist anymore
+		// assert that solution does not exist anymore
 		mockMvc.perform(get("https://localhost:" + port + "/courses/solutions/" + solutionId))
 		.andExpect(status().is(HttpStatus.NOT_FOUND.value()));
 	}

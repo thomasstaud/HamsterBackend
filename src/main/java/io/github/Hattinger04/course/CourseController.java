@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -472,32 +473,41 @@ public class CourseController {
 	}
 	
 	/**
-	 * POST solution for an exercise
+	 * PUT solution for an exercise
 	 * requires in @RequestBody solution object
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@PostMapping("/solutions")
+	@PutMapping("/solutions")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> addSolutionToExercise(@RequestBody JsonNode node) {
 		Solution solution = mapper.convertValue(node.get("solution"), Solution.class);
 
-		// check if different solution already exists for this exercise and student
-		int exercise_id = solution.getExercise().getId();
-		int student_id = solution.getStudent().getId();
-		Solution existing_solution = courseService.getSolutionByExerciseAndStudentId(exercise_id, student_id);
-		if (existing_solution != null && existing_solution.getId() != solution.getId())
-			return new ResponseEntity<>("Solution already exists!", HttpStatus.BAD_REQUEST);
+		if (solution.getId() != null) {
+			// update existing solution
+			Solution existingSolution = courseService.getSolutionById(solution.getId());
+			
+			// check if id is correct
+			if (existingSolution.getId() != solution.getId())
+				return new ResponseEntity<>("Solution already exists with different ID!", HttpStatus.BAD_REQUEST);
+			// check if there is already feedback
+			if (existingSolution.getFeedback() != null)
+				return new ResponseEntity<>("Can't update solution: It was already feedbacked!", HttpStatus.BAD_REQUEST);
+			// update fields
+			existingSolution.setCode(solution.getCode());
+			existingSolution.setSubmitted(solution.isSubmitted());
+			solution = existingSolution;
+		}
 		
 		solution = courseService.saveSolution(solution);
 		return solution != null ? new ResponseEntity<>(solution.getId(), HttpStatus.OK)
-				: new ResponseEntity<>("Could not create solution!", HttpStatus.BAD_REQUEST);
+				: new ResponseEntity<>("Could not update solution!", HttpStatus.BAD_REQUEST);
 	}
 	
 	/**
-	 * Add evaluation to an exercise for one student
-	 * Needs exercise object + student object
+	 * POST feedback to a solution
+	 * requires @PathVariable solution_id + in @RequestBody feedback object
 	 * 
 	 * @param json
 	 * @return
@@ -507,6 +517,7 @@ public class CourseController {
 	public ResponseEntity<?> feedbackSolution(@PathVariable int solution_id, @RequestBody JsonNode node) {
 		Solution solution = courseService.getSolutionById(solution_id);
 		if (solution == null) new ResponseEntity<>("Solution does not exist!", HttpStatus.NOT_FOUND);
+		if (!solution.isSubmitted()) new ResponseEntity<>("Solution was not submitted!", HttpStatus.BAD_REQUEST);
 		
 		String feedback = mapper.convertValue(node.get("feedback"), String.class);
 		solution.setFeedback(feedback);
