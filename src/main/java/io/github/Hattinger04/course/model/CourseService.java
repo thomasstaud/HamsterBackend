@@ -31,7 +31,6 @@ public class CourseService {
 		this.userService = userService;
 	}
 	
-	// TODO: refactor (is this optimized? does it even work?)
 	public List<User> getAllStudentsInCourse(int course_id) {
 		try {
 			List<String[]> studentsString = courseRepository.getAllStudents(course_id);
@@ -146,7 +145,7 @@ public class CourseService {
 	}
 	
 	public List<Course> getCoursesByStudentId(int student_id) {
-		return courseRepository.findCourseByStudentId(student_id);
+		return courseRepository.getCoursesByStudentId(student_id);
 	}
 	
 	
@@ -198,10 +197,13 @@ public class CourseService {
 		return solutionRepository.findByExerciseId(exercise_id);
 	}
 
+	// get solution for one exercise for a specified student
+	public Solution getSolutionByExerciseAndStudentId(int exercise_id, int student_id) {
+		return solutionRepository.findByExerciseAndStudentId(exercise_id, student_id);
+	}
+
 	// get all solutions for one student in a specific course
 	public List<Solution> getSolutionsByStudentId(int student_id, int course_id) {
 		return solutionRepository.findByStudentIdInSpecifiedCourse(student_id, course_id);
 	}
-
-	// TODO: teacher correcting students work
 }

@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface CourseRepository extends JpaRepository<Course, Long>{
+public interface CourseRepository extends JpaRepository<Course, Integer>{
 	Course findById(int id);
 	Course findByName(String name);
 	// TODO: SQL not tested yet!
@@ -66,5 +66,5 @@ public interface CourseRepository extends JpaRepository<Course, Long>{
 	public int doesCourseExist(@Param("course_id") int course_id);
 	
 	@Query(value = "SELECT c.* FROM course c JOIN user_course uc USING(course_id) WHERE uc.user_id=:student_id", nativeQuery = true)
-	public List<Course> findCourseByStudentId(@Param("student_id") int student_id);
+	public List<Course> getCoursesByStudentId(@Param("student_id") int student_id);
 }

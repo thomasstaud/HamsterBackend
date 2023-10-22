@@ -331,13 +331,13 @@ class CourseControllerTest {
 		response = result.getResponse().getContentAsString();
 		User student = objectMapper.readValue(response, User.class);
 		
-		result = mockMvc.perform(get("https://localhost:" + port + "/courses/exercises/1"))
+		result = mockMvc.perform(get("https://localhost:" + port + "/courses/exercises/4"))
 				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
 		response = result.getResponse().getContentAsString();
 		Exercise exercise = objectMapper.readValue(response, Exercise.class);
 		
 		Solution solution = new Solution();
-		solution.setHamster("hamster");
+		solution.setCode("hamster");
 		solution.setStudent(student);
 		solution.setExercise(exercise);
 		

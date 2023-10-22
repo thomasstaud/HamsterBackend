@@ -10,7 +10,8 @@ public class SolutionDTO {
 		this.id = solution.getId();
 		this.exerciseId = solution.getExercise().getId();
 		this.studentId = solution.getStudent().getId();
-		this.hamster = solution.getHamster();
+		this.code = solution.getCode();
+		this.submitted = solution.isSubmitted();
 		this.feedback = solution.getFeedback();
 	}
 
@@ -20,8 +21,10 @@ public class SolutionDTO {
 	private int exerciseId;
 	@JsonProperty("student_id")
 	private int studentId;
-	@JsonProperty("hamster")
-	private String hamster;
+	@JsonProperty("code")
+	private String code;
+	@JsonProperty("submitted")
+	private boolean submitted;
 	@JsonProperty("feedback")
 	private String feedback;
 }

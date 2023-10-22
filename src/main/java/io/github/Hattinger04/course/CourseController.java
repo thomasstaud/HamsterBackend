@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.github.Hattinger04.course.model.CourseService;
+import io.github.Hattinger04.course.model.ExerciseViewDTO;
 import io.github.Hattinger04.course.model.StudentViewDTO;
 import io.github.Hattinger04.course.model.course.Course;
 import io.github.Hattinger04.course.model.course.CourseDTO;
@@ -481,9 +482,39 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> addSolutionToExercise(@RequestBody JsonNode node) {
 		Solution solution = mapper.convertValue(node.get("solution"), Solution.class);
+
+		// check if different solution already exists for this exercise and student
+		int exercise_id = solution.getExercise().getId();
+		int student_id = solution.getStudent().getId();
+		Solution existing_solution = courseService.getSolutionByExerciseAndStudentId(exercise_id, student_id);
+		if (existing_solution != null && existing_solution.getId() != solution.getId())
+			return new ResponseEntity<>("Solution already exists!", HttpStatus.BAD_REQUEST);
+		
 		solution = courseService.saveSolution(solution);
 		return solution != null ? new ResponseEntity<>(solution.getId(), HttpStatus.OK)
 				: new ResponseEntity<>("Could not create solution!", HttpStatus.BAD_REQUEST);
+	}
+	
+	/**
+	 * Add evaluation to an exercise for one student
+	 * Needs exercise object + student object
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@PostMapping("/solutions/{solution_id}/feedback")
+	@PreAuthorize("hasAuthority('TEACHER')")
+	public ResponseEntity<?> feedbackSolution(@PathVariable int solution_id, @RequestBody JsonNode node) {
+		Solution solution = courseService.getSolutionById(solution_id);
+		if (solution == null) new ResponseEntity<>("Solution does not exist!", HttpStatus.NOT_FOUND);
+		
+		String feedback = mapper.convertValue(node.get("feedback"), String.class);
+		solution.setFeedback(feedback);
+		
+		System.out.println(feedback);
+		
+	    courseService.saveSolution(solution);
+	    return new ResponseEntity<>(solution.getId(), HttpStatus.OK);
 	}
 
 	/**
@@ -506,7 +537,6 @@ public class CourseController {
 	*
 	**************************************************************/
 	
-	// TODO: check if user is student
 	/**
 	 * GET all courses and exercises for active user (must be student)
 	 *
@@ -522,31 +552,22 @@ public class CourseController {
 		List<StudentViewDTO> studentViews = new ArrayList<StudentViewDTO>();
 		// get exercises for each course
 		for (Course course : courseService.getCoursesByStudentId(student_id)) {
-			List<Exercise> exercises = courseService.getAllExercisesInCourse(course.getId());
-			studentViews.add(new StudentViewDTO(course, exercises));
+			List<ExerciseViewDTO> exerciseViews = new ArrayList<ExerciseViewDTO>();
+			// get exercise view for each exercise
+			for (Exercise exercise : courseService.getAllExercisesInCourse(course.getId())) {
+				Solution solution = courseService.getSolutionByExerciseAndStudentId(exercise.getId(), student_id);
+				if(solution != null)
+					exerciseViews.add(new ExerciseViewDTO(exercise, solution));
+				else
+					exerciseViews.add(new ExerciseViewDTO(exercise));
+			}
+			studentViews.add(new StudentViewDTO(course, exerciseViews));
 		}
 		
 		if(studentViews.isEmpty()) {
 			return new ResponseEntity<>("Student is not in any course", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(studentViews, HttpStatus.OK);
-	}
-	
-	// TODO: this doesn't make any sense
-	//			there is no parameter for the evaluation itself
-	//			should there be a new DB table for evaluations?
-	/**
-	 * Add evaluation to an exercise for one student
-	 * Needs exercise object + student object
-	 * 
-	 * @param json
-	 * @return
-	 */
-	@PostMapping("/exercises/evaluate")
-	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> evaluateExercise(@RequestBody JsonNode node) {
-		// TODO: implement
-		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	// TODO: do we need this function?

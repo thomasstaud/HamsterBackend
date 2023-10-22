@@ -1,5 +1,7 @@
 package io.github.Hattinger04.course.model.exercise;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,10 +30,11 @@ import lombok.ToString;
 @JsonTypeName("exercise") 
 public class Exercise {
 
-	public Exercise(Course course, String name, String details, String hamster) {
+	public Exercise(Course course, String name, String details, Date deadline, String hamster) {
 		this.course = course; 
 		this.name = name;
 		this.details = details;
+		this.deadline = deadline;
 		this.hamster = hamster;
 	}
 	
@@ -45,6 +48,9 @@ public class Exercise {
 	
 	@Column(name = "details")
 	private String details;
+	
+	@Column(name = "deadline")
+	private Date deadline;
 	
 	@Column(name = "hamster", nullable = false)
 	private String hamster; 

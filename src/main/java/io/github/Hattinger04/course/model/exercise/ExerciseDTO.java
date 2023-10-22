@@ -1,5 +1,7 @@
 package io.github.Hattinger04.course.model.exercise;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
@@ -11,6 +13,7 @@ public class ExerciseDTO {
 		this.courseId = exercise.getCourse().getId();
 		this.name = exercise.getName();
 		this.details = exercise.getDetails();
+		this.deadline = exercise.getDeadline();
 		this.hamster = exercise.getHamster();
 	}
 	
@@ -22,6 +25,8 @@ public class ExerciseDTO {
 	private String name;
 	@JsonProperty("details")
 	private String details;
+	@JsonProperty("deadline")
+	private Date deadline;
 	@JsonProperty("hamster")
 	private String hamster;
 }

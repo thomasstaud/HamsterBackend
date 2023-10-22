@@ -1,25 +1,18 @@
 package io.github.Hattinger04.course.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.github.Hattinger04.course.model.course.Course;
-import io.github.Hattinger04.course.model.exercise.Exercise;
-import io.github.Hattinger04.course.model.exercise.ExerciseDTO;
 import lombok.Data;
 
 @Data
 public class StudentViewDTO {
-	public StudentViewDTO(Course course, List<Exercise> exercises) {
+	public StudentViewDTO(Course course, List<ExerciseViewDTO> exerciseViews) {
 		this.courseId = course.getId();
 		this.courseName = course.getName();
-		this.exercises = new ArrayList<ExerciseDTO>();
-		for (Exercise e : exercises) {
-			ExerciseDTO exercise = new ExerciseDTO(e);
-			this.exercises.add(exercise);
-		}
+		this.exerciseViews = exerciseViews;
 	}
 	
 	@JsonProperty("course_id")
@@ -27,5 +20,5 @@ public class StudentViewDTO {
 	@JsonProperty("course_name")
 	private String courseName;
 	@JsonProperty("exercises")
-	private List<ExerciseDTO> exercises;
+	private List<ExerciseViewDTO> exerciseViews;
 }
