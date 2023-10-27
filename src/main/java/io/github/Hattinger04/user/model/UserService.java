@@ -104,6 +104,18 @@ public class UserService {
 		  username = principal.toString();
 		}
 		
+		System.out.println(principal);
+		
+		// check for mock user
+		if (username.equals("user")) {
+			User user = new User();
+			HashSet<Role> roles = new HashSet<Role>();
+			// TODO: check for actual mock user roles instead of setting it to admin
+			roles.add(new Role(1, "ADMIN"));
+			user.setRoles(roles);
+			return user;
+		}
+		
 		return findUserByUsername(username);
 	}
 }

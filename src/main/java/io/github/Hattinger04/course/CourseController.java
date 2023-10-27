@@ -33,6 +33,7 @@ import io.github.Hattinger04.course.model.exercise.Exercise;
 import io.github.Hattinger04.course.model.exercise.ExerciseDTO;
 import io.github.Hattinger04.course.model.solution.Solution;
 import io.github.Hattinger04.course.model.solution.SolutionDTO;
+import io.github.Hattinger04.role.Role;
 import io.github.Hattinger04.user.model.User;
 import io.github.Hattinger04.user.model.UserDTO;
 import io.github.Hattinger04.user.model.UserService;
@@ -48,7 +49,7 @@ public class CourseController {
 	@Autowired
 	private ObjectMapper mapper;
 	
-	// TODO: check if teacher is in course when making rest request!
+	// TODO: give admins (and devs?) all permissions
 	// TODO: proper parameter and return documentation
 
 	/**************************************************************
@@ -59,22 +60,31 @@ public class CourseController {
 	
 	/**
 	 * GET all students by course id
-	 * requires @PathVariable course_id
+	 * requires @PathVariable courseId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/{course_id}/students")
+	@GetMapping("/{courseId}/students")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getAllStudentsByCourseId(@PathVariable int course_id) {
+	public ResponseEntity<?> getAllStudentsByCourseId(@PathVariable int courseId) {
 		// check if course exists
-		if (courseService.getCourseById(course_id) == null) {
+		Course course = courseService.getCourseById(courseId);
+		if (course == null) {
 			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
+		}
+		
+		// if user is a teacher, they must be teacher of the specified course
+		User user = userService.getCurrentUser();
+		for (Role role : user.getRoles()) {
+			if (role.getRole().equals("TEACHER") && course.getTeacher().getId() != user.getId()) {
+				return new ResponseEntity<>("You must be this courses teacher to view its students.", HttpStatus.FORBIDDEN);
+			}
 		}
 		
 		// get users and convert to DTOs
 		List<UserDTO> students = new ArrayList<UserDTO>();
-		for (User student : courseService.getAllStudentsInCourse(course_id)) {
+		for (User student : courseService.getAllStudentsInCourse(courseId)) {
 			students.add(new UserDTO(student));
 		}
 		
@@ -83,23 +93,31 @@ public class CourseController {
 	
 	/**
 	 * GET student by student id from specified course
-	 * requires @PathVariable student_id and course_id
+	 * requires @PathVariable studentId and courseId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/{course_id}/students/{student_id}")
+	@GetMapping("/{courseId}/students/{studentId}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getStudentInCourseByCourseId(@PathVariable int course_id, @PathVariable int student_id) {
-		User student = userService.findUserByID(student_id);
-		
+	public ResponseEntity<?> getStudentInCourseByCourseId(@PathVariable int courseId, @PathVariable int studentId) {
 		// check if course exists
-		if (courseService.getCourseById(course_id) == null) {
+		Course course = courseService.getCourseById(courseId);
+		if (course == null) {
 			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
 		}
 		
+		// if user is a teacher, they must be teacher of the specified course
+		User user = userService.getCurrentUser();
+		for (Role role : user.getRoles()) {
+			if (role.getRole().equals("TEACHER") && course.getTeacher().getId() != user.getId()) {
+				return new ResponseEntity<>("You must be this courses teacher to view its students.", HttpStatus.FORBIDDEN);
+			}
+		}
+		
 		// check if student exists and is in course
-		if (student == null || !courseService.isUserStudent(student_id, course_id)) {
+		User student = userService.findUserByID(studentId);
+		if (student == null || !courseService.isUserStudent(studentId, courseId)) {
 			return new ResponseEntity<>("Student does not exist!", HttpStatus.NOT_FOUND);
 		}
 		
@@ -109,29 +127,57 @@ public class CourseController {
 	
 	/**
 	 * POST existing student to existing course
-	 * requires @PathVariable course_id and student_id
+	 * requires @PathVariable courseId and studentId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@PostMapping("/{course_id}/students/{student_id}")
+	@PostMapping("/{courseId}/students/{studentId}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> addStudentToCourse(@PathVariable int course_id, @PathVariable int student_id) {
-		return courseService.addStudentToCourse(course_id, student_id) ? new ResponseEntity<>(HttpStatus.OK)
+	public ResponseEntity<?> addStudentToCourse(@PathVariable int courseId, @PathVariable int studentId) {
+		// check if course exists
+		Course course = courseService.getCourseById(courseId);
+		if (course == null) {
+			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
+		}
+		
+		// if user is a teacher, they must be teacher of the specified course
+		User user = userService.getCurrentUser();
+		for (Role role : user.getRoles()) {
+			if (role.getRole().equals("TEACHER") && course.getTeacher().getId() != user.getId()) {
+				return new ResponseEntity<>("You must be this courses teacher to add a student.", HttpStatus.FORBIDDEN);
+			}
+		}
+		
+		return courseService.addStudentToCourse(courseId, studentId) ? new ResponseEntity<>(HttpStatus.OK)
 				: new ResponseEntity<>("Could not add student to course!", HttpStatus.BAD_REQUEST);
 	}
 
 	/**
 	 * DELETE student from course
-	 * requires @PathVariable student_id and course_id
+	 * requires @PathVariable studentId and courseId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@DeleteMapping("/{course_id}/students/{student_id}")
+	@DeleteMapping("/{courseId}/students/{studentId}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> removeStudentFromCourse(@PathVariable int course_id, @PathVariable int student_id) {
-		return courseService.removeStudentFromCourse(course_id, student_id) ? new ResponseEntity<>(HttpStatus.OK)
+	public ResponseEntity<?> removeStudentFromCourse(@PathVariable int courseId, @PathVariable int studentId) {
+		// check if course exists
+		Course course = courseService.getCourseById(courseId);
+		if (course == null) {
+			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
+		}
+		
+		// if user is a teacher, they must be teacher of the specified course
+		User user = userService.getCurrentUser();
+		for (Role role : user.getRoles()) {
+			if (role.getRole().equals("TEACHER") && course.getTeacher().getId() != user.getId()) {
+				return new ResponseEntity<>("You must be this courses teacher to remove a student.", HttpStatus.FORBIDDEN);
+			}
+		}
+		
+		return courseService.removeStudentFromCourse(courseId, studentId) ? new ResponseEntity<>(HttpStatus.OK)
 				: new ResponseEntity<>("Could not remove student from course!", HttpStatus.BAD_REQUEST);
 	}
 
@@ -143,15 +189,15 @@ public class CourseController {
 	
 	/**
 	 * GET teacher by course id
-	 * requires @PathVariable course_id
+	 * requires @PathVariable courseId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/{course_id}/teacher")
-	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getCourseTeacherByCourseID(@PathVariable int course_id) {
-		User teacher = courseService.getCourseTeacher(course_id);
+	@GetMapping("/{courseId}/teacher")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<?> getCourseTeacherByCourseID(@PathVariable int courseId) {
+		User teacher = courseService.getCourseTeacher(courseId);
 		if (teacher == null) {
 			return new ResponseEntity<>("This course has invalid teachers - contact an admin!", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -166,15 +212,15 @@ public class CourseController {
 	
 	/**
 	 * GET course by id
-	 * requires @PathVariable course_id
+	 * requires @PathVariable courseId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/{course_id}")
+	@GetMapping("/{courseId}")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> getCourseById(@PathVariable int course_id) {
-		Course course = courseService.getCourseById(course_id); 
+	public ResponseEntity<?> getCourseById(@PathVariable int courseId) {
+		Course course = courseService.getCourseById(courseId); 
 		if (course == null) {
 			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
 		}
@@ -207,53 +253,6 @@ public class CourseController {
 	}
 	
 	/**
-	 * GET all courses for a student
-	 * requires @PathVariable student_id
-	 * 
-	 * @param json
-	 * @return
-	 */
-	@GetMapping("/students/{student_id}/courses")
-	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> getCoursesByStudentId(@PathVariable int student_id) {
-		// get courses and convert to DTOs
-		List<CourseDTO> courses = new ArrayList<CourseDTO>();
-		for(Course course : courseService.getCoursesByStudentId(student_id)) {
-			courses.add(new CourseDTO(course));
-		}
-		
-		if(courses.isEmpty()) {
-			return new ResponseEntity<>("No courses available", HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<>(courses, HttpStatus.OK);
-	}
-
-	// TODO: check if user is student
-	/**
-	 * GET all courses for active user (must be student)
-	 *
-	 * 
-	 * @param json
-	 * @return
-	 */
-	@GetMapping("/students/my-courses")
-	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> getCoursesForLoggedInStudent() {
-		int student_id = userService.getCurrentUser().getId();
-		
-		// get courses and convert to DTOs
-		List<CourseDTO> courses = new ArrayList<CourseDTO>();
-		for(Course course : courseService.getCoursesByStudentId(student_id)) {
-			courses.add(new CourseDTO(course));
-		}
-		
-		if(courses.isEmpty()) {
-			return new ResponseEntity<>("No courses available", HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<>(courses, HttpStatus.OK);
-	}
-	
-	/**
 	 * POST course
 	 * requires in @RequestBody course object
 	 * 
@@ -273,15 +272,29 @@ public class CourseController {
 
 	/**
 	 * DELETE course
-	 * requires @PathVariable course_id
+	 * requires @PathVariable courseId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@DeleteMapping("/{course_id}")
+	@DeleteMapping("/{courseId}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> deleteCourse(@PathVariable int course_id) {
-		return courseService.deleteCourse(course_id) ? new ResponseEntity<>(HttpStatus.OK)
+	public ResponseEntity<?> deleteCourse(@PathVariable int courseId) {
+		// check if course exists
+		Course course = courseService.getCourseById(courseId);
+		if (course == null) {
+			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
+		}
+		
+		// if user is a teacher, they must be teacher of the specified course
+		User user = userService.getCurrentUser();
+		for (Role role : user.getRoles()) {
+			if (role.getRole().equals("TEACHER") && course.getTeacher().getId() != user.getId()) {
+				return new ResponseEntity<>("You must be this courses teacher to delete it.", HttpStatus.FORBIDDEN);
+			}
+		}
+		
+		return courseService.deleteCourse(courseId) ? new ResponseEntity<>(HttpStatus.OK)
 				: new ResponseEntity<>("Could not delete course!", HttpStatus.BAD_REQUEST);
 	}
 
@@ -293,37 +306,55 @@ public class CourseController {
 	
 	/**
 	 * GET exercise by id
-	 * requires @PathVariable exercise_id
+	 * requires @PathVariable exerciseId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/exercises/{exercise_id}")
+	@GetMapping("/exercises/{exerciseId}")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> getExerciseById(@PathVariable int exercise_id) {
-		Exercise exercise = courseService.getExerciseById(exercise_id); 
+	public ResponseEntity<?> getExerciseById(@PathVariable int exerciseId) {
+		Exercise exercise = courseService.getExerciseById(exerciseId);
 		if (exercise == null) {
-			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Exercise does not exist!", HttpStatus.NOT_FOUND);
 		}
+		
+		// check if user is in course (either as student or as teacher)
+		User user = userService.getCurrentUser();
+		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
+			if (!courseService.isUserInCourse(user.getId(), exercise.getCourse().getId())) {
+				return new ResponseEntity<>("You must be in this course to view its exercises.", HttpStatus.FORBIDDEN);
+			}
+		}
+		
 		return new ResponseEntity<>(new ExerciseDTO(exercise), HttpStatus.OK);
 	}
 	
 	/**
 	 * GET all exercises for a course
-	 * requires @PathVariable course_id
+	 * requires @PathVariable courseId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/{course_id}/exercises")
+	@GetMapping("/{courseId}/exercises")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> getAllExercisesByCourseId(@PathVariable int course_id) {
-		if (courseService.getCourseById(course_id) == null)
-			return new ResponseEntity<>("Course does not exist!", HttpStatus.BAD_REQUEST);
+	public ResponseEntity<?> getAllExercisesByCourseId(@PathVariable int courseId) {
+		// check if course exists
+		Course course = courseService.getCourseById(courseId);
+		if (course == null) {
+			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
+		}
+
+		// check if user is in course (either as student or as teacher)
+		int userId = userService.getCurrentUser().getId();
+		if (!courseService.isUserInCourse(userId, course.getId())) {
+			return new ResponseEntity<>("You must be in this course to view its exercises.", HttpStatus.FORBIDDEN);
+		}
 		
 		// get exercises and convert to DTOs
 		List<ExerciseDTO> exercises = new ArrayList<ExerciseDTO>();
-		for(Exercise exercise : courseService.getAllExercisesInCourse(course_id)) {
+		for(Exercise exercise : courseService.getAllExercisesInCourse(courseId)) {
 			exercises.add(new ExerciseDTO(exercise));
 		}
 		
@@ -346,13 +377,21 @@ public class CourseController {
 		Exercise exercise = mapper.convertValue(node.get("exercise"), Exercise.class);
 		exercise = courseService.saveExercise(exercise);
 		
+		// if user is a teacher, they must be teacher of the specified course
+		User user = userService.getCurrentUser();
+		for (Role role : user.getRoles()) {
+			if (role.getRole().equals("TEACHER") && exercise.getCourse().getTeacher().getId() != user.getId()) {
+				return new ResponseEntity<>("You must be this courses teacher to add an exercise to it.", HttpStatus.FORBIDDEN);
+			}
+		}
+		
 		return exercise != null ? new ResponseEntity<>(exercise.getId(), HttpStatus.OK)
 				: new ResponseEntity<>("Could not create exercise!", HttpStatus.BAD_REQUEST);
 	}
 	
 	/**
 	 * PATCH exercise
-	 * requires @PathVariable exercise_id and in @RequestBody object
+	 * requires @PathVariable exerciseId and in @RequestBody object
 	 * 
 	 * @param json
 	 * @return
@@ -367,10 +406,17 @@ public class CourseController {
 	    }
 	    
 	    Exercise exercise = courseService.getExerciseById(exerciseId);
-	    
 	    if (exercise == null) {
 	    	return new ResponseEntity<>("Exercise does not exist!", HttpStatus.NOT_FOUND);
 	    }
+
+		// if user is a teacher, they must be teacher of the specified course
+		User user = userService.getCurrentUser();
+		for (Role role : user.getRoles()) {
+			if (role.getRole().equals("TEACHER") && exercise.getCourse().getTeacher().getId() != user.getId()) {
+				return new ResponseEntity<>("You must be this courses teacher to change its exercises.", HttpStatus.FORBIDDEN);
+			}
+		}
 
 	    fields.forEach((k, v) -> {
 		    System.out.println(k);
@@ -385,15 +431,25 @@ public class CourseController {
 
 	/**
 	 * DELETE existing exercise
-	 * requires @PathVariable exercise_id
+	 * requires @PathVariable exerciseId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@DeleteMapping("/exercises/{exercise_id}")
+	@DeleteMapping("/exercises/{exerciseId}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> deleteExercise(@PathVariable int exercise_id) {
-		return courseService.deleteExercise(exercise_id) ? new ResponseEntity<>(HttpStatus.OK)
+	public ResponseEntity<?> deleteExercise(@PathVariable int exerciseId) {
+	    Exercise exercise = courseService.getExerciseById(exerciseId);
+
+		// if user is a teacher, they must be teacher of the specified course
+		User user = userService.getCurrentUser();
+		for (Role role : user.getRoles()) {
+			if (role.getRole().equals("TEACHER") && exercise.getCourse().getTeacher().getId() != user.getId()) {
+				return new ResponseEntity<>("You must be this courses teacher to delete its exercises.", HttpStatus.FORBIDDEN);
+			}
+		}
+		
+		return courseService.deleteExercise(exerciseId) ? new ResponseEntity<>(HttpStatus.OK)
 				: new ResponseEntity<>("Could not delete exercise!", HttpStatus.BAD_REQUEST);
 	}
 
@@ -405,37 +461,63 @@ public class CourseController {
 	
 	/**
 	 * GET solution by id
-	 * requires @PathVariable solution_id
+	 * requires @PathVariable solutionId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/solutions/{solution_id}")
+	@GetMapping("/solutions/{solutionId}")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> getSolutionById(@PathVariable int solution_id) {
-		Solution solution = courseService.getSolutionById(solution_id); 
+	public ResponseEntity<?> getSolutionById(@PathVariable int solutionId) {
+		Solution solution = courseService.getSolutionById(solutionId); 
 		if (solution == null) {
-			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Solution does not exist!", HttpStatus.NOT_FOUND);
 		}
+
+		User user = userService.getCurrentUser();
+		if (!(user.getRoles().contains(new Role(1, "ADMIN")) || user.getRoles().contains(new Role(2, "DEV")))) {
+			// check if user is in course (either as student or as teacher)
+			if (!courseService.isUserInCourse(user.getId(), solution.getExercise().getCourse().getId())) {
+				return new ResponseEntity<>("You must be in this course to view its solutions.", HttpStatus.FORBIDDEN);
+			}
+	
+			// if user is a student, they must have created the solution
+			for (Role role : user.getRoles()) {
+				if (role.getRole().equals("USER") && solution.getStudent().getId() != user.getId()) {
+					return new ResponseEntity<>("You cannot view other student's solutions.", HttpStatus.FORBIDDEN);
+				}
+			}
+		}
+		
 		return new ResponseEntity<>(new SolutionDTO(solution), HttpStatus.OK);
 	}
 	
 	/**
 	 * GET all solutions for an exercise
-	 * requires @PathVariable exercise_id
+	 * requires @PathVariable exerciseId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/exercises/{exercise_id}/solutions")
+	@GetMapping("/exercises/{exerciseId}/solutions")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getAllSolutionsByExerciseId(@PathVariable int exercise_id) {
-		if (courseService.getExerciseById(exercise_id) == null)
-			return new ResponseEntity<>("Exercise does not exist!", HttpStatus.BAD_REQUEST);
+	public ResponseEntity<?> getAllSolutionsByExerciseId(@PathVariable int exerciseId) {
+	    Exercise exercise = courseService.getExerciseById(exerciseId);
+	    if (exercise == null) {
+	    	return new ResponseEntity<>("Exercise does not exist!", HttpStatus.NOT_FOUND);
+	    }
+
+		// if user is a teacher, they must be teacher of the specified course
+		User user = userService.getCurrentUser();
+		for (Role role : user.getRoles()) {
+			if (role.getRole().equals("TEACHER") && exercise.getCourse().getTeacher().getId() != user.getId()) {
+				return new ResponseEntity<>("You must be this courses teacher to view its exercises.", HttpStatus.FORBIDDEN);
+			}
+		}
 
 		// get solutions and convert to DTOs
 		List<SolutionDTO> solutions = new ArrayList<SolutionDTO>();
-		for (Solution solution : courseService.getSolutionsByExerciseId(exercise_id)) {
+		for (Solution solution : courseService.getSolutionsByExerciseId(exerciseId)) {
 			solutions.add(new SolutionDTO(solution));
 		}
 		
@@ -447,22 +529,32 @@ public class CourseController {
 
 	/**
 	 * GET all solutions from a student for a specified course
-	 * requires @PathVariable student_id, course_id
+	 * requires @PathVariable studentId, courseId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/{course_id}/students/{student_id}/solutions")
+	@GetMapping("/{courseId}/students/{studentId}/solutions")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getAllSolutionsByStudentId(@PathVariable int course_id, @PathVariable int student_id) {
-		if (courseService.getCourseById(course_id) == null)
-			return new ResponseEntity<>("Course does not exist!", HttpStatus.BAD_REQUEST);
-		if (!courseService.isUserStudent(student_id, course_id))
+	public ResponseEntity<?> getAllSolutionsByStudentId(@PathVariable int courseId, @PathVariable int studentId) {
+		// check if course exists and student is in course
+		Course course = courseService.getCourseById(courseId);
+		if (course == null)
+			return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
+		if (!courseService.isUserStudent(studentId, courseId))
 			return new ResponseEntity<>("Student does not exist or is not in course!", HttpStatus.BAD_REQUEST);
+		
+		// if user is a teacher, they must be teacher of the specified course
+		User user = userService.getCurrentUser();
+		for (Role role : user.getRoles()) {
+			if (role.getRole().equals("TEACHER") && course.getTeacher().getId() != user.getId()) {
+				return new ResponseEntity<>("You must be this courses teacher to view its students.", HttpStatus.FORBIDDEN);
+			}
+		}
 		
 		// get solutions and convert to DTOs
 		List<SolutionDTO> solutions = new ArrayList<SolutionDTO>();
-		for (Solution solution : courseService.getSolutionsByStudentId(student_id, course_id)) {
+		for (Solution solution : courseService.getSolutionsByStudentId(studentId, courseId)) {
 			solutions.add(new SolutionDTO(solution));
 		}
 		
@@ -484,8 +576,24 @@ public class CourseController {
 	public ResponseEntity<?> addSolutionToExercise(@RequestBody JsonNode node) {
 		Solution solution = mapper.convertValue(node.get("solution"), Solution.class);
 
+		User user = userService.getCurrentUser();
+		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
+			// check if user is student in course
+			if (!courseService.isUserStudent(user.getId(), solution.getExercise().getCourse().getId())) {
+				return new ResponseEntity<>("You must be in this course to create solutions.", HttpStatus.FORBIDDEN);
+			}
+		}
+
 		if (solution.getId() != null) {
 			// update existing solution
+
+			if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
+				// check if user created solution
+				if (solution.getStudent().getId() != user.getId()) {
+					return new ResponseEntity<>("You cannot update other student's solutions.", HttpStatus.FORBIDDEN);
+				}
+			}
+			
 			Solution existingSolution = courseService.getSolutionById(solution.getId());
 			
 			// check if id is correct
@@ -507,17 +615,25 @@ public class CourseController {
 	
 	/**
 	 * POST feedback to a solution
-	 * requires @PathVariable solution_id + in @RequestBody feedback object
+	 * requires @PathVariable solutionId + in @RequestBody feedback object
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@PostMapping("/solutions/{solution_id}/feedback")
+	@PostMapping("/solutions/{solutionId}/feedback")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> feedbackSolution(@PathVariable int solution_id, @RequestBody JsonNode node) {
-		Solution solution = courseService.getSolutionById(solution_id);
+	public ResponseEntity<?> feedbackSolution(@PathVariable int solutionId, @RequestBody JsonNode node) {
+		Solution solution = courseService.getSolutionById(solutionId);
 		if (solution == null) new ResponseEntity<>("Solution does not exist!", HttpStatus.NOT_FOUND);
 		if (!solution.isSubmitted()) new ResponseEntity<>("Solution was not submitted!", HttpStatus.BAD_REQUEST);
+		
+		// if user is a teacher, they must be teacher of the specified course
+		User user = userService.getCurrentUser();
+		for (Role role : user.getRoles()) {
+			if (role.getRole().equals("TEACHER") && solution.getExercise().getCourse().getTeacher().getId() != user.getId()) {
+				return new ResponseEntity<>("You must be this courses teacher to view its students.", HttpStatus.FORBIDDEN);
+			}
+		}
 		
 		String feedback = mapper.convertValue(node.get("feedback"), String.class);
 		solution.setFeedback(feedback);
@@ -530,15 +646,26 @@ public class CourseController {
 
 	/**
 	 * DELETE existing solution
-	 * requires @PathVariable solution_id
+	 * requires @PathVariable solutionId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@DeleteMapping("/solutions/{solution_id}")
-	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> deleteSolution(@PathVariable int solution_id) {
-		return courseService.deleteSolution(solution_id) ? new ResponseEntity<>(HttpStatus.OK)
+	@DeleteMapping("/solutions/{solutionId}")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<?> deleteSolution(@PathVariable int solutionId) {
+		Solution solution = courseService.getSolutionById(solutionId);
+		if (solution == null) new ResponseEntity<>("Solution does not exist!", HttpStatus.NOT_FOUND);
+		
+		// check if user created the solution
+		User user = userService.getCurrentUser();
+		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
+			if (solution.getStudent().getId() != user.getId()) {
+				return new ResponseEntity<>("You cannot delete other student's solutions.", HttpStatus.FORBIDDEN);
+			}
+		}
+		
+		return courseService.deleteSolution(solutionId) ? new ResponseEntity<>(HttpStatus.OK)
 				: new ResponseEntity<>("Could not delete exercise!", HttpStatus.BAD_REQUEST);
 	}
 
@@ -558,15 +685,15 @@ public class CourseController {
 	@GetMapping("/students/my-view")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> getViewForLoggedInStudent() {
-		int student_id = userService.getCurrentUser().getId();
+		int studentId = userService.getCurrentUser().getId();
 		
 		List<StudentViewDTO> studentViews = new ArrayList<StudentViewDTO>();
 		// get exercises for each course
-		for (Course course : courseService.getCoursesByStudentId(student_id)) {
+		for (Course course : courseService.getCoursesByStudentId(studentId)) {
 			List<ExerciseViewDTO> exerciseViews = new ArrayList<ExerciseViewDTO>();
 			// get exercise view for each exercise
 			for (Exercise exercise : courseService.getAllExercisesInCourse(course.getId())) {
-				Solution solution = courseService.getSolutionByExerciseAndStudentId(exercise.getId(), student_id);
+				Solution solution = courseService.getSolutionByExerciseAndStudentId(exercise.getId(), studentId);
 				if(solution != null)
 					exerciseViews.add(new ExerciseViewDTO(exercise, solution));
 				else
@@ -584,22 +711,22 @@ public class CourseController {
 	// TODO: do we need this function?
 	/**
 	 * Service for checking if logged in user is in course
-	 * requires @PathVariable course_id
+	 * requires @PathVariable courseId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/{course_id}/logged-in")
+	@GetMapping("/{courseId}/logged-in")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> isUserInCourse(@PathVariable int course_id) {
-		Course course = courseService.getCourseById(course_id); 
+	public ResponseEntity<?> isUserInCourse(@PathVariable int courseId) {
+		Course course = courseService.getCourseById(courseId); 
 		if(course == null) {
 			return new ResponseEntity<>("Course not found!", HttpStatus.BAD_REQUEST); 
 		}
-		int user_id = userService.getCurrentUser().getId();
+		int userId = userService.getCurrentUser().getId();
 		
 		return new ResponseEntity<>(
-			courseService.isUserInCourse(user_id, course_id),
+			courseService.isUserInCourse(userId, courseId),
 			HttpStatus.OK
 		);
 	}
