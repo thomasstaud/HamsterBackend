@@ -19,6 +19,7 @@ public class ExerciseViewDTO {
 		this.hamster = exercise.getHamster();
 		
 		// solution fields
+		this.solutionId = solution.getId();
 		this.code = solution.getCode();
 		this.submitted = solution.isSubmitted();
 		this.feedback = solution.getFeedback();
@@ -45,6 +46,8 @@ public class ExerciseViewDTO {
 	private String hamster;
 	
 	// solution fields
+	@JsonProperty("solution_id")
+	private int solutionId;
 	@JsonProperty("solution_code")
 	private String code;
 	@JsonProperty("submitted")

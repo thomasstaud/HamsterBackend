@@ -584,7 +584,7 @@ public class CourseController {
 			}
 		}
 
-		if (solution.getId() != null) {
+		if (solution.getId() != 0) {
 			// update existing solution
 
 			if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
