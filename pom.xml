@@ -17,7 +17,7 @@
 	<properties>
 		<java.version>11</java.version>
 		<jackson.version>2.15.1</jackson.version>
-		<exec.mainClass>io.github.Hattinger04.ProjectWebsiteApplication</exec.mainClass>
+		<exec.mainClass>at.ac.htlinn.ProjectWebsiteApplication</exec.mainClass>
 	</properties>
 	<dependencies>
 		<dependency>
