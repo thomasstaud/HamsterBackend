@@ -29,9 +29,20 @@ public class CourseService {
 		this.userService = userService;
 	}
 	
+	public List<User> getAllStudents() {
+		try {
+			List<String[]> studentsString = courseRepository.getAllStudents();
+			return studentsString.stream().map(
+					x -> new User(Integer.parseInt(x[0]), x[1])).collect(Collectors.toList()
+			);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
 	public List<User> getAllStudentsInCourse(int course_id) {
 		try {
-			List<String[]> studentsString = courseRepository.getAllStudents(course_id);
+			List<String[]> studentsString = courseRepository.getAllStudentsInCourse(course_id);
 			return studentsString.stream().map(
 					x -> new User(Integer.parseInt(x[0]), x[1])).collect(Collectors.toList()
 			);

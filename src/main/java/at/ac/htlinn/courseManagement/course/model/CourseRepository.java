@@ -13,11 +13,14 @@ public interface CourseRepository extends JpaRepository<Course, Integer>{
 	Course findById(int id);
 	Course findByName(String name);
 	
+	@Query(value = "SELECT user_id, username FROM USER_ROLE ur JOIN USERS u USING(user_id) WHERE ur.role_id=4", nativeQuery = true)
+	List<String[]> getAllStudents();
+	
 	@Query(value = "SELECT user_id, username FROM USERS u JOIN course c ON u.user_id=c.teacher_id where c.course_id=:course_id", nativeQuery = true)
-	List<String[]> getCourseTeacher(int course_id); 
+	List<String[]> getCourseTeacher(int course_id);
 	
 	@Query(value = "SELECT user_id, username FROM USER_COURSE uc JOIN USERS u USING(user_id) WHERE uc.course_id=:course_id", nativeQuery = true)
-	List<String[]> getAllStudents(int course_id); 
+	List<String[]> getAllStudentsInCourse(int course_id);
 	
 	@Query(value = "SELECT EXISTS(SELECT user_id FROM USERS u JOIN STUDENT s using(user_id) JOIN user_course c using(user_id) where user_id=:user_id and c.course_id=:course_id)", nativeQuery = true)
 	public int isUserInCourse(@Param("user_id") int user_id, @Param("course_id") int course_id);

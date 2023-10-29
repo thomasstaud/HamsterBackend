@@ -59,6 +59,25 @@ public class CourseController {
 	**************************************************************/
 	
 	/**
+	 * GET all students
+	 *
+	 *
+	 * @param json
+	 * @return
+	 */
+	@GetMapping("/students")
+	@PreAuthorize("hasAuthority('TEACHER')")
+	public ResponseEntity<?> getAllStudents() {
+		// get users and convert to DTOs
+		List<UserDTO> students = new ArrayList<UserDTO>();
+		for (User student : courseService.getAllStudents()) {
+			students.add(new UserDTO(student));
+		}
+		
+		return new ResponseEntity<>(students, HttpStatus.OK);
+	}
+	
+	/**
 	 * GET all students by course id
 	 * requires @PathVariable courseId
 	 * 
