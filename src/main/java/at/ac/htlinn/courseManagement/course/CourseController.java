@@ -590,7 +590,7 @@ public class CourseController {
 		}
 		
 		solution = courseService.saveSolution(solution);
-		return solution != null ? new ResponseEntity<>(solution, HttpStatus.OK)
+		return solution != null ? new ResponseEntity<>(new SolutionDTO(solution), HttpStatus.OK)
 				: new ResponseEntity<>("Could not update solution!", HttpStatus.BAD_REQUEST);
 	}
 	
