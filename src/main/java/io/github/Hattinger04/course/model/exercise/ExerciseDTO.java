@@ -5,8 +5,10 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class ExerciseDTO {
 	public ExerciseDTO(Exercise exercise) {
 		this.id = exercise.getId();

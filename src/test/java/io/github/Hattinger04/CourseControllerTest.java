@@ -37,8 +37,11 @@ import io.github.Hattinger04.course.CourseController;
 import io.github.Hattinger04.user.UserController;
 import io.github.Hattinger04.user.model.User;
 import io.github.Hattinger04.course.model.course.Course;
+import io.github.Hattinger04.course.model.course.CourseDTO;
 import io.github.Hattinger04.course.model.exercise.Exercise;
+import io.github.Hattinger04.course.model.exercise.ExerciseDTO;
 import io.github.Hattinger04.course.model.solution.Solution;
+import io.github.Hattinger04.course.model.solution.SolutionDTO;
 
 @RunWith(SpringRunner.class)
 @EntityScan("io.github.Hattinger04.*")
@@ -191,14 +194,9 @@ class CourseControllerTest {
 		String response;
 		
 		// create JSON-String with course data
-		result = mockMvc.perform(get("https://localhost:" + port + "/user/users/1"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-		response = result.getResponse().getContentAsString();
-		User teacher = objectMapper.readValue(response, User.class);
-		
-		Course course = new Course();
+		CourseDTO course = new CourseDTO();
 		course.setName("new_course");
-		course.setTeacher(teacher);
+		course.setTeacherId(1);
 		
 		JsonNode node = objectMapper.valueToTree(course);
 		ObjectNode objectNode = objectMapper.createObjectNode();
@@ -234,15 +232,10 @@ class CourseControllerTest {
 		String response;
 		
 		// create JSON-String with exercise data
-		result = mockMvc.perform(get("https://localhost:" + port + "/courses/1"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-		response = result.getResponse().getContentAsString();
-		Course course = objectMapper.readValue(response, Course.class);
-		
-		Exercise exercise = new Exercise();
+		ExerciseDTO exercise = new ExerciseDTO();
 		exercise.setName("new_course");
 		exercise.setHamster("hamster");
-		exercise.setCourse(course);
+		exercise.setCourseId(1);
 		
 		JsonNode node = objectMapper.valueToTree(exercise);
 		ObjectNode objectNode = objectMapper.createObjectNode();
@@ -367,20 +360,10 @@ class CourseControllerTest {
 		String response;
 		
 		// create JSON-String with solution data
-		result = mockMvc.perform(get("https://localhost:" + port + "/user/users/1"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-		response = result.getResponse().getContentAsString();
-		User student = objectMapper.readValue(response, User.class);
-		
-		result = mockMvc.perform(get("https://localhost:" + port + "/courses/exercises/4"))
-				.andExpect(status().is(HttpStatus.OK.value())).andReturn();
-		response = result.getResponse().getContentAsString();
-		Exercise exercise = objectMapper.readValue(response, Exercise.class);
-		
-		Solution solution = new Solution();
+		SolutionDTO solution = new SolutionDTO();
 		solution.setCode("hamster");
-		solution.setStudent(student);
-		solution.setExercise(exercise);
+		solution.setStudentId(1);
+		solution.setExerciseId(4);
 		
 		JsonNode node = objectMapper.valueToTree(solution);
 		ObjectNode objectNode = objectMapper.createObjectNode();
