@@ -172,7 +172,7 @@ class CourseControllerTest {
 		
 		// add student to course
 		mockMvc.perform(post("https://localhost:" + port + "/courses/1/students/2"))
-				.andExpect(status().is(HttpStatus.OK.value())); 
+				.andExpect(status().is(HttpStatus.NO_CONTENT.value())); 
 		
 		// assert that student is now in course
 		mockMvc.perform(get("https://localhost:" + port + "/courses/1/students/2"))
@@ -180,7 +180,7 @@ class CourseControllerTest {
 		
 		// remove student from course
 		mockMvc.perform(delete("https://localhost:" + port + "/courses/1/students/2"))
-		.andExpect(status().is(HttpStatus.OK.value())); 
+		.andExpect(status().is(HttpStatus.NO_CONTENT.value())); 
 		
 		// assert that student is not in course anymore
 		mockMvc.perform(get("https://localhost:" + port + "/courses/1/students/2"))
@@ -218,7 +218,7 @@ class CourseControllerTest {
 		
 		// send delete request
 		mockMvc.perform(delete("https://localhost:" + port + "/courses/" + courseId))
-		.andExpect(status().is(HttpStatus.OK.value())); 
+		.andExpect(status().is(HttpStatus.NO_CONTENT.value())); 
 		
 		// assert that course does not exist anymore
 		mockMvc.perform(get("https://localhost:" + port + "/courses/" + courseId))
@@ -257,7 +257,7 @@ class CourseControllerTest {
 		
 		// send delete request
 		mockMvc.perform(delete("https://localhost:" + port + "/courses/exercises/" + exerciseId))
-		.andExpect(status().is(HttpStatus.OK.value())); 
+		.andExpect(status().is(HttpStatus.NO_CONTENT.value())); 
 		
 		// assert that solution does not exist anymore
 		mockMvc.perform(get("https://localhost:" + port + "/courses/exercises/" + exerciseId))
@@ -385,7 +385,7 @@ class CourseControllerTest {
 		
 		// send delete request
 		mockMvc.perform(delete("https://localhost:" + port + "/courses/solutions/" + solutionId))
-		.andExpect(status().is(HttpStatus.OK.value())); 
+		.andExpect(status().is(HttpStatus.NO_CONTENT.value())); 
 		
 		// assert that solution does not exist anymore
 		mockMvc.perform(get("https://localhost:" + port + "/courses/solutions/" + solutionId))

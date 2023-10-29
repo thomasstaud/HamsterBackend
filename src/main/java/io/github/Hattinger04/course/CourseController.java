@@ -149,7 +149,7 @@ public class CourseController {
 			}
 		}
 		
-		return courseService.addStudentToCourse(courseId, studentId) ? new ResponseEntity<>(HttpStatus.OK)
+		return courseService.addStudentToCourse(courseId, studentId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
 				: new ResponseEntity<>("Could not add student to course!", HttpStatus.BAD_REQUEST);
 	}
 
@@ -177,7 +177,7 @@ public class CourseController {
 			}
 		}
 		
-		return courseService.removeStudentFromCourse(courseId, studentId) ? new ResponseEntity<>(HttpStatus.OK)
+		return courseService.removeStudentFromCourse(courseId, studentId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
 				: new ResponseEntity<>("Could not remove student from course!", HttpStatus.BAD_REQUEST);
 	}
 
@@ -296,7 +296,7 @@ public class CourseController {
 			}
 		}
 		
-		return courseService.deleteCourse(courseId) ? new ResponseEntity<>(HttpStatus.OK)
+		return courseService.deleteCourse(courseId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
 				: new ResponseEntity<>("Could not delete course!", HttpStatus.BAD_REQUEST);
 	}
 
@@ -453,7 +453,7 @@ public class CourseController {
 			}
 		}
 		
-		return courseService.deleteExercise(exerciseId) ? new ResponseEntity<>(HttpStatus.OK)
+		return courseService.deleteExercise(exerciseId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
 				: new ResponseEntity<>("Could not delete exercise!", HttpStatus.BAD_REQUEST);
 	}
 
@@ -645,7 +645,6 @@ public class CourseController {
 	    return new ResponseEntity<>(solution.getId(), HttpStatus.OK);
 	}
 	
-	// TODO: prevent student from deleting feedbacked solutions
 	/**
 	 * DELETE existing solution
 	 * requires @PathVariable solutionId
@@ -659,15 +658,18 @@ public class CourseController {
 		Solution solution = courseService.getSolutionById(solutionId);
 		if (solution == null) new ResponseEntity<>("Solution does not exist!", HttpStatus.NOT_FOUND);
 		
-		// check if user created the solution
 		User user = userService.getCurrentUser();
 		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
-			if (solution.getStudent().getId() != user.getId()) {
+			// check if solution has already been feedbacked
+			if (solution.getFeedback() != null)
+				return new ResponseEntity<>("You cannot delete solutions that were already feedbacked.", HttpStatus.FORBIDDEN);
+			
+			// check if user created the solution
+			if (solution.getStudent().getId() != user.getId())
 				return new ResponseEntity<>("You cannot delete other student's solutions.", HttpStatus.FORBIDDEN);
-			}
 		}
 		
-		return courseService.deleteSolution(solutionId) ? new ResponseEntity<>(HttpStatus.OK)
+		return courseService.deleteSolution(solutionId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
 				: new ResponseEntity<>("Could not delete exercise!", HttpStatus.BAD_REQUEST);
 	}
 
