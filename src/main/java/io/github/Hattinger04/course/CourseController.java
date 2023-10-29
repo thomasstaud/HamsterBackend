@@ -262,7 +262,9 @@ public class CourseController {
 	@PostMapping("")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> createCourse(@RequestBody JsonNode node) {
-		Course course = mapper.convertValue(node.get("course"), Course.class);
+		CourseDTO courseDTO = mapper.convertValue(node.get("course"), CourseDTO.class);
+		Course course = new Course(courseDTO, userService);
+		
 		course = courseService.saveCourse(course);
 		if (course != null) {
 			return new ResponseEntity<>(course.getId(), HttpStatus.OK);
@@ -374,7 +376,9 @@ public class CourseController {
 	@PostMapping("/exercises")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> createExercise(@RequestBody JsonNode node) {
-		Exercise exercise = mapper.convertValue(node.get("exercise"), Exercise.class);
+		ExerciseDTO exerciseDTO = mapper.convertValue(node.get("exercise"), ExerciseDTO.class);
+		Exercise exercise = new Exercise(exerciseDTO, courseService);
+		
 		exercise = courseService.saveExercise(exercise);
 		
 		// if user is a teacher, they must be teacher of the specified course
@@ -574,26 +578,22 @@ public class CourseController {
 	@PutMapping("/solutions")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> addSolutionToExercise(@RequestBody JsonNode node) {
-		Solution solution = mapper.convertValue(node.get("solution"), Solution.class);
+		SolutionDTO solutionDTO = mapper.convertValue(node.get("solution"), SolutionDTO.class);
+		Solution solution = new Solution(solutionDTO, courseService, userService);
 
 		User user = userService.getCurrentUser();
 		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
+			// check if studentId in solution matches active user
+			if (solutionDTO.getStudentId() != user.getId())
+				return new ResponseEntity<>("You cannot create or update other student's solutions.", HttpStatus.FORBIDDEN);
+			
 			// check if user is student in course
-			if (!courseService.isUserStudent(user.getId(), solution.getExercise().getCourse().getId())) {
+			if (!courseService.isUserStudent(user.getId(), solution.getExercise().getCourse().getId()))
 				return new ResponseEntity<>("You must be in this course to create solutions.", HttpStatus.FORBIDDEN);
-			}
 		}
 
 		if (solution.getId() != 0) {
 			// update existing solution
-
-			if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
-				// check if user created solution
-				if (solution.getStudent().getId() != user.getId()) {
-					return new ResponseEntity<>("You cannot update other student's solutions.", HttpStatus.FORBIDDEN);
-				}
-			}
-			
 			Solution existingSolution = courseService.getSolutionById(solution.getId());
 			
 			// check if id is correct
@@ -613,6 +613,7 @@ public class CourseController {
 				: new ResponseEntity<>("Could not update solution!", HttpStatus.BAD_REQUEST);
 	}
 	
+	// TODO: prevent changing feedback (?)
 	/**
 	 * POST feedback to a solution
 	 * requires @PathVariable solutionId + in @RequestBody feedback object
@@ -643,7 +644,8 @@ public class CourseController {
 	    courseService.saveSolution(solution);
 	    return new ResponseEntity<>(solution.getId(), HttpStatus.OK);
 	}
-
+	
+	// TODO: prevent student from deleting feedbacked solutions
 	/**
 	 * DELETE existing solution
 	 * requires @PathVariable solutionId

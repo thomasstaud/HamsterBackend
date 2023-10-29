@@ -11,8 +11,10 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
+import io.github.Hattinger04.course.model.CourseService;
 import io.github.Hattinger04.course.model.exercise.Exercise;
 import io.github.Hattinger04.user.model.User;
+import io.github.Hattinger04.user.model.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,12 +30,13 @@ import lombok.ToString;
 @ToString
 @JsonTypeName("solution") 
 public class Solution {
-
-	public Solution(Exercise exercise, User student, String code, String feedback) {
-		this.exercise = exercise;
-		this.student = student;
-		this.code = code;
-		this.feedback = feedback;
+	public Solution(SolutionDTO solution, CourseService courseService, UserService userService) {
+		this.id = solution.getId();
+		this.exercise = courseService.getExerciseById(solution.getExerciseId());
+		this.student = userService.findUserByID(solution.getStudentId());
+		this.code = solution.getCode();
+		this.submitted = solution.isSubmitted();
+		// feedback must be set separately!
 	}
 	
 	@Id

@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import io.github.Hattinger04.user.model.User;
+import io.github.Hattinger04.user.model.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,10 +33,11 @@ import lombok.ToString;
 @ToString
 @JsonTypeName("course") 
 public class Course {
-
-	public Course(String name, User teacher) {
-		this.name = name; 
-		this.teacher = teacher;
+	public Course(CourseDTO course, UserService userService) {
+		this.id = course.getId();
+		this.name = course.getName();
+		this.teacher = userService.findUserByID(course.getTeacherId());
+		// users must be added separately!
 	}
 	
 	@Id

@@ -2,9 +2,11 @@ package io.github.Hattinger04.course.model.solution;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class SolutionDTO {
 	public SolutionDTO(Solution solution) {
 		this.id = solution.getId();

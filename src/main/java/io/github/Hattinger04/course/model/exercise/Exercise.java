@@ -13,6 +13,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
+import io.github.Hattinger04.course.model.CourseService;
 import io.github.Hattinger04.course.model.course.Course;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,13 +30,13 @@ import lombok.ToString;
 @ToString
 @JsonTypeName("exercise") 
 public class Exercise {
-
-	public Exercise(Course course, String name, String details, Date deadline, String hamster) {
-		this.course = course; 
-		this.name = name;
-		this.details = details;
-		this.deadline = deadline;
-		this.hamster = hamster;
+	public Exercise(ExerciseDTO exercise, CourseService courseService) {
+		this.id = exercise.getId();
+		this.name = exercise.getName();
+		this.details = exercise.getDetails();
+		this.deadline = exercise.getDeadline();
+		this.hamster = exercise.getHamster();
+		this.course = courseService.getCourseById(exercise.getCourseId());
 	}
 	
 	@Id
