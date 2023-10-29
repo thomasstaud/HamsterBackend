@@ -17,16 +17,12 @@ public class SolutionDTO {
 		this.feedback = solution.getFeedback();
 	}
 
-	@JsonProperty("id")
 	private int id;
 	@JsonProperty("exercise_id")
 	private int exerciseId;
 	@JsonProperty("student_id")
 	private int studentId;
-	@JsonProperty("code")
 	private String code;
-	@JsonProperty("submitted")
 	private boolean submitted;
-	@JsonProperty("feedback")
 	private String feedback;
 }

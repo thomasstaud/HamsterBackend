@@ -12,9 +12,7 @@ public class CourseDTO {
 		this.teacherId = course.getTeacher().getId();
 	}
 
-	@JsonProperty("id")
 	private int id;
-	@JsonProperty("name")
 	private String name;
 	@JsonProperty("teacher_id")
 	private int teacherId;

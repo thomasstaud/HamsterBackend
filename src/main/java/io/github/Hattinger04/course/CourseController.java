@@ -25,12 +25,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.github.Hattinger04.course.model.CourseService;
-import io.github.Hattinger04.course.model.ExerciseViewDTO;
-import io.github.Hattinger04.course.model.StudentViewDTO;
 import io.github.Hattinger04.course.model.course.Course;
 import io.github.Hattinger04.course.model.course.CourseDTO;
+import io.github.Hattinger04.course.model.course.CourseViewDTO;
 import io.github.Hattinger04.course.model.exercise.Exercise;
 import io.github.Hattinger04.course.model.exercise.ExerciseDTO;
+import io.github.Hattinger04.course.model.exercise.ExerciseViewDTO;
 import io.github.Hattinger04.course.model.solution.Solution;
 import io.github.Hattinger04.course.model.solution.SolutionDTO;
 import io.github.Hattinger04.role.Role;
@@ -689,7 +689,7 @@ public class CourseController {
 	public ResponseEntity<?> getViewForLoggedInStudent() {
 		int studentId = userService.getCurrentUser().getId();
 		
-		List<StudentViewDTO> studentViews = new ArrayList<StudentViewDTO>();
+		List<CourseViewDTO> courseViews = new ArrayList<CourseViewDTO>();
 		// get exercises for each course
 		for (Course course : courseService.getCoursesByStudentId(studentId)) {
 			List<ExerciseViewDTO> exerciseViews = new ArrayList<ExerciseViewDTO>();
@@ -701,13 +701,13 @@ public class CourseController {
 				else
 					exerciseViews.add(new ExerciseViewDTO(exercise));
 			}
-			studentViews.add(new StudentViewDTO(course, exerciseViews));
+			courseViews.add(new CourseViewDTO(course, exerciseViews));
 		}
 		
-		if(studentViews.isEmpty()) {
+		if(courseViews.isEmpty()) {
 			return new ResponseEntity<>("Student is not in any course", HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(studentViews, HttpStatus.OK);
+		return new ResponseEntity<>(courseViews, HttpStatus.OK);
 	}
 
 	// TODO: do we need this function?

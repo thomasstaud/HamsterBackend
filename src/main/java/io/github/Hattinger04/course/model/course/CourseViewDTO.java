@@ -1,15 +1,15 @@
-package io.github.Hattinger04.course.model;
+package io.github.Hattinger04.course.model.course;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.github.Hattinger04.course.model.course.Course;
+import io.github.Hattinger04.course.model.exercise.ExerciseViewDTO;
 import lombok.Data;
 
 @Data
-public class StudentViewDTO {
-	public StudentViewDTO(Course course, List<ExerciseViewDTO> exerciseViews) {
+public class CourseViewDTO {
+	public CourseViewDTO(Course course, List<ExerciseViewDTO> exerciseViews) {
 		this.courseId = course.getId();
 		this.courseName = course.getName();
 		this.exerciseViews = exerciseViews;
