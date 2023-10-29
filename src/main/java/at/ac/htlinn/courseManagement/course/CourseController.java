@@ -543,14 +543,11 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> addSolutionToExercise(@RequestBody JsonNode node) {
 		SolutionDTO solutionDTO = mapper.convertValue(node.get("solution"), SolutionDTO.class);
+		User user = userService.getCurrentUser();
+		solutionDTO.setStudentId(user.getId());
 		Solution solution = new Solution(solutionDTO, courseService, userService);
 
-		User user = userService.getCurrentUser();
 		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
-			// check if studentId in solution matches active user
-			if (solutionDTO.getStudentId() != user.getId())
-				return new ResponseEntity<>("You cannot create or update other student's solutions.", HttpStatus.FORBIDDEN);
-			
 			// check if user is student in course
 			if (!courseService.isUserStudent(user.getId(), solution.getExercise().getCourse().getId()))
 				return new ResponseEntity<>("You must be in this course to create solutions.", HttpStatus.FORBIDDEN);
