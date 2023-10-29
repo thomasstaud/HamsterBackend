@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 public interface SolutionRepository extends JpaRepository<Solution, Long>{
 	Solution findById(int id);
 	
-	// TODO: SQL not tested yet!
 	@Query(value = "SELECT * FROM solution s WHERE exercise_id=:exercise_id", nativeQuery = true)
 	List<Solution> findByExerciseId(@Param("exercise_id")int exercise_id);
 	

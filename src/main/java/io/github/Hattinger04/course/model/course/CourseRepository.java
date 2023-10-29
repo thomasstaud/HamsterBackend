@@ -12,7 +12,6 @@ import org.springframework.data.repository.query.Param;
 public interface CourseRepository extends JpaRepository<Course, Integer>{
 	Course findById(int id);
 	Course findByName(String name);
-	// TODO: SQL not tested yet!
 	
 	@Query(value = "SELECT user_id, username FROM USERS u JOIN course c ON u.user_id=c.teacher_id where c.course_id=:course_id", nativeQuery = true)
 	List<String[]> getCourseTeacher(int course_id); 
