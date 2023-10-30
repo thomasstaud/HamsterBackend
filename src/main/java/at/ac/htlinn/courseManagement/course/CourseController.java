@@ -141,14 +141,14 @@ public class CourseController {
 	
 	/**
 	 * POST existing student to existing course
-	 * requires @PathVariable courseId and studentId
+	 * requires @PathVariable courseId and in @RequestBody student list
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@PostMapping("/{courseId}/students/{studentId}")
+	@PostMapping("/{courseId}/students")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> addStudentToCourse(@PathVariable int courseId, @PathVariable int studentId) {
+	public ResponseEntity<?> addStudentToCourse(@PathVariable int courseId, @RequestBody JsonNode node) {
 		// check if course exists
 		Course course = courseService.getCourseById(courseId);
 		if (course == null) return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
@@ -159,9 +159,16 @@ public class CourseController {
 			if (role.getRole().equals("TEACHER") && course.getTeacher().getId() != user.getId())
 				return new ResponseEntity<>("You must be this courses teacher to add a student.", HttpStatus.FORBIDDEN);
 		}
+
+		int[] userIds = mapper.convertValue(node.get("users"), int[].class);
+		ArrayList<Integer> failedUserIds = new ArrayList<Integer>(); 
+		for (int userId : userIds) {
+			boolean success = courseService.addStudentToCourse(courseId, userId);
+			if (!success) failedUserIds.add(userId);
+		}
 		
-		return courseService.addStudentToCourse(courseId, studentId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-				: new ResponseEntity<>("Could not add student to course!", HttpStatus.BAD_REQUEST);
+		return failedUserIds.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+				: new ResponseEntity<>(failedUserIds, HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -268,6 +275,9 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> createCourse(@RequestBody JsonNode node) {
 		CourseDTO courseDTO = mapper.convertValue(node.get("course"), CourseDTO.class);
+		// set teacher id to active user id
+		int user_id = userService.getCurrentUser().getId();
+		courseDTO.setTeacherId(user_id);
 		Course course = new Course(courseDTO, userService);
 		
 		course = courseService.saveCourse(course);
