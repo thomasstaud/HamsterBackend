@@ -597,6 +597,14 @@ public class CourseController {
 			existingSolution.setCode(solution.getCode());
 			existingSolution.setSubmitted(solution.isSubmitted());
 			solution = existingSolution;
+		} else {
+			// create new solution
+			
+			// check if solution already exists for this exercise/student combination
+			int exerciseId = solutionDTO.getExerciseId();
+			int userId = user.getId();
+			if (courseService.getSolutionByExerciseAndStudentId(exerciseId, userId) != null)
+				return new ResponseEntity<>("Solution already exists!", HttpStatus.BAD_REQUEST);
 		}
 		
 		solution = courseService.saveSolution(solution);
