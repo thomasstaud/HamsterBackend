@@ -1,4 +1,4 @@
-package at.ac.htlinn.user.model;
+package at.ac.htlinn.user;
 
 import java.util.List;
 
@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import at.ac.htlinn.user.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	User findById(int id);

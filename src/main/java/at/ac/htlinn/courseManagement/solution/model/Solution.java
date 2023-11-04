@@ -11,10 +11,10 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-import at.ac.htlinn.courseManagement.course.model.CourseService;
+import at.ac.htlinn.courseManagement.exercise.ExerciseService;
 import at.ac.htlinn.courseManagement.exercise.model.Exercise;
+import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
-import at.ac.htlinn.user.model.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,9 +30,9 @@ import lombok.ToString;
 @ToString
 @JsonTypeName("solution") 
 public class Solution {
-	public Solution(SolutionDTO solution, CourseService courseService, UserService userService) {
+	public Solution(SolutionDTO solution, ExerciseService exerciseService, UserService userService) {
 		this.id = solution.getId();
-		this.exercise = courseService.getExerciseById(solution.getExerciseId());
+		this.exercise = exerciseService.getExerciseById(solution.getExerciseId());
 		this.student = userService.findUserByID(solution.getStudentId());
 		this.code = solution.getCode();
 		this.submitted = solution.isSubmitted();

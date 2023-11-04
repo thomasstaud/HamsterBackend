@@ -1,4 +1,4 @@
-package at.ac.htlinn.user.model;
+package at.ac.htlinn.user;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import at.ac.htlinn.configuration.CustomPasswordEncoder;
 import at.ac.htlinn.role.Role;
 import at.ac.htlinn.role.RoleRepository;
+import at.ac.htlinn.user.model.User;
 
 @Service
 public class UserService {

@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 
 import at.ac.htlinn.role.Role;
 import at.ac.htlinn.role.RoleRepository;
+import at.ac.htlinn.user.UserRepository;
 import at.ac.htlinn.user.model.User;
-import at.ac.htlinn.user.model.UserRepository;
 
 @Component
 @PropertySource("classpath:settings.properties")

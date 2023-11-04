@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
-import at.ac.htlinn.user.model.UserService;
 
 @RestController
 public class AuthController {

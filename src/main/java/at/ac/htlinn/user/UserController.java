@@ -19,12 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import at.ac.htlinn.role.Role;
 import at.ac.htlinn.user.model.User;
-import at.ac.htlinn.user.model.UserService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
 	static Logger log = LoggerFactory.getLogger(UserController.class);
@@ -36,13 +34,13 @@ public class UserController {
 	private ObjectMapper mapper;
 
 	/**
-	 * 
-	 * Get user by username. Needs as @RequestParam username
+	 * GET all users or one user by username
+	 * optional @RequestParam username
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/users")
+	@GetMapping
 	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> getUserByUsername(@RequestParam(name = "username", required = false) String username) {
 		if(username == null) {
@@ -65,7 +63,7 @@ public class UserController {
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("/users/{id}")
+	@GetMapping("{id}")
 	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> getUserById(@PathVariable long id) {
 		User userFound = userService.findUserByID(id);
@@ -82,7 +80,7 @@ public class UserController {
 	 * @return
 	 */
 
-	@PostMapping("/users")
+	@PostMapping
 	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> createUser(@RequestBody JsonNode node) {
 		User user = mapper.convertValue(node.get("user"), User.class);
@@ -101,7 +99,7 @@ public class UserController {
 	 * @param json
 	 * @return
 	 */
-	@PutMapping("/users")
+	@PutMapping
 	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> updateUser(@RequestBody JsonNode node) {
 		User user = mapper.convertValue(node.get("user"), User.class);
@@ -117,7 +115,7 @@ public class UserController {
 	 * @param json
 	 * @return
 	 */
-	@DeleteMapping("/users")
+	@DeleteMapping
 	@PreAuthorize("hasAuthority('DEV')")
 	public ResponseEntity<?> deleteUser(@RequestBody JsonNode node) {
 		User user = mapper.convertValue(node.get("user"), User.class);
@@ -129,17 +127,15 @@ public class UserController {
 
 	/**
 	 * 
-	 * Adding role to user. Needs as RequestBody role_id and user_id
+	 * Adding role to user. Needs as PathVariable role_id and userId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@PostMapping("/roles")
+	@PostMapping("{userId}/roles/{roleId}")
 	@PreAuthorize("hasAuthority('DEV')")
-	public ResponseEntity<?> addRole(@RequestBody JsonNode node) {
-		User user = mapper.convertValue(node.get("user"), User.class);
-		Role role = mapper.convertValue(node.get("role"), Role.class);
-		if (!userService.insertUserRole(user.getId(), role.getId())) {
+	public ResponseEntity<?> addRole(@PathVariable int userId, @PathVariable int roleId) {
+		if (!userService.insertUserRole(userId, roleId)) {
 			return new ResponseEntity<>("Could not insert new Role!", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
@@ -147,17 +143,15 @@ public class UserController {
 
 	/**
 	 * 
-	 * Removing role from user. Needs as RequestBody role_id and user_id
+	 * Removing role from user. Needs as PathVariable role_id and user_id
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@DeleteMapping("/roles")
+	@DeleteMapping("{userId}/roles/{roleId}")
 	@PreAuthorize("hasAuthority('DEV')")
-	public ResponseEntity<?> removeRole(@RequestBody JsonNode node) {
-		User user = mapper.convertValue(node.get("user"), User.class);
-		Role role = mapper.convertValue(node.get("role"), Role.class);
-		if (!userService.removeUserRole(user.getId(), role.getId())) {
+	public ResponseEntity<?> removeRole(@PathVariable int userId, @PathVariable int roleId) {
+		if (!userService.removeUserRole(userId, roleId)) {
 			return new ResponseEntity<>("Could not remove Role!", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(HttpStatus.OK);

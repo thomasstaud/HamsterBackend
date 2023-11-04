@@ -16,8 +16,8 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
+import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
-import at.ac.htlinn.user.model.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
