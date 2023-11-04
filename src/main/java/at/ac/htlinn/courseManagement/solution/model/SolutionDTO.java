@@ -17,6 +17,7 @@ public class SolutionDTO {
 		this.feedback = solution.getFeedback();
 	}
 
+	@JsonProperty("solution_id")
 	private int id;
 	@JsonProperty("exercise_id")
 	private int exerciseId;

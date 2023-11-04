@@ -1,4 +1,4 @@
-package at.ac.htlinn.user.model;
+package at.ac.htlinn.user;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import at.ac.htlinn.role.Role;
+import at.ac.htlinn.user.model.User;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {

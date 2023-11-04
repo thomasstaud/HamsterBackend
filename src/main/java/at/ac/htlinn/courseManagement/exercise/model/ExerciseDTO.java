@@ -19,6 +19,7 @@ public class ExerciseDTO {
 		this.hamster = exercise.getHamster();
 	}
 	
+	@JsonProperty("exercise_id")
 	private int id;
 	@JsonProperty("course_id")
 	private int courseId;

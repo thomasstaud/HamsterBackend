@@ -12,7 +12,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-import at.ac.htlinn.user.model.MyUserDetailsService;
+import at.ac.htlinn.user.MyUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
