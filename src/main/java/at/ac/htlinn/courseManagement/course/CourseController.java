@@ -94,6 +94,9 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> createCourse(@RequestBody JsonNode node) {
 		CourseDTO courseDTO = mapper.convertValue(node.get("course"), CourseDTO.class);
+		// set teacher id to active user id
+		int user_id = userService.getCurrentUser().getId();
+		courseDTO.setTeacherId(user_id);
 		Course course = new Course(courseDTO, userService);
 		
 		course = courseService.saveCourse(course);
