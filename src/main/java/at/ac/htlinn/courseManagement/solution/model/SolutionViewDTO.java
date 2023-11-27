@@ -10,12 +10,12 @@ public class SolutionViewDTO {
 		this.solutionId = solution.getId();
 		this.code = solution.getCode();
 		this.submitted = solution.isSubmitted();
+		this.feedback = solution.getFeedback();
 	}
 	
 	@JsonProperty("solution_id")
 	private int solutionId;
-	@JsonProperty("code")
 	private String code;
-	@JsonProperty("submitted")
 	private boolean submitted;
+	private String feedback;
 }
