@@ -1,5 +1,7 @@
 package at.ac.htlinn.courseManagement.solution.model;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
@@ -10,6 +12,7 @@ public class SolutionViewDTO {
 		this.solutionId = solution.getId();
 		this.code = solution.getCode();
 		this.submitted = solution.isSubmitted();
+		this.submissionDate = solution.getSubmissionDate();
 		this.feedback = solution.getFeedback();
 	}
 	
@@ -17,5 +20,6 @@ public class SolutionViewDTO {
 	private int solutionId;
 	private String code;
 	private boolean submitted;
+	private Date submissionDate;
 	private String feedback;
 }

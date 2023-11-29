@@ -1,5 +1,6 @@
 package at.ac.htlinn.courseManagement.solution;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,6 +153,8 @@ public class SolutionController {
 		SolutionDTO solutionDTO = mapper.convertValue(node.get("solution"), SolutionDTO.class);
 		User user = userService.getCurrentUser();
 		solutionDTO.setStudentId(user.getId());
+		// set submissionDate to current Date
+		solutionDTO.setSubmissionDate(new Date());
 		
 		Solution solution = new Solution(solutionDTO, exerciseService, userService);
 

@@ -1,5 +1,7 @@
 package at.ac.htlinn.courseManagement.solution.model;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
@@ -14,6 +16,7 @@ public class SolutionDTO {
 		this.studentId = solution.getStudent().getId();
 		this.code = solution.getCode();
 		this.submitted = solution.isSubmitted();
+		this.submissionDate = solution.getSubmissionDate();
 		this.feedback = solution.getFeedback();
 	}
 
@@ -25,5 +28,7 @@ public class SolutionDTO {
 	private int studentId;
 	private String code;
 	private boolean submitted;
+	@JsonProperty("submission-date")
+	private Date submissionDate;
 	private String feedback;
 }

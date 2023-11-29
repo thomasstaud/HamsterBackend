@@ -1,5 +1,7 @@
 package at.ac.htlinn.courseManagement.solution.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,6 +38,7 @@ public class Solution {
 		this.student = userService.findUserByID(solution.getStudentId());
 		this.code = solution.getCode();
 		this.submitted = solution.isSubmitted();
+		this.submissionDate = solution.getSubmissionDate();
 		// feedback must be set separately!
 	}
 	
@@ -57,6 +60,9 @@ public class Solution {
 	
 	@Column(name = "submitted")
 	private boolean submitted;
+
+	@Column(name = "submission_date")
+	private Date submissionDate;
 	
 	@Column(name = "feedback")	
 	private String feedback;
