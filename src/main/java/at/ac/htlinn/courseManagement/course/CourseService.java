@@ -81,6 +81,10 @@ public class CourseService {
 	public List<Course> getCoursesByStudentId(int studentId) {
 		return courseRepository.getCoursesByStudentId(studentId);
 	}
+	
+	public List<Course> getCoursesByTeacherId(int teacherId) {
+		return courseRepository.getCoursesByTeacherId(teacherId);
+	}
 
 	public Course getCourseBySolution(SolutionDTO solution) {
 		int exerciseId = solution.getExerciseId();
@@ -89,7 +93,7 @@ public class CourseService {
 	
 
 	
-	public List<CourseViewDTO> getCourseViews(int studentId) {
+	public List<CourseViewDTO> getStudentCourseViews(int studentId) {
 		
 		List<CourseViewDTO> courseViews = new ArrayList<CourseViewDTO>();
 		// get exercises for each course
@@ -103,6 +107,22 @@ public class CourseService {
 					exerciseViews.add(new ExerciseViewDTO(exercise, solution));
 				else
 					exerciseViews.add(new ExerciseViewDTO(exercise));
+			}
+			courseViews.add(new CourseViewDTO(course, exerciseViews));
+		}
+		
+		return courseViews;
+	}
+	
+	public List<CourseViewDTO> getTeacherCourseViews(int teacherId) {
+		
+		List<CourseViewDTO> courseViews = new ArrayList<CourseViewDTO>();
+		// get exercises for each course
+		for (Course course : getCoursesByTeacherId(teacherId)) {
+			List<ExerciseViewDTO> exerciseViews = new ArrayList<ExerciseViewDTO>();
+			// get exercise view for each exercise
+			for (Exercise exercise : exerciseService.getAllExercisesInCourse(course.getId())) {
+				exerciseViews.add(new ExerciseViewDTO(exercise));
 			}
 			courseViews.add(new CourseViewDTO(course, exerciseViews));
 		}

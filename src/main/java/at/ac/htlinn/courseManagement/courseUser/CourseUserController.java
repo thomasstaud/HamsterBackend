@@ -43,7 +43,7 @@ public class CourseUserController {
 	private ObjectMapper mapper;
 	
 	/**
-	 * GET all courses and exercises for active user (must be student)
+	 * GET all courses, exercises and solutions for active user (must be student)
 	 *
 	 * 
 	 * @param json
@@ -54,7 +54,7 @@ public class CourseUserController {
 	public ResponseEntity<?> getViewForLoggedInStudent() {
 		int studentId = userService.getCurrentUser().getId();
 		
-		List<CourseViewDTO> courseViews = courseService.getCourseViews(studentId);
+		List<CourseViewDTO> courseViews = courseService.getStudentCourseViews(studentId);
 		return new ResponseEntity<>(courseViews, HttpStatus.OK);
 	}
 	
@@ -223,5 +223,21 @@ public class CourseUserController {
 		
 		User teacher = courseUserService.getCourseTeacher(courseId);
 		return new ResponseEntity<>(new UserDTO(teacher), HttpStatus.OK);
+	}
+	
+	/**
+	 * GET all courses and exercises for active user (must be teacher)
+	 *
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@GetMapping("teachers/my-view")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<?> getViewForLoggedInTeacher() {
+		int studentId = userService.getCurrentUser().getId();
+		
+		List<CourseViewDTO> courseViews = courseService.getTeacherCourseViews(studentId);
+		return new ResponseEntity<>(courseViews, HttpStatus.OK);
 	}
 }
