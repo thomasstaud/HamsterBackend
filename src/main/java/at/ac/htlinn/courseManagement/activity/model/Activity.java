@@ -1,8 +1,7 @@
-package at.ac.htlinn.courseManagement.exercise.model;
-
-import java.util.Date;
+package at.ac.htlinn.courseManagement.activity.model;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,33 +10,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
-
-import at.ac.htlinn.courseManagement.course.CourseService;
 import at.ac.htlinn.courseManagement.course.model.Course;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Entity
-@Table(name = "exercise")
+@DiscriminatorColumn(name="activity_type")
+@Table(name = "activity")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
-@JsonTypeName("exercise") 
-public class Exercise {
-	public Exercise(ExerciseDTO exercise, CourseService courseService) {
-		this.id = exercise.getId();
-		this.name = exercise.getName();
-		this.details = exercise.getDetails();
-		this.deadline = exercise.getDeadline();
-		this.hamster = exercise.getHamster();
-		this.course = courseService.getCourseById(exercise.getCourseId());
-	}
+public abstract class Activity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,12 +33,6 @@ public class Exercise {
 	
 	@Column(name = "details")
 	private String details;
-	
-	@Column(name = "deadline")
-	private Date deadline;
-	
-	@Column(name = "hamster", nullable = false)
-	private String hamster; 
 	
 	@ManyToOne
 	@JoinColumn(name="course_id", nullable = false)

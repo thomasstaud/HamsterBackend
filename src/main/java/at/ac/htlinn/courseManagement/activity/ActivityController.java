@@ -1,4 +1,4 @@
-package at.ac.htlinn.courseManagement.exercise;
+package at.ac.htlinn.courseManagement.activity;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -23,23 +23,23 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import at.ac.htlinn.courseManagement.activity.model.Exercise;
+import at.ac.htlinn.courseManagement.activity.model.ExerciseDTO;
 import at.ac.htlinn.courseManagement.course.CourseService;
 import at.ac.htlinn.courseManagement.course.model.Course;
 import at.ac.htlinn.courseManagement.courseUser.CourseUserService;
-import at.ac.htlinn.courseManagement.exercise.model.Exercise;
-import at.ac.htlinn.courseManagement.exercise.model.ExerciseDTO;
 import at.ac.htlinn.role.Role;
 import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
 
 @RestController
 @RequestMapping("/exercises")
-public class ExerciseController {
+public class ActivityController {
 
 	@Autowired
 	private CourseService courseService;
 	@Autowired
-	private ExerciseService exerciseService;
+	private ActivityService exerciseService;
 	@Autowired
 	private CourseUserService studentService;
 	@Autowired
@@ -48,16 +48,16 @@ public class ExerciseController {
 	private ObjectMapper mapper;
 	
 	/**
-	 * GET exercise by id
-	 * requires @PathVariable exerciseId
+	 * GET activity by id
+	 * requires @PathVariable activityId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("{exerciseId}")
+	@GetMapping("{activityId}")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> getExerciseById(@PathVariable int exerciseId) {
-		Exercise exercise = exerciseService.getExerciseById(exerciseId);
+	public ResponseEntity<?> getActivityById(@PathVariable int activityId) {
+		Exercise exercise = exerciseService.getActivityById(activityId);
 		if (exercise == null) return new ResponseEntity<>("Exercise does not exist!", HttpStatus.NOT_FOUND);
 		
 		User user = userService.getCurrentUser();
@@ -94,7 +94,7 @@ public class ExerciseController {
 		}
 		
 		List<ExerciseDTO> exercises = new ArrayList<ExerciseDTO>();
-		for (Exercise exercise : exerciseService.getAllExercisesInCourse(courseId)) {
+		for (Exercise exercise : exerciseService.getAllActivitiesInCourse(courseId)) {
 			exercises.add(new ExerciseDTO(exercise));
 		}
 		return new ResponseEntity<>(exercises, HttpStatus.OK);
@@ -113,7 +113,7 @@ public class ExerciseController {
 		ExerciseDTO exerciseDTO = mapper.convertValue(node.get("exercise"), ExerciseDTO.class);
 		Exercise exercise = new Exercise(exerciseDTO, courseService);
 		
-		exercise = exerciseService.saveExercise(exercise);
+		exercise = exerciseService.saveActivity(exercise);
 		
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
@@ -143,7 +143,7 @@ public class ExerciseController {
 	        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	    }
 	    
-	    Exercise exercise = exerciseService.getExerciseById(exerciseId);
+	    Exercise exercise = exerciseService.getActivityById(exerciseId);
 	    if (exercise == null) return new ResponseEntity<>("Exercise does not exist!", HttpStatus.NOT_FOUND);
 
 		// if user is a teacher, they must be teacher of the specified course
@@ -160,7 +160,7 @@ public class ExerciseController {
 	        ReflectionUtils.setField(field, exercise, v); // set given field for exercise object to value V
 	    });
 
-	    exerciseService.saveExercise(exercise);
+	    exerciseService.saveActivity(exercise);
 	    return new ResponseEntity<>(exercise.getId(), HttpStatus.OK);
 	}
 
@@ -174,7 +174,7 @@ public class ExerciseController {
 	@DeleteMapping("{exerciseId}")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> deleteExercise(@PathVariable int exerciseId) {
-	    Exercise exercise = exerciseService.getExerciseById(exerciseId);
+	    Exercise exercise = exerciseService.getActivityById(exerciseId);
 
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
@@ -183,7 +183,7 @@ public class ExerciseController {
 				return new ResponseEntity<>("You must be this courses teacher to delete its exercises.", HttpStatus.FORBIDDEN);
 		}
 		
-		return exerciseService.deleteExercise(exerciseId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+		return exerciseService.deleteActivity(exerciseId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
 				: new ResponseEntity<>("Could not delete exercise!", HttpStatus.BAD_REQUEST);
 	}
 }

@@ -33,11 +33,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import at.ac.htlinn.courseManagement.activity.model.Exercise;
+import at.ac.htlinn.courseManagement.activity.model.ExerciseDTO;
 import at.ac.htlinn.courseManagement.course.CourseController;
 import at.ac.htlinn.courseManagement.course.model.Course;
 import at.ac.htlinn.courseManagement.course.model.CourseDTO;
-import at.ac.htlinn.courseManagement.exercise.model.Exercise;
-import at.ac.htlinn.courseManagement.exercise.model.ExerciseDTO;
 import at.ac.htlinn.courseManagement.solution.model.Solution;
 import at.ac.htlinn.courseManagement.solution.model.SolutionDTO;
 import at.ac.htlinn.user.UserController;
@@ -325,7 +325,7 @@ class CourseControllerTest {
 		response = result.getResponse().getContentAsString();
 		Solution solution = objectMapper.readValue(response, Solution.class);
 		
-		System.out.println(solution.getExercise());
+		System.out.println(solution.getActivity());
 		
 		String code = solution.getCode() + " code";
 		solution.setCode(code);
@@ -363,7 +363,7 @@ class CourseControllerTest {
 		SolutionDTO solution = new SolutionDTO();
 		solution.setCode("hamster");
 		solution.setStudentId(1);
-		solution.setExerciseId(4);
+		solution.setActivityId(4);
 		
 		JsonNode node = objectMapper.valueToTree(solution);
 		ObjectNode objectNode = objectMapper.createObjectNode();

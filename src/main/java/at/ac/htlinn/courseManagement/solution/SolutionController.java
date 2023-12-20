@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import at.ac.htlinn.courseManagement.activity.ActivityService;
+import at.ac.htlinn.courseManagement.activity.model.Exercise;
 import at.ac.htlinn.courseManagement.course.CourseService;
 import at.ac.htlinn.courseManagement.course.model.Course;
 import at.ac.htlinn.courseManagement.courseUser.CourseUserService;
-import at.ac.htlinn.courseManagement.exercise.ExerciseService;
-import at.ac.htlinn.courseManagement.exercise.model.Exercise;
 import at.ac.htlinn.courseManagement.solution.model.Solution;
 import at.ac.htlinn.courseManagement.solution.model.SolutionDTO;
 import at.ac.htlinn.role.Role;
@@ -38,7 +38,7 @@ public class SolutionController {
 	@Autowired
 	private CourseService courseService;
 	@Autowired
-	private ExerciseService exerciseService;
+	private ActivityService exerciseService;
 	@Autowired
 	private SolutionService solutionService;
 	@Autowired
@@ -64,7 +64,7 @@ public class SolutionController {
 		User user = userService.getCurrentUser();
 		if (!(user.getRoles().contains(new Role(1, "ADMIN")) || user.getRoles().contains(new Role(2, "DEV")))) {
 			// check if user is in course (either as student or as teacher)
-			if (!studentService.isUserInCourse(user.getId(), solution.getExercise().getCourse().getId()))
+			if (!studentService.isUserInCourse(user.getId(), solution.getActivity().getCourse().getId()))
 				return new ResponseEntity<>("You must be in this course to view its solutions.", HttpStatus.FORBIDDEN);
 	
 			// if user is a student, they must have created the solution
@@ -95,7 +95,7 @@ public class SolutionController {
 		if (exerciseId != null) {
 			// get all solutions for 1 exercise
 			
-		    Exercise exercise = exerciseService.getExerciseById(exerciseId);
+		    Exercise exercise = exerciseService.getActivityById(exerciseId);
 		    if (exercise == null) return new ResponseEntity<>("Exercise does not exist!", HttpStatus.NOT_FOUND);
 
 			// if user is a teacher, they must be teacher of the specified course
@@ -160,7 +160,7 @@ public class SolutionController {
 
 		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
 			// check if user is student in course
-			if (!studentService.isUserStudent(user.getId(), solution.getExercise().getCourse().getId()))
+			if (!studentService.isUserStudent(user.getId(), solution.getActivity().getCourse().getId()))
 				return new ResponseEntity<>("You must be in this course to create solutions.", HttpStatus.FORBIDDEN);
 		}
 
@@ -183,7 +183,7 @@ public class SolutionController {
 			// create new solution
 
 			// check if solution already exists for this exercise/student combination
-			int exerciseId = solutionDTO.getExerciseId();
+			int exerciseId = solutionDTO.getActivityId();
 			int userId = user.getId();
 			if (solutionService.getSolutionByExerciseAndStudentId(exerciseId, userId) != null)
 				return new ResponseEntity<>("Solution already exists!", HttpStatus.BAD_REQUEST);
@@ -211,7 +211,7 @@ public class SolutionController {
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
 		for (Role role : user.getRoles()) {
-			if (role.getRole().equals("TEACHER") && solution.getExercise().getCourse().getTeacher().getId() != user.getId())
+			if (role.getRole().equals("TEACHER") && solution.getActivity().getCourse().getTeacher().getId() != user.getId())
 				return new ResponseEntity<>("You must be this courses teacher to give feedback.", HttpStatus.FORBIDDEN);
 		}
 		

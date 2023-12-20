@@ -5,12 +5,13 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import at.ac.htlinn.courseManagement.activity.ActivityService;
+import at.ac.htlinn.courseManagement.activity.model.Activity;
+import at.ac.htlinn.courseManagement.activity.model.ActivityViewDTO;
+import at.ac.htlinn.courseManagement.activity.model.ExerciseViewDTO;
 import at.ac.htlinn.courseManagement.course.model.Course;
 import at.ac.htlinn.courseManagement.course.model.CourseViewDTO;
 import at.ac.htlinn.courseManagement.courseUser.CourseUserService;
-import at.ac.htlinn.courseManagement.exercise.ExerciseService;
-import at.ac.htlinn.courseManagement.exercise.model.Exercise;
-import at.ac.htlinn.courseManagement.exercise.model.ExerciseViewDTO;
 import at.ac.htlinn.courseManagement.solution.SolutionService;
 import at.ac.htlinn.courseManagement.solution.model.Solution;
 import at.ac.htlinn.courseManagement.solution.model.SolutionDTO;
@@ -22,15 +23,15 @@ public class CourseService {
 	private CourseRepository courseRepository;
 	
 	private CourseUserService courseUserService;
-	private ExerciseService exerciseService;
+	private ActivityService activityService;
 	private SolutionService solutionService;
 
 	public CourseService(CourseRepository courseRepository, CourseUserService studentService,
-			ExerciseService exerciseService, SolutionService solutionService) {
+			ActivityService activityService, SolutionService solutionService) {
 		
 		this.courseRepository = courseRepository;
 		this.courseUserService = studentService;
-		this.exerciseService = exerciseService;
+		this.activityService = activityService;
 		this.solutionService = solutionService;
 	}
 	
@@ -87,7 +88,7 @@ public class CourseService {
 	}
 
 	public Course getCourseBySolution(SolutionDTO solution) {
-		int exerciseId = solution.getExerciseId();
+		int exerciseId = solution.getActivityId();
 		return courseRepository.getByExerciseId(exerciseId);
 	}
 	
@@ -98,17 +99,19 @@ public class CourseService {
 		List<CourseViewDTO> courseViews = new ArrayList<CourseViewDTO>();
 		// get exercises for each course
 		for (Course course : getCoursesByStudentId(studentId)) {
-			List<ExerciseViewDTO> exerciseViews = new ArrayList<ExerciseViewDTO>();
+			List<ActivityViewDTO> activityViews = new ArrayList<ActivityViewDTO>();
 			// get exercise view for each exercise
-			for (Exercise exercise : exerciseService.getAllExercisesInCourse(course.getId())) {
-				Solution solution = solutionService.getSolutionByExerciseAndStudentId(exercise.getId(), studentId);
+			for (Activity activity : activityService.getAllActivitiesInCourse(course.getId())) {
+				Solution solution = solutionService.getSolutionByExerciseAndStudentId(activity.getId(), studentId);
 				
+				/*
 				if(solution != null)
-					exerciseViews.add(new ExerciseViewDTO(exercise, solution));
+					activityViews.add(new ExerciseViewDTO(exercise, solution));
 				else
-					exerciseViews.add(new ExerciseViewDTO(exercise));
+					activityViews.add(new ExerciseViewDTO(exercise));
+				*/
 			}
-			courseViews.add(new CourseViewDTO(course, exerciseViews));
+			courseViews.add(new CourseViewDTO(course, activityViews));
 		}
 		
 		return courseViews;
@@ -119,12 +122,12 @@ public class CourseService {
 		List<CourseViewDTO> courseViews = new ArrayList<CourseViewDTO>();
 		// get exercises for each course
 		for (Course course : getCoursesByTeacherId(teacherId)) {
-			List<ExerciseViewDTO> exerciseViews = new ArrayList<ExerciseViewDTO>();
+			List<ActivityViewDTO> activityViews = new ArrayList<ActivityViewDTO>();
 			// get exercise view for each exercise
-			for (Exercise exercise : exerciseService.getAllExercisesInCourse(course.getId())) {
-				exerciseViews.add(new ExerciseViewDTO(exercise));
+			for (Activity activity : activityService.getAllActivitiesInCourse(course.getId())) {
+				// activityViews.add(new ExerciseViewDTO(exercise));
 			}
-			courseViews.add(new CourseViewDTO(course, exerciseViews));
+			courseViews.add(new CourseViewDTO(course, activityViews));
 		}
 		
 		return courseViews;

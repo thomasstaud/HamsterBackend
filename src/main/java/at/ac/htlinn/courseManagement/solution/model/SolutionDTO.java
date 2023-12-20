@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class SolutionDTO {
 	public SolutionDTO(Solution solution) {
 		this.id = solution.getId();
-		this.exerciseId = solution.getExercise().getId();
+		this.activityId = solution.getActivity().getId();
 		this.studentId = solution.getStudent().getId();
 		this.code = solution.getCode();
 		this.submitted = solution.isSubmitted();
@@ -22,8 +22,8 @@ public class SolutionDTO {
 
 	@JsonProperty("solution_id")
 	private int id;
-	@JsonProperty("exercise_id")
-	private int exerciseId;
+	@JsonProperty("activity_id")
+	private int activityId;
 	@JsonProperty("student_id")
 	private int studentId;
 	private String code;

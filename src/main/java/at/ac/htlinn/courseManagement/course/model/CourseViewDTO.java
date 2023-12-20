@@ -4,15 +4,15 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import at.ac.htlinn.courseManagement.exercise.model.ExerciseViewDTO;
+import at.ac.htlinn.courseManagement.activity.model.ActivityViewDTO;
 import lombok.Data;
 
 @Data
 public class CourseViewDTO {
-	public CourseViewDTO(Course course, List<ExerciseViewDTO> exerciseViews) {
+	public CourseViewDTO(Course course, List<ActivityViewDTO> activityViews) {
 		this.courseId = course.getId();
 		this.courseName = course.getName();
-		this.exerciseViews = exerciseViews;
+		this.activityViews = activityViews;
 	}
 	
 	@JsonProperty("course_id")
@@ -20,5 +20,5 @@ public class CourseViewDTO {
 	@JsonProperty("course_name")
 	private String courseName;
 	@JsonProperty("exercises")
-	private List<ExerciseViewDTO> exerciseViews;
+	private List<ActivityViewDTO> activityViews;
 }
