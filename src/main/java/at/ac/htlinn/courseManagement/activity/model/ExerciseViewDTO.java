@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ExerciseViewDTO extends ActivityViewDTO{
+public class ExerciseViewDTO extends ActivityViewDTO {
 	public ExerciseViewDTO(Exercise exercise, Solution solution) {
 		super(exercise.getId(), exercise.getName(),
 				exercise.getDetails(), new SolutionViewDTO(solution));

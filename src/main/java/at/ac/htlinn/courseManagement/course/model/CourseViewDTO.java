@@ -10,13 +10,13 @@ import lombok.Data;
 @Data
 public class CourseViewDTO {
 	public CourseViewDTO(Course course, List<ActivityViewDTO> activityViews) {
-		this.courseId = course.getId();
+		this.id = course.getId();
 		this.courseName = course.getName();
 		this.activityViews = activityViews;
 	}
 	
 	@JsonProperty("course_id")
-	private int courseId;
+	private int id;
 	@JsonProperty("course_name")
 	private String courseName;
 	@JsonProperty("exercises")

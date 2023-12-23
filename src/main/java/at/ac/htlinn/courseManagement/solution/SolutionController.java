@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import at.ac.htlinn.courseManagement.activity.ActivityService;
-import at.ac.htlinn.courseManagement.activity.model.Exercise;
+import at.ac.htlinn.courseManagement.activity.model.Activity;
 import at.ac.htlinn.courseManagement.course.CourseService;
 import at.ac.htlinn.courseManagement.course.model.Course;
 import at.ac.htlinn.courseManagement.courseUser.CourseUserService;
@@ -38,7 +38,7 @@ public class SolutionController {
 	@Autowired
 	private CourseService courseService;
 	@Autowired
-	private ActivityService exerciseService;
+	private ActivityService activityService;
 	@Autowired
 	private SolutionService solutionService;
 	@Autowired
@@ -80,7 +80,7 @@ public class SolutionController {
 	// TODO: clean up
 	/**
 	 * GET all solutions
-	 * optional @RequestParam exerciseId
+	 * optional @RequestParam activityId
 	 * 
 	 * @param json
 	 * @return
@@ -88,25 +88,25 @@ public class SolutionController {
 	@GetMapping
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> getAllSolutions(
-			@RequestParam(name = "exercise_id", required = false) Integer exerciseId,
+			@RequestParam(name = "activity_id", required = false) Integer activityId,
 			@RequestParam(name = "student_id", required = false) Integer studentId,
 			@RequestParam(name = "course_id", required = false) Integer courseId) {
 		
-		if (exerciseId != null) {
-			// get all solutions for 1 exercise
+		if (activityId != null) {
+			// get all solutions for 1 activity
 			
-		    Exercise exercise = exerciseService.getActivityById(exerciseId);
-		    if (exercise == null) return new ResponseEntity<>("Exercise does not exist!", HttpStatus.NOT_FOUND);
+		    Activity activity = activityService.getActivityById(activityId);
+		    if (activity == null) return new ResponseEntity<>("Activity does not exist!", HttpStatus.NOT_FOUND);
 
 			// if user is a teacher, they must be teacher of the specified course
 			User user = userService.getCurrentUser();
 			for (Role role : user.getRoles()) {
-				if (role.getRole().equals("TEACHER") && exercise.getCourse().getTeacher().getId() != user.getId()) {
-					return new ResponseEntity<>("You must be this courses teacher to view its exercises.", HttpStatus.FORBIDDEN);
+				if (role.getRole().equals("TEACHER") && activity.getCourse().getTeacher().getId() != user.getId()) {
+					return new ResponseEntity<>("You must be this courses teacher to view its activitys.", HttpStatus.FORBIDDEN);
 				}
 			}
 			
-			List<SolutionDTO> solutions = solutionService.getSolutionsByExerciseId(exerciseId);
+			List<SolutionDTO> solutions = solutionService.getSolutionsByActivityId(activityId);
 			return new ResponseEntity<>(solutions, HttpStatus.OK);
 		}
 		
@@ -141,7 +141,7 @@ public class SolutionController {
 	}
 	
 	/**
-	 * PUT solution for an exercise
+	 * PUT solution for an activity
 	 * requires in @RequestBody solution object
 	 * 
 	 * @param json
@@ -149,14 +149,14 @@ public class SolutionController {
 	 */
 	@PutMapping
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> addSolutionToExercise(@RequestBody JsonNode node) {
+	public ResponseEntity<?> addSolutionToActivity(@RequestBody JsonNode node) {
 		SolutionDTO solutionDTO = mapper.convertValue(node.get("solution"), SolutionDTO.class);
 		User user = userService.getCurrentUser();
 		solutionDTO.setStudentId(user.getId());
 		// set submissionDate to current Date
 		solutionDTO.setSubmissionDate(new Date());
 		
-		Solution solution = new Solution(solutionDTO, exerciseService, userService);
+		Solution solution = new Solution(solutionDTO, activityService, userService);
 
 		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
 			// check if user is student in course
@@ -182,10 +182,10 @@ public class SolutionController {
 		} else {
 			// create new solution
 
-			// check if solution already exists for this exercise/student combination
-			int exerciseId = solutionDTO.getActivityId();
+			// check if solution already exists for this activity/student combination
+			int activityId = solutionDTO.getActivityId();
 			int userId = user.getId();
-			if (solutionService.getSolutionByExerciseAndStudentId(exerciseId, userId) != null)
+			if (solutionService.getSolutionByActivityAndStudentId(activityId, userId) != null)
 				return new ResponseEntity<>("Solution already exists!", HttpStatus.BAD_REQUEST);
 		}
 		
@@ -249,6 +249,6 @@ public class SolutionController {
 		}
 		
 		return solutionService.deleteSolution(solutionId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-				: new ResponseEntity<>("Could not delete exercise!", HttpStatus.BAD_REQUEST);
+				: new ResponseEntity<>("Could not delete activity!", HttpStatus.BAD_REQUEST);
 	}
 }

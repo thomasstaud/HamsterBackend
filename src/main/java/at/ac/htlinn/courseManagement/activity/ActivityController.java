@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import at.ac.htlinn.courseManagement.activity.model.Activity;
+import at.ac.htlinn.courseManagement.activity.model.ActivityDTO;
 import at.ac.htlinn.courseManagement.activity.model.Exercise;
 import at.ac.htlinn.courseManagement.activity.model.ExerciseDTO;
 import at.ac.htlinn.courseManagement.course.CourseService;
@@ -33,13 +35,13 @@ import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
 
 @RestController
-@RequestMapping("/exercises")
+@RequestMapping("/activitys")
 public class ActivityController {
 
 	@Autowired
 	private CourseService courseService;
 	@Autowired
-	private ActivityService exerciseService;
+	private ActivityService activityService;
 	@Autowired
 	private CourseUserService studentService;
 	@Autowired
@@ -57,21 +59,21 @@ public class ActivityController {
 	@GetMapping("{activityId}")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> getActivityById(@PathVariable int activityId) {
-		Exercise exercise = exerciseService.getActivityById(activityId);
-		if (exercise == null) return new ResponseEntity<>("Exercise does not exist!", HttpStatus.NOT_FOUND);
+		Activity activity = activityService.getActivityById(activityId);
+		if (activity == null) return new ResponseEntity<>("Activity does not exist!", HttpStatus.NOT_FOUND);
 		
 		User user = userService.getCurrentUser();
 		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
 			// check if user is in course (either as student or as teacher)
-			if (!studentService.isUserInCourse(user.getId(), exercise.getCourse().getId()))
-				return new ResponseEntity<>("You must be in this course to view its exercises.", HttpStatus.FORBIDDEN);
+			if (!studentService.isUserInCourse(user.getId(), activity.getCourse().getId()))
+				return new ResponseEntity<>("You must be in this course to view its activitys.", HttpStatus.FORBIDDEN);
 		}
 		
-		return new ResponseEntity<>(new ExerciseDTO(exercise), HttpStatus.OK);
+		return new ResponseEntity<>(activity, HttpStatus.OK);
 	}
 	
 	/**
-	 * GET all exercises for a course
+	 * GET all activitys for a course
 	 * requires @RequestParam courseId
 	 * 
 	 * @param json
@@ -79,7 +81,7 @@ public class ActivityController {
 	 */
 	@GetMapping
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> getAllExercisesByCourseId(
+	public ResponseEntity<?> getAllActivitysByCourseId(
 			@RequestParam(name = "course_id", required = true) Integer courseId) {
 		
 		// check if course exists
@@ -90,100 +92,100 @@ public class ActivityController {
 		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
 			// check if user is in course (either as student or as teacher)
 			if (!studentService.isUserInCourse(user.getId(), course.getId()))
-				return new ResponseEntity<>("You must be in this course to view its exercises.", HttpStatus.FORBIDDEN);
+				return new ResponseEntity<>("You must be in this course to view its activitys.", HttpStatus.FORBIDDEN);
 		}
 		
-		List<ExerciseDTO> exercises = new ArrayList<ExerciseDTO>();
-		for (Exercise exercise : exerciseService.getAllActivitiesInCourse(courseId)) {
-			exercises.add(new ExerciseDTO(exercise));
+		List<ActivityDTO> activitys = new ArrayList<ActivityDTO>();
+		for (Activity activity : activityService.getAllActivitiesInCourse(courseId)) {
+			// activitys.add(new ActivityDTO(activity));
 		}
-		return new ResponseEntity<>(exercises, HttpStatus.OK);
+		return new ResponseEntity<>(activitys, HttpStatus.OK);
 	}
 	
 	/**
-	 * POST exercise for existing course
-	 * requires in @RequestBody exercise object
+	 * POST activity for existing course
+	 * requires in @RequestBody activity object
 	 * 
 	 * @param json
 	 * @return
 	 */
 	@PostMapping
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> createExercise(@RequestBody JsonNode node) {
+	public ResponseEntity<?> createActivity(@RequestBody JsonNode node) {
 		ExerciseDTO exerciseDTO = mapper.convertValue(node.get("exercise"), ExerciseDTO.class);
-		Exercise exercise = new Exercise(exerciseDTO, courseService);
+		Activity activity = new Exercise(exerciseDTO, courseService);
 		
-		exercise = exerciseService.saveActivity(exercise);
+		activity = activityService.saveActivity(activity);
 		
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
 		for (Role role : user.getRoles()) {
-			if (role.getRole().equals("TEACHER") && exercise.getCourse().getTeacher().getId() != user.getId()) {
-				return new ResponseEntity<>("You must be this courses teacher to add an exercise to it.", HttpStatus.FORBIDDEN);
+			if (role.getRole().equals("TEACHER") && activity.getCourse().getTeacher().getId() != user.getId()) {
+				return new ResponseEntity<>("You must be this courses teacher to add an activity to it.", HttpStatus.FORBIDDEN);
 			}
 		}
 		
-		return exercise != null ? new ResponseEntity<>(exercise.getId(), HttpStatus.OK)
-				: new ResponseEntity<>("Could not create exercise!", HttpStatus.BAD_REQUEST);
+		return activity != null ? new ResponseEntity<>(activity.getId(), HttpStatus.OK)
+				: new ResponseEntity<>("Could not create activity!", HttpStatus.BAD_REQUEST);
 	}
 	
 	/**
-	 * PATCH exercise
-	 * requires @PathVariable exerciseId and in @RequestBody object
+	 * PATCH activity
+	 * requires @PathVariable activityId and in @RequestBody object
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@PatchMapping("{exerciseId}")
+	@PatchMapping("{activityId}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> updateExercise(@PathVariable int exerciseId, @RequestBody Map<String, Object> fields) {
+	public ResponseEntity<?> updateActivity(@PathVariable int activityId, @RequestBody Map<String, Object> fields) {
 		
 	    // Sanitize and validate the data
-	    if (exerciseId <= 0 || fields == null || fields.isEmpty()){
+	    if (activityId <= 0 || fields == null || fields.isEmpty()){
 	        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	    }
 	    
-	    Exercise exercise = exerciseService.getActivityById(exerciseId);
-	    if (exercise == null) return new ResponseEntity<>("Exercise does not exist!", HttpStatus.NOT_FOUND);
+	    Activity activity = activityService.getActivityById(activityId);
+	    if (activity == null) return new ResponseEntity<>("Activity does not exist!", HttpStatus.NOT_FOUND);
 
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
 		for (Role role : user.getRoles()) {
-			if (role.getRole().equals("TEACHER") && exercise.getCourse().getTeacher().getId() != user.getId())
-				return new ResponseEntity<>("You must be this courses teacher to change its exercises.", HttpStatus.FORBIDDEN);
+			if (role.getRole().equals("TEACHER") && activity.getCourse().getTeacher().getId() != user.getId())
+				return new ResponseEntity<>("You must be this courses teacher to change its activitys.", HttpStatus.FORBIDDEN);
 		}
 
 	    fields.forEach((k, v) -> {
 		    System.out.println(k);
-	        Field field = ReflectionUtils.findField(Exercise.class, k); // find field in exercise class
+	        Field field = ReflectionUtils.findField(Activity.class, k); // find field in activity class
 	        field.setAccessible(true); 
-	        ReflectionUtils.setField(field, exercise, v); // set given field for exercise object to value V
+	        ReflectionUtils.setField(field, activity, v); // set given field for activity object to value V
 	    });
 
-	    exerciseService.saveActivity(exercise);
-	    return new ResponseEntity<>(exercise.getId(), HttpStatus.OK);
+	    activityService.saveActivity(activity);
+	    return new ResponseEntity<>(activity.getId(), HttpStatus.OK);
 	}
 
 	/**
-	 * DELETE existing exercise
-	 * requires @PathVariable exerciseId
+	 * DELETE existing activity
+	 * requires @PathVariable activityId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@DeleteMapping("{exerciseId}")
+	@DeleteMapping("{activityId}")
 	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> deleteExercise(@PathVariable int exerciseId) {
-	    Exercise exercise = exerciseService.getActivityById(exerciseId);
+	public ResponseEntity<?> deleteActivity(@PathVariable int activityId) {
+	    Activity activity = activityService.getActivityById(activityId);
 
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
 		for (Role role : user.getRoles()) {
-			if (role.getRole().equals("TEACHER") && exercise.getCourse().getTeacher().getId() != user.getId())
-				return new ResponseEntity<>("You must be this courses teacher to delete its exercises.", HttpStatus.FORBIDDEN);
+			if (role.getRole().equals("TEACHER") && activity.getCourse().getTeacher().getId() != user.getId())
+				return new ResponseEntity<>("You must be this courses teacher to delete its activitys.", HttpStatus.FORBIDDEN);
 		}
 		
-		return exerciseService.deleteActivity(exerciseId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-				: new ResponseEntity<>("Could not delete exercise!", HttpStatus.BAD_REQUEST);
+		return activityService.deleteActivity(activityId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+				: new ResponseEntity<>("Could not delete activity!", HttpStatus.BAD_REQUEST);
 	}
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExerciseDTO extends ActivityDTO{
+public class ExerciseDTO extends ActivityDTO {
 	public ExerciseDTO(Exercise exercise) {
 		super(exercise.getId(), exercise.getCourse().getId(),
 				exercise.getName(), exercise.getDetails());

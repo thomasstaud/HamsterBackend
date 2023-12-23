@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public abstract class ActivityViewDTO {
 	
-	@JsonProperty("exercise_id")
-	private int exerciseId;
+	@JsonProperty("activity_id")
+	private int id;
 	private String name;
 	private String details;
 	@JsonProperty("solution")

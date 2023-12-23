@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public abstract class ActivityDTO {
 
-	@JsonProperty("exercise_id")
+	@JsonProperty("activity_id")
 	private int id;
 	@JsonProperty("course_id")
 	private int courseId;

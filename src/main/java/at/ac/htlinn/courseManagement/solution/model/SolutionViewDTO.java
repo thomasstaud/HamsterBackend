@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class SolutionViewDTO {
 	public SolutionViewDTO(Solution solution) {
-		this.solutionId = solution.getId();
+		this.id = solution.getId();
 		this.code = solution.getCode();
 		this.submitted = solution.isSubmitted();
 		this.submissionDate = solution.getSubmissionDate();
@@ -17,7 +17,7 @@ public class SolutionViewDTO {
 	}
 	
 	@JsonProperty("solution_id")
-	private int solutionId;
+	private int id;
 	private String code;
 	private boolean submitted;
 	private Date submissionDate;

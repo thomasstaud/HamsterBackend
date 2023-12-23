@@ -17,25 +17,25 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
-@Table(name = "exercise")
+@Table(name = "contest")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@JsonTypeName("exercise") 
-public class Exercise extends Activity {
-	public Exercise(ExerciseDTO exercise, CourseService courseService) {
-		super(exercise.getId(), exercise.getName(), exercise.getDetails(),
-				courseService.getCourseById(exercise.getCourseId()));
-		this.deadline = exercise.getDeadline();
-		this.hamster = exercise.getHamster();
+@JsonTypeName("contest") 
+public class Contest extends Activity {
+	public Contest(ContestDTO contest, CourseService courseService) {
+		super(contest.getId(), contest.getName(), contest.getDetails(),
+				courseService.getCourseById(contest.getCourseId()));
+		this.start = contest.getStart();
+		this.hamsters = contest.getHamsters();
 	}
 	
-	@Column(name = "deadline")
-	private Date deadline;
+	@Column(name = "start")
+	private Date start;
 	
-	@Column(name = "hamster", nullable = false)
-	private String hamster;
+	@Column(name = "hamsters", nullable = false)
+	private String[] hamsters;
 }
