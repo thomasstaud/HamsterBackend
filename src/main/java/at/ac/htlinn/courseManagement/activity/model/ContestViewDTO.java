@@ -24,5 +24,5 @@ public class ContestViewDTO extends ActivityViewDTO {
 	}
 
 	private Date start;
-	private String[] hamsters;
+	private String hamsters;
 }

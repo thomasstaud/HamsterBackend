@@ -10,6 +10,6 @@ import at.ac.htlinn.courseManagement.activity.model.Activity;
 
 public interface ActivityRepository extends JpaRepository<Activity, Integer>{
 	
-	@Query(value = "SELECT e.* FROM EXERCISE e where course_id=:course_id", nativeQuery = true)
+	@Query(value = "SELECT a FROM Activity a WHERE course_id=:course_id")
 	public List<Activity> getByCourseId(@Param("course_id") int course_id);
 }

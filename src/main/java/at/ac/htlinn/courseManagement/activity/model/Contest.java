@@ -37,5 +37,5 @@ public class Contest extends Activity {
 	private Date start;
 	
 	@Column(name = "hamsters", nullable = false)
-	private String[] hamsters;
+	private String hamsters;
 }

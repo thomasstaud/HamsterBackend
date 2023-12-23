@@ -8,7 +8,10 @@ import org.springframework.stereotype.Service;
 import at.ac.htlinn.courseManagement.activity.ActivityService;
 import at.ac.htlinn.courseManagement.activity.model.Activity;
 import at.ac.htlinn.courseManagement.activity.model.ActivityViewDTO;
-import at.ac.htlinn.courseManagement.activity.model.ActivityViewDTO;
+import at.ac.htlinn.courseManagement.activity.model.Contest;
+import at.ac.htlinn.courseManagement.activity.model.ContestViewDTO;
+import at.ac.htlinn.courseManagement.activity.model.Exercise;
+import at.ac.htlinn.courseManagement.activity.model.ExerciseViewDTO;
 import at.ac.htlinn.courseManagement.course.model.Course;
 import at.ac.htlinn.courseManagement.course.model.CourseViewDTO;
 import at.ac.htlinn.courseManagement.courseUser.CourseUserService;
@@ -104,12 +107,18 @@ public class CourseService {
 			for (Activity activity : activityService.getAllActivitiesInCourse(course.getId())) {
 				Solution solution = solutionService.getSolutionByActivityAndStudentId(activity.getId(), studentId);
 				
-				/*
+				// add exercise or contest to list
+				// TODO: improve this mess
 				if(solution != null)
-					activityViews.add(new ActivityViewDTO(activity, solution));
+					if (activity instanceof Exercise)
+						activityViews.add(new ExerciseViewDTO((Exercise)activity, solution));
+					else
+						activityViews.add(new ContestViewDTO((Contest)activity, solution));
 				else
-					activityViews.add(new ActivityViewDTO(activity));
-				*/
+					if (activity instanceof Exercise)
+						activityViews.add(new ExerciseViewDTO((Exercise)activity));
+					else
+						activityViews.add(new ContestViewDTO((Contest)activity));
 			}
 			courseViews.add(new CourseViewDTO(course, activityViews));
 		}
@@ -125,7 +134,12 @@ public class CourseService {
 			List<ActivityViewDTO> activityViews = new ArrayList<ActivityViewDTO>();
 			// get activity view for each activity
 			for (Activity activity : activityService.getAllActivitiesInCourse(course.getId())) {
-				// activityViews.add(new ActivityViewDTO(activity));
+				
+				// add exercise or contest to list
+				if (activity instanceof Exercise)
+					activityViews.add(new ExerciseViewDTO((Exercise)activity));
+				else
+					activityViews.add(new ContestViewDTO((Contest)activity));
 			}
 			courseViews.add(new CourseViewDTO(course, activityViews));
 		}

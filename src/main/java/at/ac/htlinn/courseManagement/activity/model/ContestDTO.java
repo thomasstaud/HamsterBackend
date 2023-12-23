@@ -20,5 +20,5 @@ public class ContestDTO extends ActivityDTO {
 	}
 
 	private Date start;
-	private String[] hamsters;
+	private String hamsters;
 }
