@@ -30,6 +30,6 @@ public interface CourseRepository extends JpaRepository<Course, Integer>{
 	@Query(value = "SELECT c.* FROM course c WHERE c.teacher_id=:teacher_id", nativeQuery = true)
 	public List<Course> getCoursesByTeacherId(@Param("teacher_id") int teacherId);
 	
-	@Query(value = "SELECT c.* FROM course c JOIN exercise e USING(course_id) WHERE e.exercise_id=:exercise_id", nativeQuery = true)
-	public Course getByExerciseId(@Param("exercise_id") int exerciseId);
+	@Query(value = "SELECT c.* FROM course c JOIN activity e USING(course_id) WHERE e.activity_id=:activity_id", nativeQuery = true)
+	public Course getByActivityId(@Param("activity_id") int activityId);
 }

@@ -50,21 +50,21 @@ public class SolutionService {
 		return solutions;
 	}
 
-	// get all solutions for one exercise
-	public List<SolutionDTO> getSolutionsByExerciseId(int exerciseId) {
+	// get all solutions for one activity
+	public List<SolutionDTO> getSolutionsByActivityId(int activityId) {
 
 		// get solutions and convert to DTOs
 		List<SolutionDTO> solutions = new ArrayList<SolutionDTO>();
-		for (Solution solution : solutionRepository.getByExerciseId(exerciseId)) {
+		for (Solution solution : solutionRepository.getByActivityId(activityId)) {
 			solutions.add(new SolutionDTO(solution));
 		}
 		
 		return solutions;
 	}
 
-	// get solution for one exercise for a specified student
-	public Solution getSolutionByExerciseAndStudentId(int exerciseId, int studentId) {
-		return solutionRepository.getByExerciseAndStudentId(exerciseId, studentId);
+	// get solution for one activity for a specified student
+	public Solution getSolutionByActivityAndStudentId(int activityId, int studentId) {
+		return solutionRepository.getByActivityAndStudentId(activityId, studentId);
 	}
 
 	// get all solutions for one student in a specific course

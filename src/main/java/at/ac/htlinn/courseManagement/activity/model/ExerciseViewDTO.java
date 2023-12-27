@@ -1,4 +1,4 @@
-package at.ac.htlinn.courseManagement.exercise.model;
+package at.ac.htlinn.courseManagement.activity.model;
 
 import java.util.Date;
 
@@ -7,32 +7,28 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import at.ac.htlinn.courseManagement.solution.model.Solution;
 import at.ac.htlinn.courseManagement.solution.model.SolutionViewDTO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class ExerciseViewDTO {
+@EqualsAndHashCode(callSuper = true)
+public class ExerciseViewDTO extends ActivityViewDTO {
 	public ExerciseViewDTO(Exercise exercise, Solution solution) {
-		this.exerciseId = exercise.getId();
-		this.name = exercise.getName();
-		this.details = exercise.getDetails();
+		super(exercise.getId(), exercise.getName(),
+				exercise.getDetails(), new SolutionViewDTO(solution));
 		this.deadline = exercise.getDeadline();
 		this.hamster = exercise.getHamster();
-		this.solutionView = new SolutionViewDTO(solution);
 	}
 	
 	public ExerciseViewDTO(Exercise exercise) {
-		this.exerciseId = exercise.getId();
-		this.name = exercise.getName();
-		this.details = exercise.getDetails();
+		super(exercise.getId(), exercise.getName(), exercise.getDetails(), null);
 		this.deadline = exercise.getDeadline();
 		this.hamster = exercise.getHamster();
 	}
 	
-	@JsonProperty("exercise_id")
-	private int exerciseId;
-	private String name;
-	private String details;
+	// used in the client to differentiate between activities
+	@JsonProperty("is_contest")
+	private boolean isContest = false;
+	
 	private Date deadline;
 	private String hamster;
-	@JsonProperty("solution")
-	private SolutionViewDTO solutionView;
 }

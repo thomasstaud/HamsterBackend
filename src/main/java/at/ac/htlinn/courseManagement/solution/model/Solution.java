@@ -13,8 +13,8 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-import at.ac.htlinn.courseManagement.exercise.ExerciseService;
-import at.ac.htlinn.courseManagement.exercise.model.Exercise;
+import at.ac.htlinn.courseManagement.activity.ActivityService;
+import at.ac.htlinn.courseManagement.activity.model.Activity;
 import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
 import lombok.AllArgsConstructor;
@@ -32,9 +32,9 @@ import lombok.ToString;
 @ToString
 @JsonTypeName("solution") 
 public class Solution {
-	public Solution(SolutionDTO solution, ExerciseService exerciseService, UserService userService) {
+	public Solution(SolutionDTO solution, ActivityService exerciseService, UserService userService) {
 		this.id = solution.getId();
-		this.exercise = exerciseService.getExerciseById(solution.getExerciseId());
+		this.activity = exerciseService.getActivityById(solution.getActivityId());
 		this.student = userService.findUserByID(solution.getStudentId());
 		this.code = solution.getCode();
 		this.submitted = solution.isSubmitted();
@@ -48,8 +48,8 @@ public class Solution {
 	private Integer id;
 	
 	@ManyToOne
-	@JoinColumn(name="exercise_id", nullable = false)
-	private Exercise exercise;
+	@JoinColumn(name="activity_id", nullable = false)
+	private Activity activity;
 	
 	@ManyToOne
 	@JoinColumn(name="student_id", nullable = false)
