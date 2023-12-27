@@ -32,7 +32,11 @@ public class ContestViewDTO extends ActivityViewDTO {
 		this.hiddenStartHamster = contest.getHiddenStartHamster();
 		this.hiddenEndHamster = contest.getHiddenStartHamster();
 	}
-
+	
+	// used in the client to differentiate between the 2 activity types
+	@JsonProperty("is_contest")
+	private boolean isContest = true;
+	
 	private Date start;
 	@JsonProperty("ignore_hamster_position")
 	private boolean ignoreHamsterPosition;
