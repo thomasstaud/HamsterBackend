@@ -25,6 +25,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import at.ac.htlinn.courseManagement.activity.model.Activity;
 import at.ac.htlinn.courseManagement.activity.model.ActivityDTO;
+import at.ac.htlinn.courseManagement.activity.model.Contest;
+import at.ac.htlinn.courseManagement.activity.model.ContestDTO;
 import at.ac.htlinn.courseManagement.activity.model.Exercise;
 import at.ac.htlinn.courseManagement.activity.model.ExerciseDTO;
 import at.ac.htlinn.courseManagement.course.CourseService;
@@ -35,7 +37,7 @@ import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
 
 @RestController
-@RequestMapping("/activitys")
+@RequestMapping("/activities")
 public class ActivityController {
 
 	@Autowired
@@ -66,14 +68,20 @@ public class ActivityController {
 		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
 			// check if user is in course (either as student or as teacher)
 			if (!studentService.isUserInCourse(user.getId(), activity.getCourse().getId()))
-				return new ResponseEntity<>("You must be in this course to view its activitys.", HttpStatus.FORBIDDEN);
+				return new ResponseEntity<>("You must be in this course to view its activities.", HttpStatus.FORBIDDEN);
 		}
-		
-		return new ResponseEntity<>(activity, HttpStatus.OK);
+
+		// create according DTO object
+		ActivityDTO activityDTO = null;
+		if (activity instanceof Exercise)
+			activityDTO = new ExerciseDTO((Exercise)activity);
+		else
+			activityDTO = new ContestDTO((Contest)activity);
+		return new ResponseEntity<>(activityDTO, HttpStatus.OK);
 	}
 	
 	/**
-	 * GET all activitys for a course
+	 * GET all activities for a course
 	 * requires @RequestParam courseId
 	 * 
 	 * @param json
@@ -81,7 +89,7 @@ public class ActivityController {
 	 */
 	@GetMapping
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> getAllActivitysByCourseId(
+	public ResponseEntity<?> getAllActivitiesByCourseId(
 			@RequestParam(name = "course_id", required = true) Integer courseId) {
 		
 		// check if course exists
@@ -92,14 +100,19 @@ public class ActivityController {
 		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
 			// check if user is in course (either as student or as teacher)
 			if (!studentService.isUserInCourse(user.getId(), course.getId()))
-				return new ResponseEntity<>("You must be in this course to view its activitys.", HttpStatus.FORBIDDEN);
+				return new ResponseEntity<>("You must be in this course to view its activities.", HttpStatus.FORBIDDEN);
 		}
 		
-		List<ActivityDTO> activitys = new ArrayList<ActivityDTO>();
+		List<ActivityDTO> activities = new ArrayList<ActivityDTO>();
 		for (Activity activity : activityService.getAllActivitiesInCourse(courseId)) {
-			// activitys.add(new ActivityDTO(activity));
+			
+			// add exercise or contest to list
+			if (activity instanceof Exercise)
+				activities.add(new ExerciseDTO((Exercise)activity));
+			else
+				activities.add(new ContestDTO((Contest)activity));
 		}
-		return new ResponseEntity<>(activitys, HttpStatus.OK);
+		return new ResponseEntity<>(activities, HttpStatus.OK);
 	}
 	
 	/**
@@ -112,10 +125,19 @@ public class ActivityController {
 	@PostMapping
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> createActivity(@RequestBody JsonNode node) {
+		// get DTO object from JSON
 		ExerciseDTO exerciseDTO = mapper.convertValue(node.get("exercise"), ExerciseDTO.class);
-		Activity activity = new Exercise(exerciseDTO, courseService);
+		ContestDTO contestDTO = mapper.convertValue(node.get("contest"), ContestDTO.class);
+		if (exerciseDTO != null && contestDTO != null)
+			return new ResponseEntity<>("Request body must not include both an exercise and a contest object.",
+					HttpStatus.BAD_REQUEST);
 		
-		activity = activityService.saveActivity(activity);
+		// parse DTO object accordingly
+		Activity activity = null;
+		if (exerciseDTO != null)
+			activity = new Exercise(exerciseDTO, courseService);
+		else
+			activity = new Contest(contestDTO, courseService);
 		
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
@@ -125,10 +147,13 @@ public class ActivityController {
 			}
 		}
 		
+		activity = activityService.saveActivity(activity);
+		
 		return activity != null ? new ResponseEntity<>(activity.getId(), HttpStatus.OK)
 				: new ResponseEntity<>("Could not create activity!", HttpStatus.BAD_REQUEST);
 	}
 	
+	// TODO: possibly replace with PUT
 	/**
 	 * PATCH activity
 	 * requires @PathVariable activityId and in @RequestBody object
@@ -152,15 +177,24 @@ public class ActivityController {
 		User user = userService.getCurrentUser();
 		for (Role role : user.getRoles()) {
 			if (role.getRole().equals("TEACHER") && activity.getCourse().getTeacher().getId() != user.getId())
-				return new ResponseEntity<>("You must be this courses teacher to change its activitys.", HttpStatus.FORBIDDEN);
+				return new ResponseEntity<>("You must be this courses teacher to change its activities.", HttpStatus.FORBIDDEN);
 		}
-
-	    fields.forEach((k, v) -> {
-		    System.out.println(k);
-	        Field field = ReflectionUtils.findField(Activity.class, k); // find field in activity class
-	        field.setAccessible(true); 
-	        ReflectionUtils.setField(field, activity, v); // set given field for activity object to value V
-	    });
+		
+		// TODO: improve
+		// TODO: does not work: JSON field names do not match actual field names
+		if (activity instanceof Exercise)
+		    fields.forEach((k, v) -> {
+		        Field field = ReflectionUtils.findField(Exercise.class, k); // find field in activity class
+		        field.setAccessible(true); 
+		        ReflectionUtils.setField(field, activity, v); // set given field for activity object to value V
+		    });
+		else
+		    fields.forEach((k, v) -> {
+			    System.out.println(k);
+		        Field field = ReflectionUtils.findField(Contest.class, k); // find field in activity class
+		        field.setAccessible(true); 
+		        ReflectionUtils.setField(field, activity, v); // set given field for activity object to value V
+		    });
 
 	    activityService.saveActivity(activity);
 	    return new ResponseEntity<>(activity.getId(), HttpStatus.OK);
@@ -182,7 +216,7 @@ public class ActivityController {
 		User user = userService.getCurrentUser();
 		for (Role role : user.getRoles()) {
 			if (role.getRole().equals("TEACHER") && activity.getCourse().getTeacher().getId() != user.getId())
-				return new ResponseEntity<>("You must be this courses teacher to delete its activitys.", HttpStatus.FORBIDDEN);
+				return new ResponseEntity<>("You must be this courses teacher to delete its activities.", HttpStatus.FORBIDDEN);
 		}
 		
 		return activityService.deleteActivity(activityId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)

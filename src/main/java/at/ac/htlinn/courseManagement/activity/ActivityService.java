@@ -3,6 +3,7 @@ package at.ac.htlinn.courseManagement.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import at.ac.htlinn.courseManagement.activity.model.Activity;
@@ -33,12 +34,12 @@ public class ActivityService {
 	}
 
 	public Activity getActivityById(int activityId) { 
-		return activityRepository.getById(activityId);
+		return (Activity)Hibernate.unproxy(activityRepository.getById(activityId));
 	}
 
 	public List<Activity> getAllActivitiesInCourse(int courseId) {
 		
-		// get exercises and convert to DTOs
+		// get exercises
 		List<Activity> activities = new ArrayList<Activity>();
 		for(Activity activity : activityRepository.getByCourseId(courseId)) {
 			activities.add(activity);
