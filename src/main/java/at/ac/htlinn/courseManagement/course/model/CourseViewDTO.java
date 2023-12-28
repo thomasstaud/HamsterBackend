@@ -19,6 +19,6 @@ public class CourseViewDTO {
 	private int id;
 	@JsonProperty("course_name")
 	private String courseName;
-	@JsonProperty("exercises")
+	@JsonProperty("activities")
 	private List<ActivityViewDTO> activityViews;
 }
