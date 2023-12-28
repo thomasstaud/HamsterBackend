@@ -181,7 +181,7 @@ public class ActivityController {
 		}
 		
 		// TODO: improve
-		// TODO: does not work: JSON field names do not match actual field names
+		// TODO: key currently needs to match actual field names instead of JSON field names
 		if (activity instanceof Exercise)
 		    fields.forEach((k, v) -> {
 		        Field field = ReflectionUtils.findField(Exercise.class, k); // find field in activity class

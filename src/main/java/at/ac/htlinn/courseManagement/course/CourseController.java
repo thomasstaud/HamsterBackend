@@ -1,14 +1,19 @@
 package at.ac.htlinn.courseManagement.course;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -103,6 +108,57 @@ public class CourseController {
 		if (course != null) return new ResponseEntity<>(course.getId(), HttpStatus.OK);
 
 		return new ResponseEntity<>("Could not create course!", HttpStatus.BAD_REQUEST);
+	}
+	
+	/**
+	 * PATCH course
+	 * requires @PathVariable courseId and in @RequestBody object
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@PatchMapping("{courseId}")
+	@PreAuthorize("hasAuthority('TEACHER')")
+	public ResponseEntity<?> updateCourse(@PathVariable int courseId, @RequestBody Map<String, Object> fields) {
+		
+	    // Sanitize and validate the data
+	    if (courseId <= 0 || fields == null || fields.isEmpty()){
+	        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	    }
+
+	    // must unproxy in order for reflection to work
+	    Course course = (Course)Hibernate.unproxy(courseService.getCourseById(courseId));
+	    if (course == null) return new ResponseEntity<>("Activity does not exist!", HttpStatus.NOT_FOUND);
+
+		// if user is a teacher, they must be teacher of the specified course
+		User user = userService.getCurrentUser();
+		for (Role role : user.getRoles()) {
+			if (role.getRole().equals("TEACHER") && course.getTeacher().getId() != user.getId())
+				return new ResponseEntity<>("You must be this courses teacher to make changes to it.", HttpStatus.FORBIDDEN);
+		}
+		
+	    fields.forEach((k, v) -> {
+	    	/* alternative method:
+	    	 * TODO: advantages/disadvantages?
+			try {
+		    	Field field = Course.class.getDeclaredField(k);
+		    	field.setAccessible(true);
+		    	System.out.println(course);
+		    	field.set(course, v);
+		    	System.out.println(course);
+			}
+			catch(Exception e) {
+				System.out.println(e.getStackTrace());
+			}
+			*/
+	    	
+	        Field field = ReflectionUtils.findField(Course.class, k); // find field in course class
+	        field.setAccessible(true);
+	        ReflectionUtils.setField(field, course, v); // set given field for course object to value V
+	    });
+
+	    courseService.saveCourse(course);
+	    return new ResponseEntity<>(course.getId(), HttpStatus.OK);
 	}
 
 	/**
