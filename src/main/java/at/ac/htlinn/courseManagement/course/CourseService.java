@@ -3,6 +3,9 @@ package at.ac.htlinn.courseManagement.course;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import at.ac.htlinn.courseManagement.activity.ActivityService;
@@ -75,7 +78,12 @@ public class CourseService {
 	}
 
 	public Course getCourseById(int id) {
-		return courseRepository.getById(id);
+		try {
+			return (Course)Hibernate.unproxy(courseRepository.getById(id));
+		}
+		catch (EntityNotFoundException e) {
+			return null;
+		}
 	}
 
 	public Course getCourseByName(String name) {
