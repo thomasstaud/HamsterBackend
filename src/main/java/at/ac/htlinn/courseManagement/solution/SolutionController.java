@@ -62,16 +62,15 @@ public class SolutionController {
 		if (solution == null) return new ResponseEntity<>("Solution does not exist!", HttpStatus.NOT_FOUND);
 
 		User user = userService.getCurrentUser();
-		if (!(user.getRoles().contains(new Role(1, "ADMIN")) || user.getRoles().contains(new Role(2, "DEV")))) {
-			// check if user is in course (either as student or as teacher)
+		if (!userService.isUserPrivileged(user)) {
+			// check if user is in course
 			if (!studentService.isUserInCourse(user.getId(), solution.getActivity().getCourse().getId()))
-				return new ResponseEntity<>("You must be in this course to view its solutions.", HttpStatus.FORBIDDEN);
+				return new ResponseEntity<>("You must be in this course to view its activities.", HttpStatus.FORBIDDEN);
 	
-			// if user is a student, they must have created the solution
-			for (Role role : user.getRoles()) {
-				if (role.getRole().equals("USER") && solution.getStudent().getId() != user.getId())
-					return new ResponseEntity<>("You cannot view other student's solutions.", HttpStatus.FORBIDDEN);
-			}
+			// if user is not teacher of this course, they must have created the solution
+			if (studentService.isUserTeacher(user.getId(), solution.getActivity().getCourse().getId()))
+			if (userService.isUserStudent(user) && solution.getStudent().getId() != user.getId())
+				return new ResponseEntity<>("You cannot view other student's solutions.", HttpStatus.FORBIDDEN);
 		}
 		
 		return new ResponseEntity<>(new SolutionDTO(solution), HttpStatus.OK);

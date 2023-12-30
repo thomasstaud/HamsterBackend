@@ -26,7 +26,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import at.ac.htlinn.courseManagement.course.model.Course;
 import at.ac.htlinn.courseManagement.course.model.CourseDTO;
-import at.ac.htlinn.role.Role;
 import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
 
@@ -132,10 +131,8 @@ public class CourseController {
 
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
-		for (Role role : user.getRoles()) {
-			if (role.getRole().equals("TEACHER") && course.getTeacher().getId() != user.getId())
-				return new ResponseEntity<>("You must be this courses teacher to make changes to it.", HttpStatus.FORBIDDEN);
-		}
+		if (userService.isUserStudent(user) && course.getTeacher().getId() != user.getId())
+			return new ResponseEntity<>("You must be this courses teacher to make changes to it.", HttpStatus.FORBIDDEN);
 		
 	    fields.forEach((k, v) -> {
 	    	/* alternative method:
@@ -177,10 +174,8 @@ public class CourseController {
 		
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
-		for (Role role : user.getRoles()) {
-			if (role.getRole().equals("TEACHER") && course.getTeacher().getId() != user.getId())
-				return new ResponseEntity<>("You must be this courses teacher to delete it.", HttpStatus.FORBIDDEN);
-		}
+		if (userService.isUserStudent(user) && course.getTeacher().getId() != user.getId())
+			return new ResponseEntity<>("You must be this courses teacher to delete it.", HttpStatus.FORBIDDEN);
 		
 		return courseService.deleteCourse(courseId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
 				: new ResponseEntity<>("Could not delete course!", HttpStatus.BAD_REQUEST);

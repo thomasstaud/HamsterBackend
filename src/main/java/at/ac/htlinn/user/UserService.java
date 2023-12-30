@@ -105,8 +105,6 @@ public class UserService {
 		  username = principal.toString();
 		}
 		
-		System.out.println(principal);
-		
 		// check for mock user
 		if (username.equals("user")) {
 			User user = new User();
@@ -118,5 +116,29 @@ public class UserService {
 		}
 		
 		return findUserByUsername(username);
+	}
+	
+	// check if user is privileged (administrator or developer)
+	// 		used to e.g. check whether users can edit a course
+	//		teachers need to have created the course, administrators and developers can always edit it
+	public boolean isUserPrivileged(User user) {
+		boolean privileged = false;
+		for (Role role : user.getRoles()) {
+			if (role.getRole().equals("ADMIN") || role.getRole().equals("DEV")) {
+				privileged = true;
+			}
+		}
+		return privileged;
+	}
+
+	// used to e.g. check whether users can edit a solution
+	//		students need to have created the solution, administrators and developers can always edit it
+	public boolean isUserStudent(User user) {
+		for (Role role : user.getRoles()) {
+			if (role.getRole().equals("USER")) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

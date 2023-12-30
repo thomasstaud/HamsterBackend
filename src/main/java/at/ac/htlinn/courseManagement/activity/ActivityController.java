@@ -32,7 +32,6 @@ import at.ac.htlinn.courseManagement.activity.model.ExerciseDTO;
 import at.ac.htlinn.courseManagement.course.CourseService;
 import at.ac.htlinn.courseManagement.course.model.Course;
 import at.ac.htlinn.courseManagement.courseUser.CourseUserService;
-import at.ac.htlinn.role.Role;
 import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
 
@@ -63,13 +62,11 @@ public class ActivityController {
 	public ResponseEntity<?> getActivityById(@PathVariable int activityId) {
 		Activity activity = activityService.getActivityById(activityId);
 		if (activity == null) return new ResponseEntity<>("Activity does not exist!", HttpStatus.NOT_FOUND);
-		
+
+		// if user is student or teacher, check if user is in course
 		User user = userService.getCurrentUser();
-		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
-			// check if user is in course (either as student or as teacher)
-			if (!studentService.isUserInCourse(user.getId(), activity.getCourse().getId()))
-				return new ResponseEntity<>("You must be in this course to view its activities.", HttpStatus.FORBIDDEN);
-		}
+		if (!userService.isUserPrivileged(user) && !studentService.isUserInCourse(user.getId(), activity.getCourse().getId()))
+			return new ResponseEntity<>("You must be in this course to view its activities.", HttpStatus.FORBIDDEN);
 
 		// create according DTO object
 		ActivityDTO activityDTO = null;
@@ -96,12 +93,10 @@ public class ActivityController {
 		Course course = courseService.getCourseById(courseId);
 		if (course == null) return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
 
+		// if user is student or teacher, check if user is in course
 		User user = userService.getCurrentUser();
-		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
-			// check if user is in course (either as student or as teacher)
-			if (!studentService.isUserInCourse(user.getId(), course.getId()))
-				return new ResponseEntity<>("You must be in this course to view its activities.", HttpStatus.FORBIDDEN);
-		}
+		if (!userService.isUserPrivileged(user) && !studentService.isUserInCourse(user.getId(), course.getId()))
+			return new ResponseEntity<>("You must be in this course to view its activities.", HttpStatus.FORBIDDEN);
 		
 		List<ActivityDTO> activities = new ArrayList<ActivityDTO>();
 		for (Activity activity : activityService.getAllActivitiesInCourse(courseId)) {
@@ -141,11 +136,8 @@ public class ActivityController {
 		
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
-		for (Role role : user.getRoles()) {
-			if (role.getRole().equals("TEACHER") && activity.getCourse().getTeacher().getId() != user.getId()) {
-				return new ResponseEntity<>("You must be this courses teacher to add an activity to it.", HttpStatus.FORBIDDEN);
-			}
-		}
+		if (!userService.isUserPrivileged(user) && activity.getCourse().getTeacher().getId() != user.getId())
+			return new ResponseEntity<>("You must be this courses teacher to add an activity to it.", HttpStatus.FORBIDDEN);
 		
 		activity = activityService.saveActivity(activity);
 		
@@ -175,10 +167,8 @@ public class ActivityController {
 
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
-		for (Role role : user.getRoles()) {
-			if (role.getRole().equals("TEACHER") && activity.getCourse().getTeacher().getId() != user.getId())
-				return new ResponseEntity<>("You must be this courses teacher to change its activities.", HttpStatus.FORBIDDEN);
-		}
+		if (!userService.isUserPrivileged(user) && activity.getCourse().getTeacher().getId() != user.getId())
+			return new ResponseEntity<>("You must be this courses teacher to change its activities.", HttpStatus.FORBIDDEN);
 		
 		// TODO: improve
 		// TODO: key currently needs to match actual field names instead of JSON field names
@@ -214,10 +204,8 @@ public class ActivityController {
 
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
-		for (Role role : user.getRoles()) {
-			if (role.getRole().equals("TEACHER") && activity.getCourse().getTeacher().getId() != user.getId())
-				return new ResponseEntity<>("You must be this courses teacher to delete its activities.", HttpStatus.FORBIDDEN);
-		}
+		if (!userService.isUserPrivileged(user) && activity.getCourse().getTeacher().getId() != user.getId())
+			return new ResponseEntity<>("You must be this courses teacher to delete its activities.", HttpStatus.FORBIDDEN);
 		
 		return activityService.deleteActivity(activityId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
 				: new ResponseEntity<>("Could not delete activity!", HttpStatus.BAD_REQUEST);

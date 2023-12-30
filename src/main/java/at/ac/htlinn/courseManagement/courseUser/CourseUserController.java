@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import at.ac.htlinn.courseManagement.course.CourseService;
 import at.ac.htlinn.courseManagement.course.model.Course;
 import at.ac.htlinn.courseManagement.course.model.CourseViewDTO;
-import at.ac.htlinn.role.Role;
 import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
 import at.ac.htlinn.user.model.UserDTO;
@@ -88,10 +87,8 @@ public class CourseUserController {
 		
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
-		for (Role role : user.getRoles()) {
-			if (role.getRole().equals("TEACHER") && course.getTeacher().getId() != user.getId())
-				return new ResponseEntity<>("You must be this courses teacher to view its students.", HttpStatus.FORBIDDEN);
-		}
+		if (!userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
+			return new ResponseEntity<>("You must be this courses teacher to view its students.", HttpStatus.FORBIDDEN);
 		
 		// get users and convert to DTOs
 		List<UserDTO> students = new ArrayList<UserDTO>();
@@ -122,10 +119,8 @@ public class CourseUserController {
 		
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
-		for (Role role : user.getRoles()) {
-			if (role.getRole().equals("TEACHER") && course.getTeacher().getId() != user.getId())
-				return new ResponseEntity<>("You must be this courses teacher to view its students.", HttpStatus.FORBIDDEN);
-		}
+		if (userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
+			return new ResponseEntity<>("You must be this courses teacher to view its students.", HttpStatus.FORBIDDEN);
 		
 		// check if student exists and is in course
 		User student = userService.findUserByID(studentId);
@@ -157,11 +152,10 @@ public class CourseUserController {
 		
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
-		for (Role role : user.getRoles()) {
-			if (role.getRole().equals("TEACHER") && course.getTeacher().getId() != user.getId())
-				return new ResponseEntity<>("You must be this courses teacher to add a student.", HttpStatus.FORBIDDEN);
-		}
+		if (userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
+			return new ResponseEntity<>("You must be this courses teacher to add a student.", HttpStatus.FORBIDDEN);
 		
+		// try to add all students to the course
 		int[] userIds = mapper.convertValue(node.get("users"), int[].class);
 		ArrayList<Integer> failedUserIds = new ArrayList<Integer>(); 
 		for (int userId : userIds) {
@@ -171,6 +165,7 @@ public class CourseUserController {
 		
 		if (failedUserIds.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		
+		// return list of students who could not be added
 		node = mapper.valueToTree(failedUserIds);
 		ObjectNode objectNode = mapper.createObjectNode();
 		objectNode.set("failed_users", node);
@@ -197,10 +192,8 @@ public class CourseUserController {
 		
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
-		for (Role role : user.getRoles()) {
-			if (role.getRole().equals("TEACHER") && course.getTeacher().getId() != user.getId())
+		if (userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
 				return new ResponseEntity<>("You must be this courses teacher to remove a student.", HttpStatus.FORBIDDEN);
-		}
 		
 		return courseUserService.removeStudentFromCourse(courseId, studentId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
 				: new ResponseEntity<>("Could not remove student from course!", HttpStatus.BAD_REQUEST);
