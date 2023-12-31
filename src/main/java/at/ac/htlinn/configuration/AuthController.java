@@ -46,10 +46,10 @@ public class AuthController {
 	public ResponseEntity<?> register(@RequestBody User user) throws Exception {
 		User userExists = userService.findUserByUsername(user.getUsername());
 		if (userExists != null) {
-			return new ResponseEntity<>("Es gibt bereits einen User mit diesem Namen",HttpStatus.BAD_REQUEST); 
+			return new ResponseEntity<>("Es gibt bereits einen User mit diesem Namen", HttpStatus.BAD_REQUEST); 
 		}
-		userService.saveUser(user);
-		return new ResponseEntity<>(HttpStatus.OK); 
+		return userService.saveUser(user) ?
+				ResponseEntity.ok(null) : new ResponseEntity<>("Invalid Credentials", HttpStatus.BAD_REQUEST); 
 	}
 	
 	
