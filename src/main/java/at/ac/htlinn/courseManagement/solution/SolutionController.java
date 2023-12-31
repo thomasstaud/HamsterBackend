@@ -27,7 +27,6 @@ import at.ac.htlinn.courseManagement.course.model.Course;
 import at.ac.htlinn.courseManagement.courseUser.CourseUserService;
 import at.ac.htlinn.courseManagement.solution.model.Solution;
 import at.ac.htlinn.courseManagement.solution.model.SolutionDTO;
-import at.ac.htlinn.role.Role;
 import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
 
@@ -63,20 +62,17 @@ public class SolutionController {
 
 		User user = userService.getCurrentUser();
 		if (!userService.isUserPrivileged(user)) {
-			// check if user is in course
-			if (!studentService.isUserInCourse(user.getId(), solution.getActivity().getCourse().getId()))
-				return new ResponseEntity<>("You must be in this course to view its activities.", HttpStatus.FORBIDDEN);
-	
 			// if user is not teacher of this course, they must have created the solution
-			if (studentService.isUserTeacher(user.getId(), solution.getActivity().getCourse().getId()))
-			if (userService.isUserStudent(user) && solution.getStudent().getId() != user.getId())
+			if ((user.getId() != solution.getActivity().getCourse().getTeacher().getId())
+					&& user.getId() != solution.getStudent().getId())
 				return new ResponseEntity<>("You cannot view other student's solutions.", HttpStatus.FORBIDDEN);
 		}
 		
-		return new ResponseEntity<>(new SolutionDTO(solution), HttpStatus.OK);
+		return ResponseEntity.ok(new SolutionDTO(solution));
 	}
 	
 	// TODO: clean up
+	// TODO: probably doesn't work properly
 	/**
 	 * GET all solutions
 	 * optional @RequestParam activityId
@@ -85,7 +81,7 @@ public class SolutionController {
 	 * @return
 	 */
 	@GetMapping
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> getAllSolutions(
 			@RequestParam(name = "activity_id", required = false) Integer activityId,
 			@RequestParam(name = "student_id", required = false) Integer studentId,
@@ -99,14 +95,11 @@ public class SolutionController {
 
 			// if user is a teacher, they must be teacher of the specified course
 			User user = userService.getCurrentUser();
-			for (Role role : user.getRoles()) {
-				if (role.getRole().equals("TEACHER") && activity.getCourse().getTeacher().getId() != user.getId()) {
-					return new ResponseEntity<>("You must be this courses teacher to view its activitys.", HttpStatus.FORBIDDEN);
-				}
-			}
+			if (!userService.isUserPrivileged(user) && activity.getCourse().getTeacher().getId() != user.getId())
+				return new ResponseEntity<>("You must be this courses teacher to view its solutions.", HttpStatus.FORBIDDEN);
 			
 			List<SolutionDTO> solutions = solutionService.getSolutionsByActivityId(activityId);
-			return new ResponseEntity<>(solutions, HttpStatus.OK);
+			return ResponseEntity.ok(solutions);
 		}
 		
 		if (studentId != null || courseId != null) {
@@ -125,20 +118,17 @@ public class SolutionController {
 			
 			// if user is a teacher, they must be teacher of the specified course
 			User user = userService.getCurrentUser();
-			for (Role role : user.getRoles()) {
-				if (role.getRole().equals("TEACHER") && course.getTeacher().getId() != user.getId())
-					return new ResponseEntity<>("You must be this courses teacher to view its students.", HttpStatus.FORBIDDEN);
-			}
+			if (!userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
+				return new ResponseEntity<>("You must be this courses teacher to view its solutions.", HttpStatus.FORBIDDEN);
 			
 			List<SolutionDTO> solutions = solutionService.getSolutionsByStudentId(studentId, courseId);
-			return new ResponseEntity<>(solutions, HttpStatus.OK);
+			return ResponseEntity.ok(solutions);
 		}
 		
-		// get all solutions
-		List<SolutionDTO> solutions = solutionService.getAllSolutions();
-		return new ResponseEntity<>(solutions, HttpStatus.OK);
+		return new ResponseEntity<>("Request must include either activity_id or course_id and student_id!", HttpStatus.BAD_REQUEST);
 	}
 	
+	// TODO: this is kind of a mess
 	/**
 	 * PUT solution for an activity
 	 * requires in @RequestBody solution object
@@ -149,24 +139,29 @@ public class SolutionController {
 	@PutMapping
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> addSolutionToActivity(@RequestBody JsonNode node) {
-		SolutionDTO solutionDTO = mapper.convertValue(node.get("solution"), SolutionDTO.class);
-		User user = userService.getCurrentUser();
-		solutionDTO.setStudentId(user.getId());
-		// set submissionDate to current Date
-		solutionDTO.setSubmissionDate(new Date());
+		SolutionDTO solutionDto = mapper.convertValue(node.get("solution"), SolutionDTO.class);
+		if (solutionDto == null) return new ResponseEntity<>("Request body is invalid!", HttpStatus.BAD_REQUEST);
 		
-		Solution solution = new Solution(solutionDTO, activityService, userService);
+		User user = userService.getCurrentUser();
+		solutionDto.setStudentId(user.getId());
+		// set submissionDate to current Date
+		solutionDto.setSubmissionDate(new Date());
+		
+		Solution solution = new Solution(solutionDto, activityService, userService);
 
-		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
+		if (!userService.isUserPrivileged(user)) {
 			// check if user is student in course
 			if (!studentService.isUserStudent(user.getId(), solution.getActivity().getCourse().getId()))
-				return new ResponseEntity<>("You must be in this course to create solutions.", HttpStatus.FORBIDDEN);
+				return new ResponseEntity<>("You must be in this course to create a solution!", HttpStatus.FORBIDDEN);
 		}
 
 		if (solution.getId() != 0) {
 			// update existing solution
 			Solution existingSolution = solutionService.getSolutionById(solution.getId());
 			
+			// TODO: check if user and course match
+			
+			// TODO: this is stupid
 			// check if id is correct
 			if (existingSolution.getId() != solution.getId())
 				return new ResponseEntity<>("Solution already exists with different ID!", HttpStatus.BAD_REQUEST);
@@ -182,15 +177,14 @@ public class SolutionController {
 			// create new solution
 
 			// check if solution already exists for this activity/student combination
-			int activityId = solutionDTO.getActivityId();
+			int activityId = solutionDto.getActivityId();
 			int userId = user.getId();
 			if (solutionService.getSolutionByActivityAndStudentId(activityId, userId) != null)
 				return new ResponseEntity<>("Solution already exists!", HttpStatus.BAD_REQUEST);
 		}
 		
-		solution = solutionService.saveSolution(solution);
-		return solution != null ? new ResponseEntity<>(new SolutionDTO(solution), HttpStatus.OK)
-				: new ResponseEntity<>("Could not update solution!", HttpStatus.BAD_REQUEST);
+		return solutionService.saveSolution(solution) != null ? ResponseEntity.ok(new SolutionDTO(solution))
+				: new ResponseEntity<>("Could not put solution!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	/**
@@ -209,18 +203,16 @@ public class SolutionController {
 		
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
-		for (Role role : user.getRoles()) {
-			if (role.getRole().equals("TEACHER") && solution.getActivity().getCourse().getTeacher().getId() != user.getId())
-				return new ResponseEntity<>("You must be this courses teacher to give feedback.", HttpStatus.FORBIDDEN);
-		}
+		if (!userService.isUserPrivileged(user) && solution.getActivity().getCourse().getTeacher().getId() != user.getId())
+			return new ResponseEntity<>("You must be this courses teacher to give feedback!", HttpStatus.FORBIDDEN);
 		
 		String feedback = mapper.convertValue(node.get("feedback"), String.class);
+		if (feedback == null) return new ResponseEntity<>("Request body is invalid!", HttpStatus.BAD_REQUEST);
+		
 		solution.setFeedback(feedback);
 		
-		System.out.println(feedback);
-		
-		solutionService.saveSolution(solution);
-	    return new ResponseEntity<>(new SolutionDTO(solution), HttpStatus.OK);
+	    return solutionService.saveSolution(solution) != null ? ResponseEntity.ok(new SolutionDTO(solution))
+	    		: new ResponseEntity<>("Could not save feedback!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	/**
@@ -237,17 +229,17 @@ public class SolutionController {
 		if (solution == null) new ResponseEntity<>("Solution does not exist!", HttpStatus.NOT_FOUND);
 		
 		User user = userService.getCurrentUser();
-		if (!user.getRoles().contains(new Role(1, "ADMIN")) && !user.getRoles().contains(new Role(2, "DEV"))) {
+		if (!userService.isUserPrivileged(user)) {
 			// check if solution has already been given feedback
 			if (solution.getFeedback() != null)
-				return new ResponseEntity<>("You cannot delete solutions that were already feedbacked.", HttpStatus.FORBIDDEN);
+				return new ResponseEntity<>("You cannot delete solutions that were already feedbacked!", HttpStatus.FORBIDDEN);
 			
 			// check if user created the solution
 			if (solution.getStudent().getId() != user.getId())
-				return new ResponseEntity<>("You cannot delete other student's solutions.", HttpStatus.FORBIDDEN);
+				return new ResponseEntity<>("You cannot delete another user's solution!", HttpStatus.FORBIDDEN);
 		}
 		
 		return solutionService.deleteSolution(solutionId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-				: new ResponseEntity<>("Could not delete activity!", HttpStatus.BAD_REQUEST);
+				: new ResponseEntity<>("Could not delete activity!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }

@@ -54,7 +54,7 @@ public class CourseUserController {
 		int studentId = userService.getCurrentUser().getId();
 		
 		List<CourseViewDTO> courseViews = courseService.getStudentCourseViews(studentId);
-		return new ResponseEntity<>(courseViews, HttpStatus.OK);
+		return ResponseEntity.ok(courseViews);
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class CourseUserController {
 				students.add(new UserDTO(student));
 			}
 			
-			return new ResponseEntity<>(students, HttpStatus.OK);
+			return ResponseEntity.ok(students);
 		}
 		
 		// check if course exists
@@ -96,9 +96,10 @@ public class CourseUserController {
 			students.add(new UserDTO(student));
 		}
 		
-		return new ResponseEntity<>(students, HttpStatus.OK);
+		return ResponseEntity.ok(students);
 	}
 	
+	// TODO: is this mapping needed?
 	/**
 	 * GET student by student id from specified course
 	 * requires @PathVariable studentId and courseId
@@ -116,10 +117,9 @@ public class CourseUserController {
 		Course course = courseService.getCourseById(courseId);
 		if (course == null) return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
 
-		
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
-		if (userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
+		if (!userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
 			return new ResponseEntity<>("You must be this courses teacher to view its students.", HttpStatus.FORBIDDEN);
 		
 		// check if student exists and is in course
@@ -129,7 +129,7 @@ public class CourseUserController {
 		}
 		
 		// return student as DTO
-		return new ResponseEntity<>(new UserDTO(student), HttpStatus.OK);
+		return ResponseEntity.ok(new UserDTO(student));
 	}
 	
 	/**
@@ -152,11 +152,13 @@ public class CourseUserController {
 		
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
-		if (userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
+		if (!userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
 			return new ResponseEntity<>("You must be this courses teacher to add a student.", HttpStatus.FORBIDDEN);
 		
 		// try to add all students to the course
 		int[] userIds = mapper.convertValue(node.get("users"), int[].class);
+		if (userIds == null) return new ResponseEntity<>("Request body is invalid", HttpStatus.BAD_REQUEST);
+		
 		ArrayList<Integer> failedUserIds = new ArrayList<Integer>(); 
 		for (int userId : userIds) {
 			boolean success = courseUserService.addStudentToCourse(courseId, userId);
@@ -172,7 +174,8 @@ public class CourseUserController {
 		String json = mapper.writeValueAsString(objectNode);
 		return  new ResponseEntity<>(json, HttpStatus.BAD_REQUEST);
 	}
-
+	
+	// TODO: returns 204 if student does not exist
 	/**
 	 * DELETE student from course
 	 * requires @PathVariable studentId and courseId
@@ -192,11 +195,11 @@ public class CourseUserController {
 		
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
-		if (userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
+		if (!userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
 				return new ResponseEntity<>("You must be this courses teacher to remove a student.", HttpStatus.FORBIDDEN);
 		
 		return courseUserService.removeStudentFromCourse(courseId, studentId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-				: new ResponseEntity<>("Could not remove student from course!", HttpStatus.BAD_REQUEST);
+				: new ResponseEntity<>("Could not remove student from course!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	
@@ -215,7 +218,7 @@ public class CourseUserController {
 			@RequestParam(name = "course_id", required = true) Integer courseId) {
 		
 		User teacher = courseUserService.getCourseTeacher(courseId);
-		return new ResponseEntity<>(new UserDTO(teacher), HttpStatus.OK);
+		return ResponseEntity.ok(new UserDTO(teacher));
 	}
 	
 	/**
@@ -231,6 +234,6 @@ public class CourseUserController {
 		int studentId = userService.getCurrentUser().getId();
 		
 		List<CourseViewDTO> courseViews = courseService.getTeacherCourseViews(studentId);
-		return new ResponseEntity<>(courseViews, HttpStatus.OK);
+		return ResponseEntity.ok(courseViews);
 	}
 }

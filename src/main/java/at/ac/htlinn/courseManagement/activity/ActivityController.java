@@ -74,7 +74,7 @@ public class ActivityController {
 			activityDTO = new ExerciseDTO((Exercise)activity);
 		else
 			activityDTO = new ContestDTO((Contest)activity);
-		return new ResponseEntity<>(activityDTO, HttpStatus.OK);
+		return ResponseEntity.ok(activityDTO);
 	}
 	
 	/**
@@ -107,7 +107,7 @@ public class ActivityController {
 			else
 				activities.add(new ContestDTO((Contest)activity));
 		}
-		return new ResponseEntity<>(activities, HttpStatus.OK);
+		return ResponseEntity.ok(activities);
 	}
 	
 	/**
@@ -121,28 +121,27 @@ public class ActivityController {
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> createActivity(@RequestBody JsonNode node) {
 		// get DTO object from JSON
-		ExerciseDTO exerciseDTO = mapper.convertValue(node.get("exercise"), ExerciseDTO.class);
-		ContestDTO contestDTO = mapper.convertValue(node.get("contest"), ContestDTO.class);
-		if (exerciseDTO != null && contestDTO != null)
-			return new ResponseEntity<>("Request body must not include both an exercise and a contest object.",
-					HttpStatus.BAD_REQUEST);
+		ExerciseDTO exerciseDto = mapper.convertValue(node.get("exercise"), ExerciseDTO.class);
+		ContestDTO contestDto = mapper.convertValue(node.get("contest"), ContestDTO.class);
+		if (exerciseDto == null && contestDto == null)
+			return new ResponseEntity<>("Request body must include either an exercise or a contest!", HttpStatus.BAD_REQUEST);
+		if (exerciseDto != null && contestDto != null)
+			return new ResponseEntity<>("Request body cannot include both an exercise and a contest!", HttpStatus.BAD_REQUEST);
 		
 		// parse DTO object accordingly
 		Activity activity = null;
-		if (exerciseDTO != null)
-			activity = new Exercise(exerciseDTO, courseService);
+		if (exerciseDto != null)
+			activity = new Exercise(exerciseDto, courseService);
 		else
-			activity = new Contest(contestDTO, courseService);
+			activity = new Contest(contestDto, courseService);
 		
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
 		if (!userService.isUserPrivileged(user) && activity.getCourse().getTeacher().getId() != user.getId())
-			return new ResponseEntity<>("You must be this courses teacher to add an activity to it.", HttpStatus.FORBIDDEN);
+			return new ResponseEntity<>("You must be this courses teacher to add an activity to it!", HttpStatus.FORBIDDEN);
 		
-		activity = activityService.saveActivity(activity);
-		
-		return activity != null ? new ResponseEntity<>(activity.getId(), HttpStatus.OK)
-				: new ResponseEntity<>("Could not create activity!", HttpStatus.BAD_REQUEST);
+		return activityService.saveActivity(activity) != null ? ResponseEntity.ok(activity.getId())
+				: new ResponseEntity<>("Could not create activity!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	// TODO: possibly replace with PUT
@@ -186,8 +185,8 @@ public class ActivityController {
 		        ReflectionUtils.setField(field, activity, v); // set given field for activity object to value V
 		    });
 
-	    activityService.saveActivity(activity);
-	    return new ResponseEntity<>(activity.getId(), HttpStatus.OK);
+		return activityService.saveActivity(activity) != null ? ResponseEntity.ok(activity.getId())
+				: new ResponseEntity<>("Could not update activity!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	/**
@@ -208,6 +207,6 @@ public class ActivityController {
 			return new ResponseEntity<>("You must be this courses teacher to delete its activities.", HttpStatus.FORBIDDEN);
 		
 		return activityService.deleteActivity(activityId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-				: new ResponseEntity<>("Could not delete activity!", HttpStatus.BAD_REQUEST);
+				: new ResponseEntity<>("Could not delete activity!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }

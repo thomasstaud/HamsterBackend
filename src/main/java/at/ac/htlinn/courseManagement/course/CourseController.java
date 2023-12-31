@@ -77,7 +77,7 @@ public class CourseController {
 			for(Course course : courseService.getAllCourses()) {
 				courses.add(new CourseDTO(course));
 			}
-			return new ResponseEntity<>(courses, HttpStatus.OK);
+			return ResponseEntity.ok(courses);
 		}
 		
 		// get one course by name
@@ -98,17 +98,15 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> createCourse(@RequestBody JsonNode node) {
 		CourseDTO courseDTO = mapper.convertValue(node.get("course"), CourseDTO.class);
-		if (courseDTO == null) return new ResponseEntity<>("Request body is invalid", HttpStatus.BAD_REQUEST);
+		if (courseDTO == null) return new ResponseEntity<>("Request body is invalid!", HttpStatus.BAD_REQUEST);
 		
 		// set teacher id to active user id
 		int user_id = userService.getCurrentUser().getId();
 		courseDTO.setTeacherId(user_id);
 		Course course = new Course(courseDTO, userService);
-		
-		course = courseService.saveCourse(course);
-		if (course == null) return new ResponseEntity<>("Course is invalid!", HttpStatus.BAD_REQUEST);
 
-		return ResponseEntity.ok(course.getId());
+		return courseService.saveCourse(course) != null ? ResponseEntity.ok(course.getId())
+				: new ResponseEntity<>("Could not create course!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	/**
@@ -133,7 +131,7 @@ public class CourseController {
 
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
-		if (userService.isUserStudent(user) && course.getTeacher().getId() != user.getId())
+		if (!userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
 			return new ResponseEntity<>("You must be this course's teacher to make changes to it.", HttpStatus.FORBIDDEN);
 
     	/* alternative method:
@@ -164,8 +162,8 @@ public class CourseController {
 	        ReflectionUtils.setField(field, course, value);
 	    });
 
-	    courseService.saveCourse(course);
-	    return ResponseEntity.ok(course.getId());
+	    return courseService.saveCourse(course) != null ? ResponseEntity.ok(course.getId())
+	    		: new ResponseEntity<>("Could not update course!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	/**
@@ -184,10 +182,10 @@ public class CourseController {
 		
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();
-		if (userService.isUserStudent(user) && course.getTeacher().getId() != user.getId())
+		if (!userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
 			return new ResponseEntity<>("You must be this courses teacher to delete it.", HttpStatus.FORBIDDEN);
 		
 		return courseService.deleteCourse(courseId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-				: new ResponseEntity<>("Could not delete course!", HttpStatus.BAD_REQUEST);
+				: new ResponseEntity<>("Could not delete course!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
