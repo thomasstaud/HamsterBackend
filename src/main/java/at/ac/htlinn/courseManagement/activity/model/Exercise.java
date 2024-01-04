@@ -29,7 +29,7 @@ public class Exercise extends Activity {
 	public static final String type = "exercise";
 	
 	public Exercise(ExerciseDto exercise, CourseService courseService) {
-		super(exercise.getId(), exercise.getName(), exercise.getDetails(),
+		super(exercise.getId(), exercise.getName(), exercise.getDetails(), exercise.isHidden(),
 				courseService.getCourseById(exercise.getCourseId()));
 		this.deadline = exercise.getDeadline();
 		this.hamster = exercise.getHamster();

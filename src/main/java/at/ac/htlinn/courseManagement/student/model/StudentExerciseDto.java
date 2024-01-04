@@ -8,8 +8,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class StudentExerciseDto extends StudentActivityDto {
 	public StudentExerciseDto(Exercise exercise, StudentSolutionDto solution) {
-		super(exercise.getId(), exercise.getName(),
-				exercise.getDetails(), solution, exercise.getDeadline(), Exercise.type);
+		super(exercise.getId(), exercise.getName(), exercise.getDetails(),
+				solution, exercise.getDeadline(), Exercise.type);
 		this.hamster = exercise.getHamster();
 	}
 	

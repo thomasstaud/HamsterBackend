@@ -29,7 +29,7 @@ public class Contest extends Activity {
 	public static final String type = "contest";
 	
 	public Contest(ContestDto contest, CourseService courseService) {
-		super(contest.getId(), contest.getName(), contest.getDetails(),
+		super(contest.getId(), contest.getName(), contest.getDetails(), contest.isHidden(),
 				courseService.getCourseById(contest.getCourseId()));
 		this.start = contest.getStart();
 		this.visibleStartHamster = contest.getVisibleStartHamster();

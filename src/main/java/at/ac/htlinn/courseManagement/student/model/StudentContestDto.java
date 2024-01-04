@@ -10,8 +10,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class StudentContestDto extends StudentActivityDto {
 	public StudentContestDto(Contest contest, StudentSolutionDto solution) {
-		super(contest.getId(), contest.getName(),
-				contest.getDetails(), solution, contest.getStart(), Contest.type);
+		super(contest.getId(), contest.getName(), contest.getDetails(),
+				solution, contest.getStart(), Contest.type);
 		this.ignoreHamsterPosition = contest.isIgnoreHamsterPosition();
 		this.visibleStartHamster = contest.getVisibleStartHamster();
 		this.visibleEndHamster = contest.getVisibleEndHamster();

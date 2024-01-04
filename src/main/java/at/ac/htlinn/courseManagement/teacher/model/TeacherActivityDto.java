@@ -17,6 +17,7 @@ public class TeacherActivityDto {
 		this.id = activity.getId();
 		this.name = activity.getName();
 		this.details = activity.getDetails();
+		this.hidden = activity.isHidden();
 		
 		if (activity instanceof Exercise) {
 			date = ((Exercise)activity).getDeadline();
@@ -34,8 +35,10 @@ public class TeacherActivityDto {
 	private int id;
 	private String name;
 	private String details;
+	private boolean hidden;
 	
-	// meaning of date depends on activity type
+	// type specific fields
+	// the meaning of date depends on activity type
 	//		for exercises, it is the deadline
 	//		for contests, it is the start date
 	private Date date;

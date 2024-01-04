@@ -81,24 +81,32 @@ public class StudentService {
 		}
 	}
 	
+	private StudentActivityDto getStudentActivityDto(Activity activity, int studentId) {
+		Solution solution = solutionService.getSolutionByActivityAndStudentId(activity.getId(), studentId);
+		StudentSolutionDto solutionDto = solution != null ?
+				new StudentSolutionDto(solution) : null;
+		
+		// return either exercise or contest
+		if (activity instanceof Exercise)
+			return new StudentExerciseDto((Exercise)activity, solutionDto);
+		else
+			return new StudentContestDto((Contest)activity, solutionDto);
+	}
+	
 	public List<StudentCourseDto> getStudentView(int studentId) {
 		
 		List<StudentCourseDto> courseViews = new ArrayList<StudentCourseDto>();
 		// get activities for each course
 		for (Course course : courseService.getCoursesByStudentId(studentId)) {
 			List<StudentActivityDto> activityViews = new ArrayList<StudentActivityDto>();
-			// get activity view for each activity
-			for (Activity activity : activityService.getAllActivitiesInCourse(course.getId())) {
-				Solution solution = solutionService.getSolutionByActivityAndStudentId(activity.getId(), studentId);
-				StudentSolutionDto solutionDto = solution != null ?
-						new StudentSolutionDto(solution) : null;
-				
-				// add exercise or contest to list
-				if (activity instanceof Exercise)
-					activityViews.add(new StudentExerciseDto((Exercise)activity, solutionDto));
-				else
-					activityViews.add(new StudentContestDto((Contest)activity, solutionDto));
-			}
+
+			// get activity view for each visible activity
+			activityService.getAllActivitiesInCourse(course.getId()).stream()
+				.filter(activity -> !activity.isHidden())
+				.forEach(activity -> activityViews.add(
+						getStudentActivityDto(activity, studentId))
+				);
+			
 			courseViews.add(new StudentCourseDto(course, activityViews));
 		}
 		

@@ -17,4 +17,5 @@ public abstract class ActivityDto {
 	private int courseId;
 	private String name;
 	private String details;
+	private boolean hidden;
 }

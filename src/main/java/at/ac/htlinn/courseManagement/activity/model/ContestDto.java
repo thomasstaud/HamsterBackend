@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class ContestDto extends ActivityDto {
 	public ContestDto(Contest contest) {
 		super(contest.getId(), contest.getCourse().getId(),
-				contest.getName(), contest.getDetails());
+				contest.getName(), contest.getDetails(), contest.isHidden());
 		this.start = contest.getStart();
 		this.ignoreHamsterPosition = contest.isIgnoreHamsterPosition();
 		this.visibleStartHamster = contest.getVisibleStartHamster();

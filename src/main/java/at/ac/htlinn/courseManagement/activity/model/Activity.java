@@ -35,6 +35,9 @@ public abstract class Activity {
 	@Column(name = "details")
 	private String details;
 	
+	@Column(name = "hidden")
+	private boolean hidden;
+	
 	@ManyToOne
 	@JoinColumn(name="course_id", nullable = false)
 	private Course course;

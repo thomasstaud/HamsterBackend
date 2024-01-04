@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class ExerciseDto extends ActivityDto {
 	public ExerciseDto(Exercise exercise) {
 		super(exercise.getId(), exercise.getCourse().getId(),
-				exercise.getName(), exercise.getDetails());
+				exercise.getName(), exercise.getDetails(), exercise.isHidden());
 		this.deadline = exercise.getDeadline();
 		this.hamster = exercise.getHamster();
 	}
