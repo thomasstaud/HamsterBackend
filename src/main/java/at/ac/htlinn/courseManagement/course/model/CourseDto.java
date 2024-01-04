@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class CourseDTO {
-	public CourseDTO(Course course) {
+public class CourseDto {
+	public CourseDto(Course course) {
 		this.id = course.getId();
 		this.name = course.getName();
 		this.teacherId = course.getTeacher().getId();

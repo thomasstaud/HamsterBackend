@@ -1,25 +1,25 @@
-package at.ac.htlinn.courseManagement.activity.model;
+package at.ac.htlinn.courseManagement.student.model;
 
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import at.ac.htlinn.courseManagement.activity.model.Exercise;
 import at.ac.htlinn.courseManagement.solution.model.Solution;
-import at.ac.htlinn.courseManagement.solution.model.SolutionViewDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ExerciseViewDTO extends ActivityViewDTO {
-	public ExerciseViewDTO(Exercise exercise, Solution solution) {
+public class StudentExerciseDto extends StudentActivityDto {
+	public StudentExerciseDto(Exercise exercise, Solution solution) {
 		super(exercise.getId(), exercise.getName(),
-				exercise.getDetails(), new SolutionViewDTO(solution));
+				exercise.getDetails(), new StudentSolutionDto(solution));
 		this.deadline = exercise.getDeadline();
 		this.hamster = exercise.getHamster();
 	}
 	
-	public ExerciseViewDTO(Exercise exercise) {
+	public StudentExerciseDto(Exercise exercise) {
 		super(exercise.getId(), exercise.getName(), exercise.getDetails(), null);
 		this.deadline = exercise.getDeadline();
 		this.hamster = exercise.getHamster();

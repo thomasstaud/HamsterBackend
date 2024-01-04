@@ -1,14 +1,15 @@
-package at.ac.htlinn.courseManagement.solution.model;
+package at.ac.htlinn.courseManagement.student.model;
 
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import at.ac.htlinn.courseManagement.solution.model.Solution;
 import lombok.Data;
 
 @Data
-public class SolutionViewDTO {
-	public SolutionViewDTO(Solution solution) {
+public class StudentSolutionDto {
+	public StudentSolutionDto(Solution solution) {
 		this.id = solution.getId();
 		this.code = solution.getCode();
 		this.submitted = solution.isSubmitted();

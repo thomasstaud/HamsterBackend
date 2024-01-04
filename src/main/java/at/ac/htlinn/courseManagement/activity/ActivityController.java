@@ -24,14 +24,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import at.ac.htlinn.courseManagement.activity.model.Activity;
-import at.ac.htlinn.courseManagement.activity.model.ActivityDTO;
+import at.ac.htlinn.courseManagement.activity.model.ActivityDto;
 import at.ac.htlinn.courseManagement.activity.model.Contest;
-import at.ac.htlinn.courseManagement.activity.model.ContestDTO;
+import at.ac.htlinn.courseManagement.activity.model.ContestDto;
 import at.ac.htlinn.courseManagement.activity.model.Exercise;
-import at.ac.htlinn.courseManagement.activity.model.ExerciseDTO;
+import at.ac.htlinn.courseManagement.activity.model.ExerciseDto;
 import at.ac.htlinn.courseManagement.course.CourseService;
 import at.ac.htlinn.courseManagement.course.model.Course;
-import at.ac.htlinn.courseManagement.courseUser.CourseUserService;
+import at.ac.htlinn.courseManagement.student.StudentService;
+import at.ac.htlinn.courseManagement.teacher.TeacherService;
 import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
 
@@ -44,7 +45,9 @@ public class ActivityController {
 	@Autowired
 	private ActivityService activityService;
 	@Autowired
-	private CourseUserService studentService;
+	private StudentService studentService;
+	@Autowired
+	private TeacherService teacherService;
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -65,15 +68,17 @@ public class ActivityController {
 
 		// if user is student or teacher, check if user is in course
 		User user = userService.getCurrentUser();
-		if (!userService.isUserPrivileged(user) && !studentService.isUserInCourse(user.getId(), activity.getCourse().getId()))
-			return new ResponseEntity<>("You must be in this course to view its activities.", HttpStatus.FORBIDDEN);
+		if (!userService.isUserPrivileged(user))
+			if (!studentService.isUserStudent(user.getId(), activity.getCourse().getId())
+					&& !teacherService.isUserTeacher(user.getId(), activity.getCourse().getId()))
+				return new ResponseEntity<>("You must be in this course to view its activities.", HttpStatus.FORBIDDEN);
 
 		// create according DTO object
-		ActivityDTO activityDTO = null;
+		ActivityDto activityDTO = null;
 		if (activity instanceof Exercise)
-			activityDTO = new ExerciseDTO((Exercise)activity);
+			activityDTO = new ExerciseDto((Exercise)activity);
 		else
-			activityDTO = new ContestDTO((Contest)activity);
+			activityDTO = new ContestDto((Contest)activity);
 		return ResponseEntity.ok(activityDTO);
 	}
 	
@@ -95,17 +100,19 @@ public class ActivityController {
 
 		// if user is student or teacher, check if user is in course
 		User user = userService.getCurrentUser();
-		if (!userService.isUserPrivileged(user) && !studentService.isUserInCourse(user.getId(), course.getId()))
-			return new ResponseEntity<>("You must be in this course to view its activities.", HttpStatus.FORBIDDEN);
+		if (!userService.isUserPrivileged(user))
+			if (!studentService.isUserStudent(user.getId(), course.getId())
+					&& !teacherService.isUserTeacher(user.getId(), course.getId()))
+				return new ResponseEntity<>("You must be in this course to view its activities.", HttpStatus.FORBIDDEN);
 		
-		List<ActivityDTO> activities = new ArrayList<ActivityDTO>();
+		List<ActivityDto> activities = new ArrayList<ActivityDto>();
 		for (Activity activity : activityService.getAllActivitiesInCourse(courseId)) {
 			
 			// add exercise or contest to list
 			if (activity instanceof Exercise)
-				activities.add(new ExerciseDTO((Exercise)activity));
+				activities.add(new ExerciseDto((Exercise)activity));
 			else
-				activities.add(new ContestDTO((Contest)activity));
+				activities.add(new ContestDto((Contest)activity));
 		}
 		return ResponseEntity.ok(activities);
 	}
@@ -121,8 +128,8 @@ public class ActivityController {
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> createActivity(@RequestBody JsonNode node) {
 		// get DTO object from JSON
-		ExerciseDTO exerciseDto = mapper.convertValue(node.get("exercise"), ExerciseDTO.class);
-		ContestDTO contestDto = mapper.convertValue(node.get("contest"), ContestDTO.class);
+		ExerciseDto exerciseDto = mapper.convertValue(node.get("exercise"), ExerciseDto.class);
+		ContestDto contestDto = mapper.convertValue(node.get("contest"), ContestDto.class);
 		if (exerciseDto == null && contestDto == null)
 			return new ResponseEntity<>("Request body must include either an exercise or a contest!", HttpStatus.BAD_REQUEST);
 		if (exerciseDto != null && contestDto != null)

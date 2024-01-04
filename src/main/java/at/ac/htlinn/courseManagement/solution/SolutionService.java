@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import at.ac.htlinn.courseManagement.solution.model.Solution;
-import at.ac.htlinn.courseManagement.solution.model.SolutionDTO;
+import at.ac.htlinn.courseManagement.solution.model.SolutionDto;
 
 @Service
 public class SolutionService {
@@ -39,24 +39,24 @@ public class SolutionService {
 		return solutionRepository.getById(solutionId);
 	}
 
-	public List<SolutionDTO> getAllSolutions() {
+	public List<SolutionDto> getAllSolutions() {
 
 		// get solutions and convert to DTOs
-		List<SolutionDTO> solutions = new ArrayList<SolutionDTO>();
+		List<SolutionDto> solutions = new ArrayList<SolutionDto>();
 		for (Solution solution : solutionRepository.findAll()) {
-			solutions.add(new SolutionDTO(solution));
+			solutions.add(new SolutionDto(solution));
 		}
 		
 		return solutions;
 	}
 
 	// get all solutions for one activity
-	public List<SolutionDTO> getSolutionsByActivityId(int activityId) {
+	public List<SolutionDto> getSolutionsByActivityId(int activityId) {
 
 		// get solutions and convert to DTOs
-		List<SolutionDTO> solutions = new ArrayList<SolutionDTO>();
+		List<SolutionDto> solutions = new ArrayList<SolutionDto>();
 		for (Solution solution : solutionRepository.getByActivityId(activityId)) {
-			solutions.add(new SolutionDTO(solution));
+			solutions.add(new SolutionDto(solution));
 		}
 		
 		return solutions;
@@ -68,12 +68,12 @@ public class SolutionService {
 	}
 
 	// get all solutions for one student in a specific course
-	public List<SolutionDTO> getSolutionsByStudentId(int studentId, int courseId) {
+	public List<SolutionDto> getSolutionsByStudentId(int studentId, int courseId) {
 		
 		// get solutions and convert to DTOs
-		List<SolutionDTO> solutions = new ArrayList<SolutionDTO>();
+		List<SolutionDto> solutions = new ArrayList<SolutionDto>();
 		for (Solution solution : solutionRepository.getByStudentIdInSpecifiedCourse(studentId, courseId)) {
-			solutions.add(new SolutionDTO(solution));
+			solutions.add(new SolutionDto(solution));
 		}
 		
 		return solutions;

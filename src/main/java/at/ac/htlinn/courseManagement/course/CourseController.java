@@ -25,7 +25,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import at.ac.htlinn.courseManagement.course.model.Course;
-import at.ac.htlinn.courseManagement.course.model.CourseDTO;
+import at.ac.htlinn.courseManagement.course.model.CourseDto;
+import at.ac.htlinn.courseManagement.student.StudentService;
 import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
 
@@ -35,6 +36,8 @@ public class CourseController {
 
 	@Autowired
 	private CourseService courseService;
+	@Autowired
+	private StudentService studentService;
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -56,7 +59,7 @@ public class CourseController {
 		Course course = courseService.getCourseById(courseId);
 		if (course == null) return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
 		
-		return ResponseEntity.ok(new CourseDTO(course));
+		return ResponseEntity.ok(new CourseDto(course));
 	}
 	
 	/**
@@ -73,9 +76,9 @@ public class CourseController {
 		
 		if(course_name == null) {
 			// get all courses and convert to DTOs
-			List<CourseDTO> courses = new ArrayList<CourseDTO>();
+			List<CourseDto> courses = new ArrayList<CourseDto>();
 			for(Course course : courseService.getAllCourses()) {
-				courses.add(new CourseDTO(course));
+				courses.add(new CourseDto(course));
 			}
 			return ResponseEntity.ok(courses);
 		}
@@ -84,7 +87,7 @@ public class CourseController {
 		Course course = courseService.getCourseByName(course_name); 
 		if(course == null) return new ResponseEntity<>("There is no course with this name!", HttpStatus.NOT_FOUND);
 
-		return ResponseEntity.ok(new CourseDTO(course));
+		return ResponseEntity.ok(new CourseDto(course));
 	}
 	
 	/**
@@ -97,7 +100,7 @@ public class CourseController {
 	@PostMapping("")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> createCourse(@RequestBody JsonNode node) {
-		CourseDTO courseDTO = mapper.convertValue(node.get("course"), CourseDTO.class);
+		CourseDto courseDTO = mapper.convertValue(node.get("course"), CourseDto.class);
 		if (courseDTO == null) return new ResponseEntity<>("Request body is invalid!", HttpStatus.BAD_REQUEST);
 		
 		// set teacher id to active user id
@@ -184,6 +187,11 @@ public class CourseController {
 		User user = userService.getCurrentUser();
 		if (!userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
 			return new ResponseEntity<>("You must be this courses teacher to delete it.", HttpStatus.FORBIDDEN);
+		
+		// attempt to remove all students from the course
+		// TODO: don't commit until every student has successfully been deleted
+		if (!studentService.removeAllStudentFromCourse(courseId))
+			return new ResponseEntity<>("Could not remove all students from course!", HttpStatus.INTERNAL_SERVER_ERROR);
 		
 		return courseService.deleteCourse(courseId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
 				: new ResponseEntity<>("Could not delete course!", HttpStatus.INTERNAL_SERVER_ERROR);

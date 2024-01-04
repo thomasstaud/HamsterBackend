@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ContestDTO extends ActivityDTO {
-	public ContestDTO(Contest contest) {
+public class ContestDto extends ActivityDto {
+	public ContestDto(Contest contest) {
 		super(contest.getId(), contest.getCourse().getId(),
 				contest.getName(), contest.getDetails());
 		this.start = contest.getStart();

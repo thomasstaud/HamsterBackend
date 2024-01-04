@@ -24,9 +24,9 @@ import at.ac.htlinn.courseManagement.activity.ActivityService;
 import at.ac.htlinn.courseManagement.activity.model.Activity;
 import at.ac.htlinn.courseManagement.course.CourseService;
 import at.ac.htlinn.courseManagement.course.model.Course;
-import at.ac.htlinn.courseManagement.courseUser.CourseUserService;
 import at.ac.htlinn.courseManagement.solution.model.Solution;
-import at.ac.htlinn.courseManagement.solution.model.SolutionDTO;
+import at.ac.htlinn.courseManagement.solution.model.SolutionDto;
+import at.ac.htlinn.courseManagement.student.StudentService;
 import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
 
@@ -41,7 +41,7 @@ public class SolutionController {
 	@Autowired
 	private SolutionService solutionService;
 	@Autowired
-	private CourseUserService studentService;
+	private StudentService studentService;
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -68,7 +68,7 @@ public class SolutionController {
 				return new ResponseEntity<>("You cannot view other student's solutions.", HttpStatus.FORBIDDEN);
 		}
 		
-		return ResponseEntity.ok(new SolutionDTO(solution));
+		return ResponseEntity.ok(new SolutionDto(solution));
 	}
 	
 	// TODO: clean up
@@ -98,7 +98,7 @@ public class SolutionController {
 			if (!userService.isUserPrivileged(user) && activity.getCourse().getTeacher().getId() != user.getId())
 				return new ResponseEntity<>("You must be this courses teacher to view its solutions.", HttpStatus.FORBIDDEN);
 			
-			List<SolutionDTO> solutions = solutionService.getSolutionsByActivityId(activityId);
+			List<SolutionDto> solutions = solutionService.getSolutionsByActivityId(activityId);
 			return ResponseEntity.ok(solutions);
 		}
 		
@@ -121,7 +121,7 @@ public class SolutionController {
 			if (!userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
 				return new ResponseEntity<>("You must be this courses teacher to view its solutions.", HttpStatus.FORBIDDEN);
 			
-			List<SolutionDTO> solutions = solutionService.getSolutionsByStudentId(studentId, courseId);
+			List<SolutionDto> solutions = solutionService.getSolutionsByStudentId(studentId, courseId);
 			return ResponseEntity.ok(solutions);
 		}
 		
@@ -139,7 +139,7 @@ public class SolutionController {
 	@PutMapping
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> addSolutionToActivity(@RequestBody JsonNode node) {
-		SolutionDTO solutionDto = mapper.convertValue(node.get("solution"), SolutionDTO.class);
+		SolutionDto solutionDto = mapper.convertValue(node.get("solution"), SolutionDto.class);
 		if (solutionDto == null) return new ResponseEntity<>("Request body is invalid!", HttpStatus.BAD_REQUEST);
 		
 		User user = userService.getCurrentUser();
@@ -183,7 +183,7 @@ public class SolutionController {
 				return new ResponseEntity<>("Solution already exists!", HttpStatus.BAD_REQUEST);
 		}
 		
-		return solutionService.saveSolution(solution) != null ? ResponseEntity.ok(new SolutionDTO(solution))
+		return solutionService.saveSolution(solution) != null ? ResponseEntity.ok(new SolutionDto(solution))
 				: new ResponseEntity<>("Could not put solution!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
@@ -211,7 +211,7 @@ public class SolutionController {
 		
 		solution.setFeedback(feedback);
 		
-	    return solutionService.saveSolution(solution) != null ? ResponseEntity.ok(new SolutionDTO(solution))
+	    return solutionService.saveSolution(solution) != null ? ResponseEntity.ok(new SolutionDto(solution))
 	    		: new ResponseEntity<>("Could not save feedback!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	

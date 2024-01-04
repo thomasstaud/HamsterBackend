@@ -1,4 +1,4 @@
-package at.ac.htlinn.courseManagement.courseUser;
+package at.ac.htlinn.courseManagement.student;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,17 +23,17 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import at.ac.htlinn.courseManagement.course.CourseService;
 import at.ac.htlinn.courseManagement.course.model.Course;
-import at.ac.htlinn.courseManagement.course.model.CourseViewDTO;
+import at.ac.htlinn.courseManagement.student.model.StudentCourseDto;
 import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
 import at.ac.htlinn.user.model.UserDTO;
 
 @RestController
-@RequestMapping("/users")
-public class CourseUserController {
+@RequestMapping("/students")
+public class StudentController {
 
 	@Autowired
-	private CourseUserService courseUserService;
+	private StudentService studentService;
 	@Autowired
 	private CourseService courseService;
 	@Autowired
@@ -42,29 +42,13 @@ public class CourseUserController {
 	private ObjectMapper mapper;
 	
 	/**
-	 * GET all courses, exercises and solutions for active user (must be student)
-	 *
-	 * 
-	 * @param json
-	 * @return
-	 */
-	@GetMapping("students/my-view")
-	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> getViewForLoggedInStudent() {
-		int studentId = userService.getCurrentUser().getId();
-		
-		List<CourseViewDTO> courseViews = courseService.getStudentCourseViews(studentId);
-		return ResponseEntity.ok(courseViews);
-	}
-	
-	/**
 	 * GET all students or all students for one course
 	 * optional @RequestParam courseId
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("students")
+	@GetMapping
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> getAllStudentsByCourseId(
 			@RequestParam(name = "course_id", required = false) Integer courseId) {
@@ -74,7 +58,7 @@ public class CourseUserController {
 			
 			// get users and convert to DTOs
 			List<UserDTO> students = new ArrayList<UserDTO>();
-			for (User student : courseUserService.getAllStudents()) {
+			for (User student : studentService.getAllStudents()) {
 				students.add(new UserDTO(student));
 			}
 			
@@ -92,44 +76,11 @@ public class CourseUserController {
 		
 		// get users and convert to DTOs
 		List<UserDTO> students = new ArrayList<UserDTO>();
-		for (User student : courseUserService.getAllStudentsInCourse(courseId)) {
+		for (User student : studentService.getAllStudentsInCourse(courseId)) {
 			students.add(new UserDTO(student));
 		}
 		
 		return ResponseEntity.ok(students);
-	}
-	
-	// TODO: is this mapping needed?
-	/**
-	 * GET student by student id from specified course
-	 * requires @PathVariable studentId and courseId
-	 * 
-	 * @param json
-	 * @return
-	 */
-	@GetMapping("students/{student_id}")
-	@PreAuthorize("hasAuthority('TEACHER')")
-	public ResponseEntity<?> getStudentInCourseByCourseId(
-			@PathVariable(name = "student_id") int studentId,
-			@RequestParam(name = "course_id", required = true) int courseId) {
-		
-		// check if course exists
-		Course course = courseService.getCourseById(courseId);
-		if (course == null) return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
-
-		// if user is a teacher, they must be teacher of the specified course
-		User user = userService.getCurrentUser();
-		if (!userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
-			return new ResponseEntity<>("You must be this courses teacher to view its students.", HttpStatus.FORBIDDEN);
-		
-		// check if student exists and is in course
-		User student = userService.findUserByID(studentId);
-		if (student == null || !courseUserService.isUserStudent(studentId, courseId)) {
-			return new ResponseEntity<>("Student does not exist!", HttpStatus.NOT_FOUND);
-		}
-		
-		// return student as DTO
-		return ResponseEntity.ok(new UserDTO(student));
 	}
 	
 	/**
@@ -140,7 +91,7 @@ public class CourseUserController {
 	 * @return
 	 * @throws JsonProcessingException 
 	 */
-	@PostMapping("students")
+	@PostMapping
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> addStudentsToCourse(
 			@RequestParam(name = "course_id", required = true) int courseId,
@@ -161,7 +112,7 @@ public class CourseUserController {
 		
 		ArrayList<Integer> failedUserIds = new ArrayList<Integer>(); 
 		for (int userId : userIds) {
-			boolean success = courseUserService.addStudentToCourse(courseId, userId);
+			boolean success = studentService.addStudentToCourse(courseId, userId);
 			if (!success) failedUserIds.add(userId);
 		}
 		
@@ -183,7 +134,7 @@ public class CourseUserController {
 	 * @param json
 	 * @return
 	 */
-	@DeleteMapping("students/{student_id}")
+	@DeleteMapping("{student_id}")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> removeStudentFromCourse(
 			@PathVariable(name = "student_id") int studentId,
@@ -198,42 +149,25 @@ public class CourseUserController {
 		if (!userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
 				return new ResponseEntity<>("You must be this courses teacher to remove a student.", HttpStatus.FORBIDDEN);
 		
-		return courseUserService.removeStudentFromCourse(courseId, studentId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+		return studentService.removeStudentFromCourse(courseId, studentId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
 				: new ResponseEntity<>("Could not remove student from course!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
-	
-	
 
-	/**
-	 * GET teacher by course id
-	 * requires @PathVariable courseId
-	 * 
-	 * @param json
-	 * @return
-	 */
-	@GetMapping("teachers")
-	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> getCourseTeacherByCourseID(
-			@RequestParam(name = "course_id", required = true) Integer courseId) {
-		
-		User teacher = courseUserService.getCourseTeacher(courseId);
-		return ResponseEntity.ok(new UserDTO(teacher));
-	}
 	
 	/**
-	 * GET all courses and exercises for active user (must be teacher)
+	 * GET all courses, exercises and solutions for active user (must be student)
 	 *
 	 * 
 	 * @param json
 	 * @return
 	 */
-	@GetMapping("teachers/my-view")
+	@GetMapping("my-view")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> getViewForLoggedInTeacher() {
-		int studentId = userService.getCurrentUser().getId();
+	public ResponseEntity<?> getViewForLoggedInStudent() {
+		int userId = userService.getCurrentUser().getId();
 		
-		List<CourseViewDTO> courseViews = courseService.getTeacherCourseViews(studentId);
+		List<StudentCourseDto> courseViews = studentService.getStudentView(userId);
 		return ResponseEntity.ok(courseViews);
 	}
 }

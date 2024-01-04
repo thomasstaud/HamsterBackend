@@ -1,4 +1,4 @@
-package at.ac.htlinn.courseManagement.activity.model;
+package at.ac.htlinn.courseManagement.teacher.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -7,14 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public abstract class ActivityDTO {
-
+public abstract class TeacherActivityDto {
+	
 	@JsonProperty("activity_id")
 	private int id;
-	@JsonProperty("course_id")
-	private int courseId;
 	private String name;
 	private String details;
 }

@@ -1,30 +1,19 @@
-package at.ac.htlinn.courseManagement.activity.model;
+package at.ac.htlinn.courseManagement.teacher.model;
 
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import at.ac.htlinn.courseManagement.solution.model.Solution;
-import at.ac.htlinn.courseManagement.solution.model.SolutionViewDTO;
+import at.ac.htlinn.courseManagement.activity.model.Contest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ContestViewDTO extends ActivityViewDTO {
-	public ContestViewDTO(Contest contest, Solution solution) {
-		super(contest.getId(), contest.getName(),
-				contest.getDetails(), new SolutionViewDTO(solution));	
-		this.start = contest.getStart();
-		this.ignoreHamsterPosition = contest.isIgnoreHamsterPosition();
-		this.visibleStartHamster = contest.getVisibleStartHamster();
-		this.visibleEndHamster = contest.getVisibleEndHamster();
-		this.hiddenStartHamster = contest.getHiddenStartHamster();
-		this.hiddenEndHamster = contest.getHiddenStartHamster();
-	}
+public class TeacherContestDto extends TeacherActivityDto {
 	
-	public ContestViewDTO(Contest contest) {
-		super(contest.getId(), contest.getName(), contest.getDetails(), null);
+	public TeacherContestDto(Contest contest) {
+		super(contest.getId(), contest.getName(), contest.getDetails());
 		this.start = contest.getStart();
 		this.ignoreHamsterPosition = contest.isIgnoreHamsterPosition();
 		this.visibleStartHamster = contest.getVisibleStartHamster();

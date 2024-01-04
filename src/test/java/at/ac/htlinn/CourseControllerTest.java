@@ -34,12 +34,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import at.ac.htlinn.courseManagement.activity.model.Exercise;
-import at.ac.htlinn.courseManagement.activity.model.ExerciseDTO;
+import at.ac.htlinn.courseManagement.activity.model.ExerciseDto;
 import at.ac.htlinn.courseManagement.course.CourseController;
 import at.ac.htlinn.courseManagement.course.model.Course;
-import at.ac.htlinn.courseManagement.course.model.CourseDTO;
+import at.ac.htlinn.courseManagement.course.model.CourseDto;
 import at.ac.htlinn.courseManagement.solution.model.Solution;
-import at.ac.htlinn.courseManagement.solution.model.SolutionDTO;
+import at.ac.htlinn.courseManagement.solution.model.SolutionDto;
 import at.ac.htlinn.user.UserController;
 import at.ac.htlinn.user.model.User;
 
@@ -194,7 +194,7 @@ class CourseControllerTest {
 		String response;
 		
 		// create JSON-String with course data
-		CourseDTO course = new CourseDTO();
+		CourseDto course = new CourseDto();
 		course.setName("new_course");
 		course.setTeacherId(1);
 		
@@ -232,7 +232,7 @@ class CourseControllerTest {
 		String response;
 		
 		// create JSON-String with exercise data
-		ExerciseDTO exercise = new ExerciseDTO();
+		ExerciseDto exercise = new ExerciseDto();
 		exercise.setName("new_course");
 		exercise.setHamster("hamster");
 		exercise.setCourseId(1);
@@ -360,7 +360,7 @@ class CourseControllerTest {
 		String response;
 		
 		// create JSON-String with solution data
-		SolutionDTO solution = new SolutionDTO();
+		SolutionDto solution = new SolutionDto();
 		solution.setCode("hamster");
 		solution.setStudentId(1);
 		solution.setActivityId(4);

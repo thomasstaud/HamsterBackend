@@ -33,7 +33,7 @@ import lombok.ToString;
 @ToString
 @JsonTypeName("course") 
 public class Course {
-	public Course(CourseDTO course, UserService userService) {
+	public Course(CourseDto course, UserService userService) {
 		this.id = course.getId();
 		this.name = course.getName();
 		this.teacher = userService.findUserByID(course.getTeacherId());

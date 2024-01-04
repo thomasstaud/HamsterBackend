@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class SolutionDTO {
-	public SolutionDTO(Solution solution) {
+public class SolutionDto {
+	public SolutionDto(Solution solution) {
 		this.id = solution.getId();
 		this.activityId = solution.getActivity().getId();
 		this.studentId = solution.getStudent().getId();

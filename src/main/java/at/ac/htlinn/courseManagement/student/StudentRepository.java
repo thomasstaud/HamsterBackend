@@ -1,4 +1,4 @@
-package at.ac.htlinn.courseManagement.courseUser;
+package at.ac.htlinn.courseManagement.student;
 
 import java.util.List;
 
@@ -11,13 +11,10 @@ import org.springframework.data.repository.query.Param;
 
 import at.ac.htlinn.user.model.User;
 
-public interface CourseUserRepository extends JpaRepository<User, Integer>{
-	
+public interface StudentRepository extends JpaRepository<User, Integer>{
+
 	@Query(value = "SELECT u.* FROM USER_ROLE ur JOIN USERS u USING(user_id) WHERE ur.role_id=4", nativeQuery = true)
 	public List<User> getAllStudents();
-	
-	@Query(value = "SELECT u.* FROM USERS u JOIN course c ON u.user_id=c.teacher_id where c.course_id=:course_id", nativeQuery = true)
-	public User getCourseTeacher(@Param("course_id") int courseId);
 	
 	@Query(value = "SELECT u.* FROM USER_COURSE uc JOIN USERS u USING(user_id) WHERE uc.course_id=:course_id", nativeQuery = true)
 	public List<User> getAllStudentsInCourse(@Param("course_id") int courseId);
@@ -35,6 +32,11 @@ public interface CourseUserRepository extends JpaRepository<User, Integer>{
 	@Query(value = "DELETE FROM user_course WHERE user_id = :user_id AND course_id=:course_id", nativeQuery = true)
 	@Transactional
 	public void removeUserFromCourse(@Param("user_id") int user_id, @Param("course_id") int courseId);
+	
+	@Modifying
+	@Query(value = "DELETE FROM user_course WHERE course_id=:course_id", nativeQuery = true)
+	@Transactional
+	public void removeAllUsersFromCourse(@Param("course_id") int courseId);
 
 	/**
 	 * If return value equals 0 => no student with this user_id exists
@@ -46,14 +48,4 @@ public interface CourseUserRepository extends JpaRepository<User, Integer>{
 	@Query(value = "SELECT EXISTS(SELECT * FROM user_course WHERE course_id=:course_id AND user_id=:user_id)", nativeQuery = true)
 	public int isUserStudent(@Param("user_id") int user_id, @Param("course_id") int courseId);
 	
-	/**
-	 * If return value equals 0 => no teacher with this user_id exists
-	 * 
-	 * @param user_id
-	 * @param course_id
-	 * @return
-	 */
-	@Query(value = "SELECT EXISTS(SELECT teacher_id FROM course "
-			+ "WHERE course_id=:course_id AND teacher_id=:user_id)",nativeQuery = true)
-	public int isUserTeacher(@Param("user_id") int user_id, @Param("course_id") int courseId); 
 }
