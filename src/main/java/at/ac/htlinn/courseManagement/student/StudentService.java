@@ -17,6 +17,7 @@ import at.ac.htlinn.courseManagement.student.model.StudentActivityDto;
 import at.ac.htlinn.courseManagement.student.model.StudentContestDto;
 import at.ac.htlinn.courseManagement.student.model.StudentCourseDto;
 import at.ac.htlinn.courseManagement.student.model.StudentExerciseDto;
+import at.ac.htlinn.courseManagement.student.model.StudentSolutionDto;
 import at.ac.htlinn.user.model.User;
 import lombok.AllArgsConstructor;
 
@@ -83,25 +84,20 @@ public class StudentService {
 	public List<StudentCourseDto> getStudentView(int studentId) {
 		
 		List<StudentCourseDto> courseViews = new ArrayList<StudentCourseDto>();
-		// get activitys for each course
+		// get activities for each course
 		for (Course course : courseService.getCoursesByStudentId(studentId)) {
 			List<StudentActivityDto> activityViews = new ArrayList<StudentActivityDto>();
 			// get activity view for each activity
 			for (Activity activity : activityService.getAllActivitiesInCourse(course.getId())) {
 				Solution solution = solutionService.getSolutionByActivityAndStudentId(activity.getId(), studentId);
+				StudentSolutionDto solutionDto = solution != null ?
+						new StudentSolutionDto(solution) : null;
 				
 				// add exercise or contest to list
-				// TODO: improve this mess
-				if(solution != null)
-					if (activity instanceof Exercise)
-						activityViews.add(new StudentExerciseDto((Exercise)activity, solution));
-					else
-						activityViews.add(new StudentContestDto((Contest)activity, solution));
+				if (activity instanceof Exercise)
+					activityViews.add(new StudentExerciseDto((Exercise)activity, solutionDto));
 				else
-					if (activity instanceof Exercise)
-						activityViews.add(new StudentExerciseDto((Exercise)activity));
-					else
-						activityViews.add(new StudentContestDto((Contest)activity));
+					activityViews.add(new StudentContestDto((Contest)activity, solutionDto));
 			}
 			courseViews.add(new StudentCourseDto(course, activityViews));
 		}

@@ -1,5 +1,7 @@
 package at.ac.htlinn.courseManagement.student.model;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -15,4 +17,10 @@ public abstract class StudentActivityDto {
 	private String details;
 	@JsonProperty("solution")
 	private StudentSolutionDto solutionView;
+	
+	// meaning of date depends on activity type
+	//		for exercises, it is the deadline
+	//		for contests, it is the start date
+	private Date date;
+	private String type;
 }
