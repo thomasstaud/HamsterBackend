@@ -1,17 +1,47 @@
 package at.ac.htlinn.courseManagement.teacher.model;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import at.ac.htlinn.courseManagement.activity.model.Activity;
+import at.ac.htlinn.courseManagement.activity.model.Contest;
+import at.ac.htlinn.courseManagement.activity.model.Exercise;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-public abstract class TeacherActivityDto {
+public class TeacherActivityDto {
+	public TeacherActivityDto(Activity activity, int submitted, int feedbacked) {
+		this.id = activity.getId();
+		this.name = activity.getName();
+		this.details = activity.getDetails();
+		
+		if (activity instanceof Exercise) {
+			date = ((Exercise)activity).getDeadline();
+			type = Exercise.type;
+		} else {
+			date = ((Contest)activity).getStart();
+			type = Contest.type;
+		}
+		
+		this.submitted = submitted;
+		this.feedbacked = feedbacked;
+	}
 	
 	@JsonProperty("activity_id")
 	private int id;
 	private String name;
 	private String details;
+	
+	// meaning of date depends on activity type
+	//		for exercises, it is the deadline
+	//		for contests, it is the start date
+	private Date date;
+	private String type;
+	
+	// information about student submissions
+	private int submitted;
+	private int feedbacked;
 }

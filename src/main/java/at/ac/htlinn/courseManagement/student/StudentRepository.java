@@ -21,17 +21,17 @@ public interface StudentRepository extends JpaRepository<User, Integer>{
 	
 	@Query(value = "SELECT EXISTS(SELECT user_id FROM USERS u JOIN STUDENT s using(user_id) JOIN user_course c using(user_id) "
 			+ "WHERE user_id=:user_id AND c.course_id=:course_id)", nativeQuery = true)
-	public int isUserInCourse(@Param("user_id") int user_id, @Param("course_id") int courseId);
+	public int isUserInCourse(@Param("user_id") int userId, @Param("course_id") int courseId);
 	
 	@Modifying
 	@Query(value = "INSERT INTO user_course (user_id, course_id) VALUES (:user_id,:course_id)", nativeQuery = true)
 	@Transactional
-	public void addUserToCourse(@Param("user_id") int user_id, @Param("course_id") int courseId);
+	public void addUserToCourse(@Param("user_id") int userId, @Param("course_id") int courseId);
 	
 	@Modifying
 	@Query(value = "DELETE FROM user_course WHERE user_id = :user_id AND course_id=:course_id", nativeQuery = true)
 	@Transactional
-	public void removeUserFromCourse(@Param("user_id") int user_id, @Param("course_id") int courseId);
+	public void removeUserFromCourse(@Param("user_id") int userId, @Param("course_id") int courseId);
 	
 	@Modifying
 	@Query(value = "DELETE FROM user_course WHERE course_id=:course_id", nativeQuery = true)
@@ -46,6 +46,5 @@ public interface StudentRepository extends JpaRepository<User, Integer>{
 	 * @return
 	 */
 	@Query(value = "SELECT EXISTS(SELECT * FROM user_course WHERE course_id=:course_id AND user_id=:user_id)", nativeQuery = true)
-	public int isUserStudent(@Param("user_id") int user_id, @Param("course_id") int courseId);
-	
+	public int isUserStudent(@Param("user_id") int userId, @Param("course_id") int courseId);
 }

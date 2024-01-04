@@ -26,6 +26,8 @@ import lombok.ToString;
 @ToString
 @JsonTypeName("contest") 
 public class Contest extends Activity {
+	public static final String type = "contest";
+	
 	public Contest(ContestDto contest, CourseService courseService) {
 		super(contest.getId(), contest.getName(), contest.getDetails(),
 				courseService.getCourseById(contest.getCourseId()));

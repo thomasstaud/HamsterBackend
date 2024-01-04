@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class UserDTO {
-	public UserDTO(User user) {
+public class UserDto {
+	public UserDto(User user) {
 		this.id = user.getId();
 		this.username = user.getUsername();
 	}

@@ -78,4 +78,12 @@ public class SolutionService {
 		
 		return solutions;
 	}
+	
+	public int getNumberOfSubmittedSolutions(int activityId) {
+		return solutionRepository.getNumberOfSubmittedSolutions(activityId);
+	}
+	
+	public int getNumberOfFeedbackedSolutions(int activityId) {
+		return solutionRepository.getNumberOfFeedbackedSolutions(activityId);
+	}
 }

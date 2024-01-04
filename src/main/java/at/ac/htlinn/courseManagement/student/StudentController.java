@@ -26,7 +26,7 @@ import at.ac.htlinn.courseManagement.course.model.Course;
 import at.ac.htlinn.courseManagement.student.model.StudentCourseDto;
 import at.ac.htlinn.user.UserService;
 import at.ac.htlinn.user.model.User;
-import at.ac.htlinn.user.model.UserDTO;
+import at.ac.htlinn.user.model.UserDto;
 
 @RestController
 @RequestMapping("/students")
@@ -57,9 +57,9 @@ public class StudentController {
 			// get all students
 			
 			// get users and convert to DTOs
-			List<UserDTO> students = new ArrayList<UserDTO>();
+			List<UserDto> students = new ArrayList<UserDto>();
 			for (User student : studentService.getAllStudents()) {
-				students.add(new UserDTO(student));
+				students.add(new UserDto(student));
 			}
 			
 			return ResponseEntity.ok(students);
@@ -75,9 +75,9 @@ public class StudentController {
 			return new ResponseEntity<>("You must be this courses teacher to view its students.", HttpStatus.FORBIDDEN);
 		
 		// get users and convert to DTOs
-		List<UserDTO> students = new ArrayList<UserDTO>();
+		List<UserDto> students = new ArrayList<UserDto>();
 		for (User student : studentService.getAllStudentsInCourse(courseId)) {
-			students.add(new UserDTO(student));
+			students.add(new UserDto(student));
 		}
 		
 		return ResponseEntity.ok(students);
