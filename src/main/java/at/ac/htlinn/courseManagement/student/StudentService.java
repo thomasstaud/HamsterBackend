@@ -72,7 +72,7 @@ public class StudentService {
 		}
 	}
 
-	public boolean removeAllStudentFromCourse(int courseId) {
+	public boolean removeAllStudentsFromCourse(int courseId) {
 		try {
 			studentRepository.removeAllUsersFromCourse(courseId);
 			return true;

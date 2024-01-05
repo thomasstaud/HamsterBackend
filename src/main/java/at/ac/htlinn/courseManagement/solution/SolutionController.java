@@ -71,8 +71,6 @@ public class SolutionController {
 		return ResponseEntity.ok(new SolutionDto(solution));
 	}
 	
-	// TODO: clean up
-	// TODO: probably doesn't work properly
 	/**
 	 * GET all solutions
 	 * optional @RequestParam activityId
@@ -106,9 +104,9 @@ public class SolutionController {
 			// get all solutions for 1 students and 1 course
 			
 			if (studentId == null)
-				return new ResponseEntity<>("You must include a student id", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>("Request is missing student id", HttpStatus.BAD_REQUEST);
 			if (courseId == null)
-				return new ResponseEntity<>("You must include a course id", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>("Request is missing course id", HttpStatus.BAD_REQUEST);
 			
 			// check if course exists and student is in course
 			Course course = courseService.getCourseById(courseId);
@@ -128,7 +126,6 @@ public class SolutionController {
 		return new ResponseEntity<>("Request must include either activity_id or course_id and student_id!", HttpStatus.BAD_REQUEST);
 	}
 	
-	// TODO: this is kind of a mess
 	/**
 	 * PUT solution for an activity
 	 * requires in @RequestBody solution object
@@ -142,11 +139,11 @@ public class SolutionController {
 		SolutionDto solutionDto = mapper.convertValue(node.get("solution"), SolutionDto.class);
 		if (solutionDto == null) return new ResponseEntity<>("Request body is invalid!", HttpStatus.BAD_REQUEST);
 		
+		// build solution from solutionDto
 		User user = userService.getCurrentUser();
 		solutionDto.setStudentId(user.getId());
 		// set submissionDate to current Date
 		solutionDto.setSubmissionDate(new Date());
-		
 		Solution solution = new Solution(solutionDto, activityService, userService);
 
 		if (!userService.isUserPrivileged(user)) {
@@ -155,16 +152,22 @@ public class SolutionController {
 				return new ResponseEntity<>("You must be in this course to create a solution!", HttpStatus.FORBIDDEN);
 		}
 
+		int activityId = solutionDto.getActivityId();
+		int userId = user.getId();
+
 		if (solution.getId() != 0) {
 			// update existing solution
 			Solution existingSolution = solutionService.getSolutionById(solution.getId());
 			
-			// TODO: check if user and course match
-			
-			// TODO: this is stupid
-			// check if id is correct
-			if (existingSolution.getId() != solution.getId())
-				return new ResponseEntity<>("Solution already exists with different ID!", HttpStatus.BAD_REQUEST);
+			// validation
+			if (existingSolution == null)
+				return new ResponseEntity<>("There is no solution with this ID!", HttpStatus.BAD_REQUEST);
+			// check if user matches
+			if (existingSolution.getStudent().getId() != userId)
+				return new ResponseEntity<>("You can't change another student's solution!", HttpStatus.BAD_REQUEST);
+			// check if activity matches
+			if (existingSolution.getActivity().getId() != activityId)
+				return new ResponseEntity<>("This solution belongs to another activity!", HttpStatus.BAD_REQUEST);
 			// check if there is already feedback
 			if (existingSolution.getFeedback() != null)
 				return new ResponseEntity<>("Can't update solution: It was already feedbacked!", HttpStatus.BAD_REQUEST);
@@ -177,8 +180,6 @@ public class SolutionController {
 			// create new solution
 
 			// check if solution already exists for this activity/student combination
-			int activityId = solutionDto.getActivityId();
-			int userId = user.getId();
 			if (solutionService.getSolutionByActivityAndStudentId(activityId, userId) != null)
 				return new ResponseEntity<>("Solution already exists!", HttpStatus.BAD_REQUEST);
 		}

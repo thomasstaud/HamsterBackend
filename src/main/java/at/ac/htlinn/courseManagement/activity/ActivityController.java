@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -151,7 +150,6 @@ public class ActivityController {
 				: new ResponseEntity<>("Could not create activity!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
-	// TODO: possibly replace with PUT
 	/**
 	 * PATCH activity
 	 * requires @PathVariable activityId and in @RequestBody object
@@ -176,21 +174,25 @@ public class ActivityController {
 		if (!userService.isUserPrivileged(user) && activity.getCourse().getTeacher().getId() != user.getId())
 			return new ResponseEntity<>("You must be this courses teacher to change its activities.", HttpStatus.FORBIDDEN);
 		
-		// TODO: improve
+		// attempt to update all specified fields
 		// TODO: key currently needs to match actual field names instead of JSON field names
-		if (activity instanceof Exercise)
-		    fields.forEach((k, v) -> {
-		        Field field = ReflectionUtils.findField(Exercise.class, k); // find field in activity class
-		        field.setAccessible(true); 
-		        ReflectionUtils.setField(field, activity, v); // set given field for activity object to value V
-		    });
-		else
-		    fields.forEach((k, v) -> {
-			    System.out.println(k);
-		        Field field = ReflectionUtils.findField(Contest.class, k); // find field in activity class
-		        field.setAccessible(true); 
-		        ReflectionUtils.setField(field, activity, v); // set given field for activity object to value V
-		    });
+		// TODO: i think this belongs in a service class...
+		for (Map.Entry<String, Object> set : fields.entrySet()) {
+			try {
+				Field field = activity instanceof Exercise ?
+						Exercise.class.getDeclaredField(set.getKey()) : Contest.class.getDeclaredField(set.getKey());
+		    	field.setAccessible(true);
+		    	field.set(activity, set.getValue());
+			}
+			catch (NoSuchFieldException e) {
+				return new ResponseEntity<>(String.format("Field %s is invalid!", set.getKey()),
+						HttpStatus.BAD_REQUEST);
+			}
+			catch (Exception e) {
+				return new ResponseEntity<>(String.format("Field %s could not be changed!", set.getKey()),
+						HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
 
 		return activityService.saveActivity(activity) != null ? ResponseEntity.ok(activity.getId())
 				: new ResponseEntity<>("Could not update activity!", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -207,6 +209,8 @@ public class ActivityController {
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> deleteActivity(@PathVariable int activityId) {
 	    Activity activity = activityService.getActivityById(activityId);
+	    
+	    // TODO: solutions should be deleted
 
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();

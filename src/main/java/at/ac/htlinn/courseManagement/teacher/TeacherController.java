@@ -42,7 +42,6 @@ public class TeacherController {
 		return ResponseEntity.ok(new UserDto(teacher));
 	}
 	
-	// TODO: possibly split up into 2 methods?
 	/**
 	 * GET all courses for active user (must be teacher)
 	 * 
@@ -56,12 +55,12 @@ public class TeacherController {
 	@GetMapping("my-view")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> getViewForLoggedInTeacher(
-		@RequestParam(name = "course_id", required = false) Integer courseId) {
+			@RequestParam(name = "course_id", required = false) Integer courseId) {
+		
+		int userId = userService.getCurrentUser().getId();
 		
 		if (courseId != null) {
 			// return info for one course
-			
-			int userId = userService.getCurrentUser().getId();
 			
 			// check if user is teacher of the specified course
 			if (teacherService.isUserTeacher(userId, courseId))
@@ -72,9 +71,6 @@ public class TeacherController {
 		}
 		
 		// return all courses
-		
-		int userId = userService.getCurrentUser().getId();
-		
 		List<CourseDto> courses = teacherService.getTeacherView(userId);
 		return ResponseEntity.ok(courses);
 	}

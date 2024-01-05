@@ -126,7 +126,6 @@ public class StudentController {
 		return  new ResponseEntity<>(json, HttpStatus.BAD_REQUEST);
 	}
 	
-	// TODO: returns 204 if student does not exist
 	/**
 	 * DELETE student from course
 	 * requires @PathVariable studentId and courseId

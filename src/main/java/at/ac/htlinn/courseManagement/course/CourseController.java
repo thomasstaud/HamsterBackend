@@ -4,13 +4,11 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -43,7 +41,6 @@ public class CourseController {
 	@Autowired
 	private ObjectMapper mapper;
 	
-	// TODO: clean up admin/dev permissions
 	// TODO: proper parameter and return documentation
 	
 	/**
@@ -136,34 +133,24 @@ public class CourseController {
 		User user = userService.getCurrentUser();
 		if (!userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
 			return new ResponseEntity<>("You must be this course's teacher to make changes to it.", HttpStatus.FORBIDDEN);
-
-    	/* alternative method:
-    	 * TODO: advantages/disadvantages?
-		try {
-	    	Field field = Course.class.getDeclaredField(k);
-	    	field.setAccessible(true);
-	    	System.out.println(course);
-	    	field.set(course, v);
-	    	System.out.println(course);
+		
+		// attempt to update all specified fields
+		// TODO: i think this belongs in a service class...
+		for (Map.Entry<String, Object> set : fields.entrySet()) {
+			try {
+				Field field = Course.class.getDeclaredField(set.getKey());
+		    	field.setAccessible(true);
+		    	field.set(course, set.getValue());
+			}
+			catch (NoSuchFieldException e) {
+				return new ResponseEntity<>(String.format("Field %s is invalid!", set.getKey()),
+						HttpStatus.BAD_REQUEST);
+			}
+			catch (Exception e) {
+				return new ResponseEntity<>(String.format("Field %s could not be changed!", set.getKey()),
+						HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
-		catch(Exception e) {
-			System.out.println(e.getStackTrace());
-		}
-		*/
-		
-		// map fields from request body to fields from the class
-		Map<Field, Object> classFields = fields.entrySet()
-			    .stream()
-			    .collect(Collectors.toMap(e -> ReflectionUtils.findField(Course.class, e.getKey()), e -> e.getValue()));
-		
-		// TODO: specify which field is invalid
-		if (classFields.containsKey(null))
-			return new ResponseEntity<>("Request body contains invalid fields!", HttpStatus.BAD_REQUEST);
-		
-	    classFields.forEach((field, value) -> {
-	    	field.setAccessible(true);
-	        ReflectionUtils.setField(field, course, value);
-	    });
 
 	    return courseService.saveCourse(course) != null ? ResponseEntity.ok(course.getId())
 	    		: new ResponseEntity<>("Could not update course!", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -179,6 +166,9 @@ public class CourseController {
 	@DeleteMapping("/{courseId}")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> deleteCourse(@PathVariable int courseId) {
+		
+		// TODO: delete activities
+		
 		// check if course exists
 		Course course = courseService.getCourseById(courseId);
 		if (course == null) return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
@@ -188,9 +178,9 @@ public class CourseController {
 		if (!userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
 			return new ResponseEntity<>("You must be this courses teacher to delete it.", HttpStatus.FORBIDDEN);
 		
+		// TODO: should be done in deleteCourse method
 		// attempt to remove all students from the course
-		// TODO: don't commit until every student has successfully been deleted
-		if (!studentService.removeAllStudentFromCourse(courseId))
+		if (!studentService.removeAllStudentsFromCourse(courseId))
 			return new ResponseEntity<>("Could not remove all students from course!", HttpStatus.INTERNAL_SERVER_ERROR);
 		
 		return courseService.deleteCourse(courseId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)

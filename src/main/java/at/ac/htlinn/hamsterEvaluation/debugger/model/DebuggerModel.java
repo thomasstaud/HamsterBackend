@@ -38,8 +38,7 @@ import at.ac.htlinn.hamsterEvaluation.workbench.Utils;
 import at.ac.htlinn.hamsterEvaluation.workbench.Workbench;
 
 /**
- * TODO: Testen der Debuggersteuerung (vor allem ThreadResumed und
- * ConnectionClosed)
+ * TODO: Testen der Debuggersteuerung (vor allem ThreadResumed und ConnectionClosed)
  *
  * @author $Author: djasper $
  * @version $Revision: 1.1 $
