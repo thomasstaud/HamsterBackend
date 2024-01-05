@@ -53,25 +53,25 @@ public class TeacherController {
 	 * @return
 	 */
 	@GetMapping("my-view")
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> getViewForLoggedInTeacher(
 			@RequestParam(name = "course_id", required = false) Integer courseId) {
 		
-		int userId = userService.getCurrentUser().getId();
+		User user = userService.getCurrentUser();
 		
 		if (courseId != null) {
 			// return info for one course
 			
-			// check if user is teacher of the specified course
-			if (teacherService.isUserTeacher(userId, courseId))
+			if (!userService.isUserPrivileged(user) && !teacherService.isUserTeacher(user.getId(), courseId))
+				// check if user is teacher of the specified course
 				return new ResponseEntity<>("You must be this courses teacher to view its details.", HttpStatus.FORBIDDEN);
 			
-			TeacherCourseDto courseView = teacherService.getCourseView(userId);
+			TeacherCourseDto courseView = teacherService.getCourseView(courseId);
 			return ResponseEntity.ok(courseView);
 		}
 		
 		// return all courses
-		List<CourseDto> courses = teacherService.getTeacherView(userId);
+		List<CourseDto> courses = teacherService.getTeacherView(user.getId());
 		return ResponseEntity.ok(courses);
 	}
 }
