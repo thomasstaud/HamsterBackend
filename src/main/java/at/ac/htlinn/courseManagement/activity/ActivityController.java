@@ -1,6 +1,5 @@
 package at.ac.htlinn.courseManagement.activity;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -146,7 +145,8 @@ public class ActivityController {
 		if (!userService.isUserPrivileged(user) && activity.getCourse().getTeacher().getId() != user.getId())
 			return new ResponseEntity<>("You must be this courses teacher to add an activity to it!", HttpStatus.FORBIDDEN);
 		
-		return activityService.saveActivity(activity) != null ? ResponseEntity.ok(activity.getId())
+		activity = activityService.saveActivity(activity);
+		return activity != null ? ResponseEntity.ok(activity.getId())
 				: new ResponseEntity<>("Could not create activity!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
@@ -174,28 +174,18 @@ public class ActivityController {
 		if (!userService.isUserPrivileged(user) && activity.getCourse().getTeacher().getId() != user.getId())
 			return new ResponseEntity<>("You must be this courses teacher to change its activities.", HttpStatus.FORBIDDEN);
 		
-		// attempt to update all specified fields
-		// TODO: key currently needs to match actual field names instead of JSON field names
-		// TODO: i think this belongs in a service class...
-		for (Map.Entry<String, Object> set : fields.entrySet()) {
-			try {
-				Field field = activity instanceof Exercise ?
-						Exercise.class.getDeclaredField(set.getKey()) : Contest.class.getDeclaredField(set.getKey());
-		    	field.setAccessible(true);
-		    	field.set(activity, set.getValue());
-			}
-			catch (NoSuchFieldException e) {
-				return new ResponseEntity<>(String.format("Field %s is invalid!", set.getKey()),
-						HttpStatus.BAD_REQUEST);
-			}
-			catch (Exception e) {
-				return new ResponseEntity<>(String.format("Field %s could not be changed!", set.getKey()),
-						HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+		try {
+			activity = activityService.updateActivity(activity, fields);
+			return activity != null ? ResponseEntity.ok(activity.getId())
+					: new ResponseEntity<>("Could not update activity!", HttpStatus.INTERNAL_SERVER_ERROR);
+			
+		} catch (NoSuchFieldException e) {
+			return new ResponseEntity<>(String.format("Field %s is invalid!", e.getMessage()),
+					HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(String.format("Field %s could not be changed!", e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		return activityService.saveActivity(activity) != null ? ResponseEntity.ok(activity.getId())
-				: new ResponseEntity<>("Could not update activity!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	/**
@@ -209,8 +199,6 @@ public class ActivityController {
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> deleteActivity(@PathVariable int activityId) {
 	    Activity activity = activityService.getActivityById(activityId);
-	    
-	    // TODO: solutions should be deleted
 
 		// if user is a teacher, they must be teacher of the specified course
 		User user = userService.getCurrentUser();

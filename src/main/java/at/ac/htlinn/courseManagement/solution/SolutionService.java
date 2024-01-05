@@ -12,11 +12,6 @@ import at.ac.htlinn.courseManagement.solution.model.SolutionDto;
 public class SolutionService {
 	private SolutionRepository solutionRepository;
 	
-	public SolutionService(SolutionRepository solutionRepository) {
-		
-		this.solutionRepository = solutionRepository;
-	}
-	
 	
 	
 	public Solution saveSolution(Solution solution) {

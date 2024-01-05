@@ -1,5 +1,6 @@
 package at.ac.htlinn.courseManagement.activity.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.InheritanceType;
 import javax.persistence.Entity;
@@ -38,7 +39,7 @@ public abstract class Activity {
 	@Column(name = "hidden")
 	private boolean hidden;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name="course_id", nullable = false)
 	private Course course;
 }

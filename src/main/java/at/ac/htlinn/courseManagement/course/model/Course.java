@@ -40,6 +40,15 @@ public class Course {
 		// users must be added separately!
 	}
 	
+	/* TODO: have a closer look at CascadeType
+	*		if a course is deleted, the corresponding
+	*		activities and user_course entries should be deleted along with it
+	*
+	*		CascadeType.ALL doesn't appear to work for this, even though it should
+	*
+	*		the same needs to be done for Activity and possibly other classes as well
+	*/
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "course_id")

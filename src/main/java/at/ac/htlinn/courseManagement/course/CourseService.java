@@ -1,6 +1,8 @@
 package at.ac.htlinn.courseManagement.course;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -9,48 +11,27 @@ import org.springframework.stereotype.Service;
 
 import at.ac.htlinn.courseManagement.course.model.Course;
 import at.ac.htlinn.courseManagement.solution.model.SolutionDto;
-import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor
 public class CourseService {
 
 	private CourseRepository courseRepository;
 	
 	
-	
-	public List<Course> getAllCourses() {
-		try {
-			return courseRepository.findAll();
-		} catch (Exception e) {
-			return null;
-		}
-	}
-
-	public Course saveCourse(Course course) {
-		try {
-			return courseRepository.save(course);
-		} catch (Exception e) {
-			return null;
-		}
-
-	}
-
-	public boolean deleteCourse(int courseId) {
-		try {
-			Course course = getCourseById(courseId);
-			courseRepository.delete(course);
-			return true;
-		} catch (IllegalArgumentException | IndexOutOfBoundsException e) {
-			return false;
-		}
-	}
 
 	public Course getCourseById(int id) {
 		try {
 			return (Course)Hibernate.unproxy(courseRepository.getById(id));
 		}
 		catch (EntityNotFoundException e) {
+			return null;
+		}
+	}
+	
+	public List<Course> getAllCourses() {
+		try {
+			return courseRepository.findAll();
+		} catch (Exception e) {
 			return null;
 		}
 	}
@@ -70,5 +51,43 @@ public class CourseService {
 	public Course getCourseBySolution(SolutionDto solution) {
 		int activityId = solution.getActivityId();
 		return courseRepository.getByActivityId(activityId);
+	}
+
+	public Course saveCourse(Course course) {
+		try {
+			return courseRepository.save(course);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	public Course updateCourse(Course course, Map<String, Object> fields) throws NoSuchFieldException, Exception {
+		// attempt to update all specified fields
+		// TODO: key currently needs to match actual field names instead of JSON field names
+		for (Map.Entry<String, Object> set : fields.entrySet()) {
+			try {
+				Field field = Course.class.getDeclaredField(set.getKey());
+		    	field.setAccessible(true);
+		    	field.set(course, set.getValue());
+			}
+			catch (NoSuchFieldException e) {
+				System.out.println(e);
+				throw new NoSuchFieldException(set.getKey());
+			}
+			catch (Exception e) {
+				throw new Exception(set.getKey());
+			}
+		}
+		
+		return saveCourse(course);
+	}
+
+	public boolean deleteCourse(Course course) {
+		try {
+			courseRepository.delete(course);
+			return true;
+		} catch (IllegalArgumentException | IndexOutOfBoundsException e) {
+			return false;
+		}
 	}
 }

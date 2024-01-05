@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import at.ac.htlinn.courseManagement.course.model.Course;
 
-public interface CourseRepository extends JpaRepository<Course, Integer>{
+public interface CourseRepository extends JpaRepository<Course, Integer> {
 
 	public Course getByName(String name);
 	

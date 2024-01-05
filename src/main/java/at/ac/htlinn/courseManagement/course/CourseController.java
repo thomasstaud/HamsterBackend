@@ -1,6 +1,5 @@
 package at.ac.htlinn.courseManagement.course;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -104,8 +103,9 @@ public class CourseController {
 		int user_id = userService.getCurrentUser().getId();
 		courseDTO.setTeacherId(user_id);
 		Course course = new Course(courseDTO, userService);
-
-		return courseService.saveCourse(course) != null ? ResponseEntity.ok(course.getId())
+		
+		course = courseService.saveCourse(course);
+		return course != null ? ResponseEntity.ok(course.getId())
 				: new ResponseEntity<>("Could not create course!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
@@ -134,26 +134,18 @@ public class CourseController {
 		if (!userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
 			return new ResponseEntity<>("You must be this course's teacher to make changes to it.", HttpStatus.FORBIDDEN);
 		
-		// attempt to update all specified fields
-		// TODO: i think this belongs in a service class...
-		for (Map.Entry<String, Object> set : fields.entrySet()) {
-			try {
-				Field field = Course.class.getDeclaredField(set.getKey());
-		    	field.setAccessible(true);
-		    	field.set(course, set.getValue());
-			}
-			catch (NoSuchFieldException e) {
-				return new ResponseEntity<>(String.format("Field %s is invalid!", set.getKey()),
-						HttpStatus.BAD_REQUEST);
-			}
-			catch (Exception e) {
-				return new ResponseEntity<>(String.format("Field %s could not be changed!", set.getKey()),
-						HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+		try {
+			course = courseService.updateCourse(course, fields);
+			return course != null ? ResponseEntity.ok(course.getId())
+					: new ResponseEntity<>("Could not update course!", HttpStatus.INTERNAL_SERVER_ERROR);
+			
+		} catch (NoSuchFieldException e) {
+			return new ResponseEntity<>(String.format("Field %s is invalid!", e.getMessage()),
+					HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(String.format("Field %s could not be changed!", e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-	    return courseService.saveCourse(course) != null ? ResponseEntity.ok(course.getId())
-	    		: new ResponseEntity<>("Could not update course!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	/**
@@ -167,8 +159,6 @@ public class CourseController {
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> deleteCourse(@PathVariable int courseId) {
 		
-		// TODO: delete activities
-		
 		// check if course exists
 		Course course = courseService.getCourseById(courseId);
 		if (course == null) return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
@@ -178,12 +168,11 @@ public class CourseController {
 		if (!userService.isUserPrivileged(user) && course.getTeacher().getId() != user.getId())
 			return new ResponseEntity<>("You must be this courses teacher to delete it.", HttpStatus.FORBIDDEN);
 		
-		// TODO: should be done in deleteCourse method
 		// attempt to remove all students from the course
 		if (!studentService.removeAllStudentsFromCourse(courseId))
 			return new ResponseEntity<>("Could not remove all students from course!", HttpStatus.INTERNAL_SERVER_ERROR);
 		
-		return courseService.deleteCourse(courseId) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+		return courseService.deleteCourse(course) ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
 				: new ResponseEntity<>("Could not delete course!", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
