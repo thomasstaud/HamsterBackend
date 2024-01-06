@@ -19,16 +19,16 @@ import at.ac.htlinn.courseManagement.student.model.StudentCourseDto;
 import at.ac.htlinn.courseManagement.student.model.StudentExerciseDto;
 import at.ac.htlinn.courseManagement.student.model.StudentSolutionDto;
 import at.ac.htlinn.user.model.User;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class StudentService {
 	
 	private StudentRepository studentRepository;
 	private CourseService courseService;
 	private ActivityService activityService;
 	private SolutionService solutionService;
-	
-	
 	
 	public List<User> getAllStudents() {
 		return studentRepository.getAllStudents();

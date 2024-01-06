@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 import at.ac.htlinn.courseManagement.activity.model.Activity;
 import at.ac.htlinn.courseManagement.activity.model.Contest;
 import at.ac.htlinn.courseManagement.activity.model.Exercise;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class ActivityService {
 
 	private ActivityRepository activityRepository;
-	
-	
 
 	public Activity getActivityById(int activityId) { 
 		return (Activity)Hibernate.unproxy(activityRepository.getById(activityId));

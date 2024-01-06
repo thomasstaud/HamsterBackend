@@ -17,8 +17,10 @@ import at.ac.htlinn.courseManagement.teacher.model.TeacherActivityDto;
 import at.ac.htlinn.courseManagement.teacher.model.TeacherCourseDto;
 import at.ac.htlinn.user.model.User;
 import at.ac.htlinn.user.model.UserDto;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class TeacherService {
 	
 	private TeacherRepository teacherRepository;
@@ -26,8 +28,6 @@ public class TeacherService {
 	private CourseService courseService;
 	private ActivityService activityService;
 	private SolutionService solutionService;
-	
-	
 	
 	public User getCourseTeacher(int courseId) {
 		return teacherRepository.getCourseTeacher(courseId);

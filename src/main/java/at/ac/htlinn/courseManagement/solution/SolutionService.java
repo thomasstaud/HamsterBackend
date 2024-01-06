@@ -7,12 +7,13 @@ import org.springframework.stereotype.Service;
 
 import at.ac.htlinn.courseManagement.solution.model.Solution;
 import at.ac.htlinn.courseManagement.solution.model.SolutionDto;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class SolutionService {
+	
 	private SolutionRepository solutionRepository;
-	
-	
 	
 	public Solution saveSolution(Solution solution) {
 		return solutionRepository.save(solution);

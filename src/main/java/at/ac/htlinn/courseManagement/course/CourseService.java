@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 
 import at.ac.htlinn.courseManagement.course.model.Course;
 import at.ac.htlinn.courseManagement.solution.model.SolutionDto;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class CourseService {
 
 	private CourseRepository courseRepository;
-	
-	
 
 	public Course getCourseById(int id) {
 		try {
