@@ -125,7 +125,6 @@ public class CourseController {
 	        return new ResponseEntity<>("Request body is invalid!", HttpStatus.BAD_REQUEST);
 	    }
 
-	    // must unproxy in order for reflection to work
 	    Course course = courseService.getCourseById(courseId);
 	    if (course == null) return new ResponseEntity<>("Course does not exist!", HttpStatus.NOT_FOUND);
 
