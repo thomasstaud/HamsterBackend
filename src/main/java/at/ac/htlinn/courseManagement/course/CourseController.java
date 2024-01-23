@@ -96,7 +96,7 @@ public class CourseController {
 	@PostMapping("")
 	@PreAuthorize("hasAuthority('TEACHER')")
 	public ResponseEntity<?> createCourse(@RequestBody JsonNode node) {
-		CourseDto courseDTO = mapper.convertValue(node.get("course"), CourseDto.class);
+		CourseDto courseDTO = mapper.convertValue(node, CourseDto.class);
 		if (courseDTO == null) return new ResponseEntity<>("Request body is invalid!", HttpStatus.BAD_REQUEST);
 		
 		// set teacher id to active user id

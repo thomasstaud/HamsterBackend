@@ -112,6 +112,7 @@ public class UserService {
 			// TODO: check for actual mock user roles instead of setting it to admin
 			roles.add(new Role(1, "ADMIN"));
 			user.setRoles(roles);
+			user.setId(1);
 			return user;
 		}
 		
