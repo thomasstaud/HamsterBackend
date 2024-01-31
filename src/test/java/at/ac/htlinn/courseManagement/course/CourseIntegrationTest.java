@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,5 +55,15 @@ public class CourseIntegrationTest {
         // remove course
         mockMvc.perform(delete(url + "/courses/" + id))
 		.andExpect(status().is(HttpStatus.NO_CONTENT.value()));
+    }
+    
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void getCourse() {
+        var result = mockMvc.perform(post(url + "/courses")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andExpect(status().isOk())
+                .andReturn();
     }
 }
