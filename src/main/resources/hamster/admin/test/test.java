@@ -1,5 +1,0 @@
-import at.ac.htlinn.hamsterEvaluation.debugger.model.Territorium;import at.ac.htlinn.hamsterEvaluation.debugger.model.Territory;import at.ac.htlinn.hamsterEvaluation.model.HamsterException;import at.ac.htlinn.hamsterEvaluation.model.HamsterInitialisierungsException;import at.ac.htlinn.hamsterEvaluation.model.HamsterNichtInitialisiertException;import at.ac.htlinn.hamsterEvaluation.model.KachelLeerException;import at.ac.htlinn.hamsterEvaluation.model.MauerDaException;import at.ac.htlinn.hamsterEvaluation.model.MaulLeerException;import at.ac.htlinn.hamsterEvaluation.model.MouthEmptyException;import at.ac.htlinn.hamsterEvaluation.model.WallInFrontException;import at.ac.htlinn.hamsterEvaluation.model.TileEmptyException;public class test extends at.ac.htlinn.hamsterEvaluation.debugger.model.IHamster implements at.ac.htlinn.hamsterEvaluation.model.HamsterProgram {public void main(){
-	linksUm(); 
-  linksUm(); 
-  vor(); 
-}}

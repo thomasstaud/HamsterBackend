@@ -1,0 +1,258 @@
+= HamsterBackend API Guide
+// keine Ahnung, was diese Parameter machen!
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+= CourseManagement API
+
+== Students
+
+=== Get all students
+`Get` request for getting a list of all registered students.
+
+*Request*
+include::{snippets}/getAllStudents/http-request.adoc[]
+*Response*
+include::{snippets}/getAllStudents/http-response.adoc[]
+
+
+=== Get students by course ID
+`Get` request for getting all students in the specified course.
+
+*Request*
+include::{snippets}/getStudentsInCourse/http-request.adoc[]
+*Response*
+include::{snippets}/getStudentsInCourse/http-response.adoc[]]
+
+
+=== Add students to course
+`Post` request for adding students to a course.
+The request body should include a list of the users' IDs.
+
+*Request*
+include::{snippets}/addStudentsToCourse/http-request.adoc[]
+*Response*
+include::{snippets}/addStudentsToCourse/http-response.adoc[]]
+
+
+=== Remove student from course
+`Delete` request for removing a student from a course.
+
+*Request*
+include::{snippets}/removeStudentFromCourse/http-request.adoc[]
+*Response*
+include::{snippets}/removeStudentFromCourse/http-response.adoc[]]
+
+
+=== Get student view
+`Get` request for getting the required data for the student view.
+
+*Request*
+include::{snippets}/getStudentView/http-request.adoc[]
+*Response*
+include::{snippets}/getStudentView/http-response.adoc[]
+
+
+
+== Teachers
+
+=== Get teacher by course ID
+`Get` request for getting the teacher for the specified course.
+
+*Request*
+include::{snippets}/getTeacherByCourse/http-request.adoc[]
+*Response*
+include::{snippets}/getTeacherByCourse/http-response.adoc[]
+
+=== Get teacher view
+`Get` request for getting the required data for the teacher view.
+
+*Request*
+include::{snippets}/getTeacherView/http-request.adoc[]
+*Response*
+include::{snippets}/getTeacherView/http-response.adoc[]
+
+=== Get course details
+`Get` request for getting the required data for the course details.
+`submitted` is the number of submitted solutions for an activity.
+`feedbacked` is the number of those solutions that have already been feedbacked by the teacher.
+
+*Request*
+include::{snippets}/getCourseDetails/http-request.adoc[]
+*Response*
+include::{snippets}/getCourseDetails/http-response.adoc[]
+
+
+
+== Courses
+
+=== Get course by ID
+`Get` request for getting the course with the specified ID.
+
+*Request*
+include::{snippets}/getCourse/http-request.adoc[]
+*Response*
+include::{snippets}/getCourse/http-response.adoc[]
+
+
+=== Get all courses
+`Get` request for getting a list of all courses.
+
+*Request*
+include::{snippets}/getCourses/http-request.adoc[]
+*Response*
+include::{snippets}/getCourses/http-response.adoc[]
+
+
+=== Create course
+`Post` request for creating a new course.
+Returns the ID of the created course.
+
+*Request*
+include::{snippets}/createCourse/http-request.adoc[]
+*Response*
+include::{snippets}/createCourse/http-response.adoc[]
+
+
+=== Update course
+`Patch` request for updating specific fields in a course.
+Returns the ID of the updated course.
+
+*Request*
+include::{snippets}/updateCourse/http-request.adoc[]
+*Response*
+include::{snippets}/updateCourse/http-response.adoc[]
+
+
+=== Delete course
+`Delete` request for deleting a course.
+
+*Request*
+include::{snippets}/deleteCourse/http-request.adoc[]
+*Response*
+include::{snippets}/deleteCourse/http-response.adoc[]
+
+
+
+
+== Activities
+
+=== Get activity by ID
+`Get` request for getting the activity with the specified ID.
+
+*Request*
+include::{snippets}/getActivity/http-request.adoc[]
+*Response*
+include::{snippets}/getActivity/http-response.adoc[]
+
+
+=== Get activities by course ID
+`Get` request for getting all activities in the specified course.
+
+*Request*
+include::{snippets}/getActivitiesByCourse/http-request.adoc[]
+*Response*
+include::{snippets}/getActivitiesByCourse/http-response.adoc[]
+
+
+=== Create activity
+`Post` request for creating a new activity.
+Returns the ID of the created activity.
+
+*Request*
+include::{snippets}/createActivity/http-request.adoc[]
+*Response*
+include::{snippets}/createActivity/http-response.adoc[]
+
+
+=== Update activity
+`Patch` request for updating specific fields in a activity.
+Returns the ID of the updated activity.
+
+*Request*
+include::{snippets}/updateActivity/http-request.adoc[]
+*Response*
+include::{snippets}/updateActivity/http-response.adoc[]
+
+
+=== Delete activity
+`Delete` request for deleting a activity.
+
+*Request*
+include::{snippets}/deleteActivity/http-request.adoc[]
+*Response*
+include::{snippets}/deleteActivity/http-response.adoc[]
+
+
+
+
+== Solutions
+
+=== Get solution by ID
+`Get` request for getting the solution with the specified ID.
+
+*Request*
+include::{snippets}/getSolution/http-request.adoc[]
+*Response*
+include::{snippets}/getSolution/http-response.adoc[]
+
+
+=== Get solutions by activity ID
+`Get` request for getting all solutions for the specified activity.
+
+*Request*
+include::{snippets}/getSolutionsByActivity/http-request.adoc[]
+*Response*
+include::{snippets}/getSolutionsByActivity/http-response.adoc[]
+
+
+=== Get solutions by student ID
+`Get` request for getting all solutions by the specified student in the specified course.
+
+*Request*
+include::{snippets}/getSolutionsByStudent/http-request.adoc[]
+*Response*
+include::{snippets}/getSolutionsByStudent/http-response.adoc[]
+
+
+=== Create solution
+`Put` request for creating a new solution.
+Returns the created solution.
+
+*Request*
+include::{snippets}/createSolution/http-request.adoc[]
+*Response*
+include::{snippets}/createSolution/http-response.adoc[]
+
+
+=== Update solution
+`Put` request for creating a solution.
+Returns the updated solution.
+
+*Request*
+include::{snippets}/updateSolution/http-request.adoc[]
+*Response*
+include::{snippets}/updateSolution/http-response.adoc[]
+
+
+=== Feedback solution
+`Delete` request for feedbacking a solution.
+Returns the updated solution.
+
+*Request*
+include::{snippets}/feedbackSolution/http-request.adoc[]
+*Response*
+include::{snippets}/feedbackSolution/http-response.adoc[]
+
+
+=== Delete solution
+`Delete` request for deleting a solution.
+
+*Request*
+include::{snippets}/deleteSolution/http-request.adoc[]
+*Response*
+include::{snippets}/deleteSolution/http-response.adoc[]
